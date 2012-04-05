@@ -1,0 +1,88 @@
+@import "bootstrap.less";
+@import "responsive.less";
+
+header {
+	hgroup {
+		#font > #family > .serif;
+		h1 {
+			color: @grayLighter;
+		}
+		h2 {
+			color: @grayLight;
+			padding-left: 1em;
+			font-style: oblique;
+		}
+	}
+	.navbar-inner {
+		#gradient > .vertical-three-colors(@gray, @grayDark, 50%, @gray);
+	}
+}
+header hgroup, header .navbar, .footer {
+	padding: 1em 1em 0 1em;
+}
+
+.main {
+	color: @black;
+	article, .sidemenu {
+		.border-radius;
+		background: @grayLighter;
+	}
+	
+	article {
+		margin-top: 1em;
+		padding: 0.5em;
+	}
+	article:first-child {
+		margin-top: 0;
+	}
+}
+
+.menus {
+	padding: 0.5em;
+	
+	.menu {
+		.clearfix;
+		margin-top: 1em;
+		h3 {
+			margin-top: 0.2em;
+			border-bottom: 1px solid #CCC;
+		}
+	}
+	.menu:first-child {
+		margin-top: 0;
+	}
+	ul, dl {
+		margin-top: 0.5em;
+		margin-bottom: 0;
+	}
+	li {
+		padding-top: 0.5em;
+		border-bottom: 1px solid #CCC;
+	}
+	li:first-child {
+		padding-top: 0;
+	}
+}
+.profile {
+	img {
+		.border-radius;
+	}
+	p {
+		display: inline;
+	}
+}
+.tweets {
+	a:first-child {
+		float: right;
+		color: #999;
+		font-size: .7em;
+	}
+}
+
+footer {
+	margin-top: 2em;
+	border-top: 1px solid @gray;
+	p {
+		color: @grayLighter;
+	}
+}
