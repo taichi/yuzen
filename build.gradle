@@ -1,0 +1,76 @@
+
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+
+group = 'io.yuzen'
+archivesBaseName = 'yuzen'
+version = '0.0.1'
+description = 'static contents granerator'
+
+configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
+
+repositories {
+	mavenCentral()
+	mavenRepo(url: 'http://download.eclipse.org/jgit/maven')
+}
+
+dependencies {
+	groovy 'org.codehaus.groovy:groovy-all:1.8.+'
+	compile 'com.google.guava:guava:11.+'
+	compile 'org.pegdown:pegdown:1.1.+'
+	compile 'org.thymeleaf:thymeleaf:2.0.+'
+	compile 'ch.qos.logback:logback-classic:1+'
+
+	testCompile 'junit:junit:4.+'
+	testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+	// TODO: use geb
+	// http://www.gebish.org/manual/current/build-integrations.html#gradle
+}
+
+sourceSets {
+	main {
+		java.srcDir 'src/java'
+		groovy.srcDir 'src/groovy'
+		resources.srcDir 'src/java'
+	}
+	scripts.groovy.srcDir 'scripts'
+	test {
+		java.srcDir 'test/java'
+		resources.srcDir 'test/java'
+	}
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+def encoding = { it.encoding = 'UTF-8' }
+tasks.withType(AbstractCompile) each { encoding it.options }
+tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
+
+eclipse {
+	project { name = 'yuzen' }
+	classpath {
+		containers = [
+			'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
+		]
+		defaultOutputDir = file('bin')
+		file {
+			withXml {
+				// for tailing classpath container
+				def n = it.asNode()
+				def gp = [
+					'GROOVY_SUPPORT',
+					'GROOVY_DSL_SUPPORT'
+				]
+				n.children().findAll { gp.contains(it.@path) } each { n.remove(it) }
+
+				gp.each {
+					n.appendNode 'classpathentry', [kind: 'con', path: it]
+				}
+			}
+		}
+	}
+}
