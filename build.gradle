@@ -21,8 +21,9 @@ repositories {
 dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:1.8.+'
 
-	compile "org.eclipse.jgit:org.eclipse.jgit:1.+"
+	compile 'org.eclipse.jgit:org.eclipse.jgit:1.+'
 	compile 'com.google.guava:guava:11.+'
+	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 	compile 'org.thymeleaf:thymeleaf:2.0.+'
 	compile 'ch.qos.logback:logback-classic:1+'
