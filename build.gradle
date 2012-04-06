@@ -2,6 +2,7 @@
 
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'war'
 apply plugin: 'eclipse'
 
 
@@ -19,10 +20,20 @@ repositories {
 
 dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:1.8.+'
+
+	compile "org.eclipse.jgit:org.eclipse.jgit:1.+"
 	compile 'com.google.guava:guava:11.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 	compile 'org.thymeleaf:thymeleaf:2.0.+'
 	compile 'ch.qos.logback:logback-classic:1+'
+
+	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
+	[
+		'jetty-server',
+		'jetty-servlet'
+	].each {
+		providedCompile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
+	}
 
 	testCompile 'junit:junit:4.+'
 	testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'

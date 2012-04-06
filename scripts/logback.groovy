@@ -14,4 +14,5 @@ appender("CONSOLE", ConsoleAppender) {
 }
 
 logger 'org.thymeleaf', INFO, ['CONSOLE']
+logger 'org.eclipse.jetty', INFO, ['CONSOLE']
 root INFO, ['CONSOLE']
