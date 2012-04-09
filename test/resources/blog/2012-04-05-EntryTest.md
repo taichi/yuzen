@@ -1,9 +1,3 @@
----
-layout: default
-title: Not published!
-published: false
-category: publish_test
----
 # エントリのテストだよん。
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt

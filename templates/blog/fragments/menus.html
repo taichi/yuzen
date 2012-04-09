@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+</head>
+<body>
+	<div th:fragment="menus">
+		<div class="menu profile">
+			<img
+				src="https://twimg0-a.akamaihd.net/profile_images/769940966/226710936a3042d473708005333d57118c925cac_normal.png" />
+			<span> Trick Programmer </span>
+		</div>
+		<div class="menu recents">
+			<h3>Recent Posts</h3>
+			<ul class="unstyled">
+				<li th:each="r : ${blog.recentposts}" ><a th:href="*{url}" th:text="*{title}">たいとる</a></li>
+				<li th:remove="all"><a href="">たいとる</a></li>
+			</ul>
+		</div>
+		<div class="menu github">
+			<h3>GitHub Repos</h3>
+			<ul class="unstyled repos">
+				<li><a
+					href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
+					<p>Download libraries from maven2 repository without maven2.</p></li>
+				<li><a
+					href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
+					<p>Download libraries from maven2 repository without maven2.</p></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

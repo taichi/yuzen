@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+</head>
+<body>
+	<header th:fragment="header">
+		<hgroup>
+			<h1 th:text="${blog.title}">Blog Title</h1>
+			<h2 th:text="${blog.subtitle}">sub title</h2>
+		</hgroup>
+		<div class="navbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<ul class="nav">
+						<li><a href="/">Home</a></li>
+						<li><a href="/archives">Archives</a></li>
+						<li><a href="/profile">Profile</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

@@ -1,14 +1,14 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="utf-8">
-<title>Between Design and Implementation</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet/less" type="text/css" href="less/main.less">
+<head th:include="fragments/head::${blog.head}">
+<meta charset="utf-8" />
+<title>Blog Title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet/less" type="text/css" href="less/main.less" />
 <script type="application/javascript" src="less/less-1.3.0.min.js"></script>
 </head>
 <body>
-	<header>
+	<header th:include="fragments/header::header">
 		<hgroup>
 			<h1>Between Design and Implementation</h1>
 			<h2>I'm a monster but not evil</h2>
