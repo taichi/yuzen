@@ -1,4 +1,4 @@
-package io.yuzen;
+package org.koshinuke.yuzen;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;

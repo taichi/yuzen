@@ -1,12 +1,14 @@
-package io.yuzen.thymeleaf;
+package org.koshinuke.yuzen.thymeleaf;
 
 import static org.junit.Assert.assertEquals;
-import io.yuzen.util.ClassUtil;
 
 import java.io.StringWriter;
 import java.net.URL;
 
 import org.junit.Test;
+import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver;
+import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
+import org.koshinuke.yuzen.util.ClassUtil;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;

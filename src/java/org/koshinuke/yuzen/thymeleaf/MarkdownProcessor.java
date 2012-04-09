@@ -1,4 +1,4 @@
-package io.yuzen.thymeleaf;
+package org.koshinuke.yuzen.thymeleaf;
 
 import java.util.List;
 

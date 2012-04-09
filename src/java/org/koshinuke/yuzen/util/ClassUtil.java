@@ -1,4 +1,4 @@
-package io.yuzen.util;
+package org.koshinuke.yuzen.util;
 
 /**
  * @author taichi

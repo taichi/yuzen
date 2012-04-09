@@ -6,7 +6,7 @@ apply plugin: 'war'
 apply plugin: 'eclipse'
 
 
-group = 'io.yuzen'
+group = 'org.koshinuke.yuzen'
 archivesBaseName = 'yuzen'
 version = '0.0.1'
 description = 'static contents granerator'
