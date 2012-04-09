@@ -6,8 +6,6 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.junit.Test;
-import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver;
-import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
 import org.koshinuke.yuzen.util.ClassUtil;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -46,6 +44,7 @@ public class MarkdownProcessorTest {
 		te.addDialect(new YuzenDialect());
 
 		Context c = new Context();
+		c.setVariable("md", "mdp");
 
 		StringWriter w = new StringWriter();
 		te.process("MarkdownProcessorTest", c, w);

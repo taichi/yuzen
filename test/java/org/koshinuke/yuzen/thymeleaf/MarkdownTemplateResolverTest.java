@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.junit.Test;
-import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver;
 import org.koshinuke.yuzen.util.ClassUtil;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -33,7 +32,6 @@ public class MarkdownTemplateResolverTest {
 		te.addTemplateResolver(md);
 
 		Context c = new Context();
-
 		StringWriter w = new StringWriter();
 		te.process("MarkdownTemplateResolverTest", c, w);
 		w.flush();

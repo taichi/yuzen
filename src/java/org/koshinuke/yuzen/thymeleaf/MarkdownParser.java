@@ -40,7 +40,7 @@ public class MarkdownParser implements ITemplateParser {
 			char[] src = md.toCharArray();
 			String html = this.toHtml(src);
 			return this.delegate.parseTemplate(configuration, documentName,
-					new StringReader(html));
+					new StringReader("<div>" + html + "</div>"));
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
