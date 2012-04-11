@@ -12,6 +12,7 @@ import org.pegdown.ToHtmlSerializer;
 import org.pegdown.ast.RootNode;
 import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Document;
+import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.templateparser.ITemplateParser;
 import org.thymeleaf.templateparser.xmlsax.XhtmlAndHtml5NonValidatingSAXTemplateParser;
@@ -39,8 +40,12 @@ public class MarkdownParser implements ITemplateParser {
 			String md = CharStreams.toString(source);
 			char[] src = md.toCharArray();
 			String html = this.toHtml(src);
-			return this.delegate.parseTemplate(configuration, documentName,
-					new StringReader("<div>" + html + "</div>"));
+			Document doc = this.delegate.parseTemplate(configuration,
+					documentName, new StringReader("<div>" + html + "</div>"));
+			NestableNode node = (NestableNode) doc.getFirstChild();
+			// remove trick nodes.
+			doc.setChildren(node.getChildren());
+			return doc;
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

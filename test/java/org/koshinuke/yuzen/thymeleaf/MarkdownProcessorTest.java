@@ -54,6 +54,9 @@ public class MarkdownProcessorTest {
 				+ "MarkdownProcessorTest.html.expected");
 		String expected = Resources.toString(url, Charsets.UTF_8).replace("\r",
 				"");
+		System.out.println(expected);
+		System.out.println(actual);
+
 		assertEquals(expected.length(), actual.length());
 		assertEquals(expected, w.toString());
 	}
