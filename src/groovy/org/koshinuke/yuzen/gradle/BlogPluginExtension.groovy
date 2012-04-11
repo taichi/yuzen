@@ -21,5 +21,6 @@ class BlogPluginExtension {
 
 	BlogPluginExtension(Project project) {
 		this.project = project;
+		articles = project.file('_articles')
 	}
 }

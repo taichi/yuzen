@@ -1,3 +1,4 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency;
 import org.gradle.plugins.ide.eclipse.model.AbstractLibrary;
 import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory;
 
@@ -8,9 +9,8 @@ apply plugin: 'war'
 apply plugin: 'eclipse'
 
 
-group = 'org.koshinuke.yuzen'
-archivesBaseName = 'yuzen'
-version = '0.0.1'
+group = 'org.koshinuke'
+version = '0.0.1-SNAPSHOT'
 description = 'static contents granerator'
 
 configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
@@ -24,11 +24,15 @@ dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:1.8.+'
 
 	compile gradleApi()
+	compile 'org.thymeleaf:thymeleaf:2.0.+'
+	// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
+	// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
+	compile 'xerces:xercesImpl:2.10.0'
+	
 	compile 'org.eclipse.jgit:org.eclipse.jgit:1.+'
 	compile 'com.google.guava:guava:11.+'
 	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
-	compile 'org.thymeleaf:thymeleaf:2.0.+'
 
 	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
 	[
@@ -78,9 +82,7 @@ eclipse {
 				def ref = new FileReferenceFactory().fromFile(src)
 				it.entries.findAll {
 					it in AbstractLibrary && it.library.file.name.startsWith('gradle-')
-				} each {
-					it.sourcePath = ref
-				}
+				} each { it.sourcePath = ref }
 			}
 			withXml {
 				// for tailing classpath container

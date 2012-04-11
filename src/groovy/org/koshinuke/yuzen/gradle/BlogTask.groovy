@@ -16,7 +16,6 @@ class BlogTask extends ConventionTask {
 
 	@TaskAction
 	def generate() {
-		def f = this.destinationDir
-		println f
+		println this.destinationDir
 	}
 }
