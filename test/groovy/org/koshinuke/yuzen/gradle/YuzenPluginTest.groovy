@@ -32,4 +32,12 @@ class YuzenPluginTest {
 		project.tasks.blog.destinationDir = f
 		assert f == project.tasks.blog.destinationDir
 	}
+
+	@Test
+	void overwriteTest() {
+		def f = project.file("hoge/moge/blog")
+		project.tasks.blog.destinationDir = f
+		project.task([overwrite:true, type: BlogTask],'blog', { it.destinationDir = f })
+		assert f == project.tasks.blog.destinationDir
+	}
 }
