@@ -19,6 +19,10 @@ class YuzenPluginTest {
 	void setUp() {
 		this.project = ProjectBuilder.builder().build()
 		project.apply plugin: 'yuzen'
+
+		def f = this.project.file("_contents/hoge/moge/piro.md")
+		f.parentFile.mkdirs()
+		f.text = "* testdata"
 	}
 
 	@Test
@@ -39,5 +43,10 @@ class YuzenPluginTest {
 		project.tasks.blog.destinationDir = f
 		project.task([overwrite:true, type: BlogTask],'blog', { it.destinationDir = f })
 		assert f == project.tasks.blog.destinationDir
+	}
+
+	@Test
+	void executeTest() {
+		project.tasks.blog.execute()
 	}
 }

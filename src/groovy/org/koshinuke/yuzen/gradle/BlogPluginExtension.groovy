@@ -14,6 +14,9 @@ class BlogPluginExtension {
 
 	String subtitle
 
+	String head = 'less'
+
+	def recentposts = [] // TODO ...
 	BlogPluginExtension(Project project) {
 		this.project = project;
 	}

@@ -1,6 +1,7 @@
 package org.koshinuke.yuzen.gradle
 
 import org.gradle.api.Project;
+import org.gradle.api.file.FileTree
 
 /**
  * @author taichi
@@ -10,21 +11,24 @@ class YuzenPluginConvention {
 
 	final BlogTaskConvention blog = new BlogTaskConvention()
 
+	String contentsDirName = '_contents'
+	String templatePrefix = 'templates'
+	String templateSuffix = ".html"
 	String destinationDirName = 'yuzen'
 
 	YuzenPluginConvention(Project project) {
 		this.project = project
 	}
 
-	File getArticlesDir() {
-		this.project.fileResolver.withBaseDir(this.project.projectDir).resolve(blog.articlesDirName)
+	FileTree getContents() {
+		project.fileTree(contentsDirName) { include '**/*.md' }
 	}
+
 	File getDestinationDir() {
-		this.project.fileResolver.withBaseDir(this.project.buildDir).resolve(destinationDirName)
+		this.project.file("$project.buildDir/$destinationDirName")
 	}
 }
 
 class BlogTaskConvention {
-	String articlesDirName = '_articles'
 	String dirName = 'blog'
 }
