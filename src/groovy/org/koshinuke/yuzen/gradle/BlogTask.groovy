@@ -14,9 +14,9 @@ import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
 import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 /**
@@ -83,7 +83,7 @@ class BlogTask extends ConventionTask {
 		r.prefix = this.templatePrefix
 		r.suffix = this.templateSuffix
 
-		def cr = new ClassLoaderResourceResolver()
+		def cr = new ClassLoaderTemplateResolver()
 		cr.templateMode = 'HTML5'
 		cr.prefix = this.templatePrefix
 		cr.suffix = this.templateSuffix
