@@ -1,6 +1,5 @@
 package org.koshinuke.yuzen.gradle
 
-import java.io.File;
 
 import org.gradle.api.Project;
 
@@ -9,18 +8,13 @@ import org.gradle.api.Project;
  */
 class BlogPluginExtension {
 
+	final Project project
+
 	String title
 
 	String subtitle
 
-	File profile
-
-	File articles
-
-	final Project project
-
 	BlogPluginExtension(Project project) {
 		this.project = project;
-		articles = project.file('_articles')
 	}
 }

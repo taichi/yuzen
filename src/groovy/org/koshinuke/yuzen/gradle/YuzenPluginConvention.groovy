@@ -8,14 +8,23 @@ import org.gradle.api.Project;
 class YuzenPluginConvention {
 	final Project project
 
-	String docsDirName
+	final BlogTaskConvention blog = new BlogTaskConvention()
+
+	String destinationDirName = 'yuzen'
 
 	YuzenPluginConvention(Project project) {
 		this.project = project
-		this.docsDirName = 'yuzen'
 	}
 
-	File getDocsDir() {
-		this.project.fileResolver.withBaseDir(this.project.buildDir).resolve(docsDirName)
+	File getArticlesDir() {
+		this.project.fileResolver.withBaseDir(this.project.projectDir).resolve(blog.articlesDirName)
 	}
+	File getDestinationDir() {
+		this.project.fileResolver.withBaseDir(this.project.buildDir).resolve(destinationDirName)
+	}
+}
+
+class BlogTaskConvention {
+	String articlesDirName = '_articles'
+	String dirName = 'blog'
 }
