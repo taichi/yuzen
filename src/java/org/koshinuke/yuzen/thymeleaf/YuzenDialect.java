@@ -5,11 +5,18 @@ import java.util.Set;
 
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.templateresolver.TemplateResolver;
 
 /**
  * @author taichi
  */
 public class YuzenDialect extends AbstractDialect {
+
+	final TemplateResolver markdownResolver;
+
+	public YuzenDialect(TemplateResolver md) {
+		this.markdownResolver = md;
+	}
 
 	@Override
 	public String getPrefix() {
@@ -24,7 +31,7 @@ public class YuzenDialect extends AbstractDialect {
 	@Override
 	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
-		processors.add(new MarkdownProcessor());
+		processors.add(new MarkdownProcessor(this.markdownResolver));
 		return processors;
 	}
 }

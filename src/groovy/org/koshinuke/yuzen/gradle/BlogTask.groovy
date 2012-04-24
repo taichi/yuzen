@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitor;
+import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
@@ -53,23 +54,35 @@ class BlogTask extends ConventionTask {
 					visitDir : {
 					},
 					visitFile : {
-						String path = it.relativePath.pathString
-						def i = path.lastIndexOf('.')
-						if(0 < i) {
-							path = path.substring(0, i)
+
+						RelativePath rel = it.relativePath
+						def template = rel.lastName
+						if(1 < rel.segments.length) {
+							template = rel.segments[0]
 						}
+						template = removeExtension(template)
+						String path = removeExtension(rel.pathString)
 
 						def c = new Context()
 						c.setVariable('blog', blog)
-						c.setVariable('article',[path: path, date: new Date()])
-						def sd = project.file("$destinationDir/$path")
-						sd.mkdirs()
-						def html = project.file("$sd/index.html")
+						c.setVariable('content',[path: path, date: new Date()])
+						def dir = project.file("$destinationDir/$path")
+						dir.mkdirs()
+						def html = project.file("$dir/index.html")
 						html.withWriter("UTF-8") {
-							te.process('entry', c, it)
+							te.process(template, c, it)
 						}
 					}
 				] as FileVisitor)
+	}
+
+	def removeExtension(String path) {
+		def result = path
+		def i = path.lastIndexOf('.')
+		if(0 < i) {
+			result = path.substring(0, i)
+		}
+		return result
 	}
 
 	def makeEngine() {
@@ -94,7 +107,7 @@ class BlogTask extends ConventionTask {
 		te.addTemplateResolver(md)
 		te.addTemplateResolver(r)
 		te.addTemplateResolver(cr)
-		te.addDialect(new YuzenDialect())
+		te.addDialect(new YuzenDialect(md))
 		return te
 	}
 }

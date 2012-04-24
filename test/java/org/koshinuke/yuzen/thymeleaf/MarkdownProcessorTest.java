@@ -41,7 +41,7 @@ public class MarkdownProcessorTest {
 		te.addTemplateModeHandler(MarkdownTemplateResolver.MARKDOWN);
 		te.addTemplateResolver(md);
 		te.addTemplateResolver(r);
-		te.addDialect(new YuzenDialect());
+		te.addDialect(new YuzenDialect(md));
 
 		Context c = new Context();
 		c.setVariable("md", "mdp");
