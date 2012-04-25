@@ -23,7 +23,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 /**
  * @author taichi
  */
-class BlogTask extends ConventionTask {
+class BlogTask extends ConventionTask implements ContentsTask {
 
 	@InputFiles
 	FileTree contents
@@ -54,7 +54,6 @@ class BlogTask extends ConventionTask {
 					visitDir : {
 					},
 					visitFile : {
-
 						RelativePath rel = it.relativePath
 						def template = rel.lastName
 						if(1 < rel.segments.length) {

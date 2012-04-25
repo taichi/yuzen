@@ -14,6 +14,13 @@ buildscript {
 		classpath 'com.google.guava:guava:11.+'
 		classpath 'org.pegdown:pegdown:1.1.+'
 		classpath 'org.koshinuke:yuzen:0.0.1-SNAPSHOT'
+		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
+		[
+			'jetty-server',
+			'jetty-servlet'
+		].each {
+			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
+		}
 	}
 }
 
@@ -26,6 +33,13 @@ blog {
 
 task blog(overwrite: true, type: BlogTask) {
 	destinationDir = file("${project.buildDir}/html")
+	doLast {
+		println "xxx $destinationDir"
+	}
+}
+
+task blog2(type: BlogTask) {
+	destinationDir = file("${project.buildDir}/bb")
 	doLast {
 		println "xxx $destinationDir"
 	}
