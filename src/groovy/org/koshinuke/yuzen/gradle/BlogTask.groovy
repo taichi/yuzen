@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitor;
-import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
@@ -13,6 +12,7 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
 import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
+import org.koshinuke.yuzen.util.FileUtil;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
@@ -48,40 +48,33 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	@TaskAction
 	def generate() {
 		def te = makeEngine()
-		def blog = project.extensions.getByType(BlogPluginExtension)
 		// process main contents
 		this.contents.visit([
 					visitDir : {
 					},
 					visitFile : {
-						RelativePath rel = it.relativePath
-						def template = rel.lastName
-						if(1 < rel.segments.length) {
-							template = rel.segments[0]
-						}
-						template = removeExtension(template)
-						String path = removeExtension(rel.pathString)
-
-						def c = new Context()
-						c.setVariable('blog', blog)
-						c.setVariable('content',[path: path, date: new Date()])
-						def dir = project.file("$destinationDir/$path")
-						dir.mkdirs()
-						def html = project.file("$dir/index.html")
-						html.withWriter("UTF-8") {
-							te.process(template, c, it)
-						}
-					}
+						processTemplate(te, it.relativePath) }
 				] as FileVisitor)
 	}
 
-	def removeExtension(String path) {
-		def result = path
-		def i = path.lastIndexOf('.')
-		if(0 < i) {
-			result = path.substring(0, i)
+	def processTemplate(te, rel) {
+		def template = rel.lastName
+		if(1 < rel.segments.length) {
+			template = rel.segments[0]
 		}
-		return result
+		template = FileUtil.removeExtension(template)
+		String path = FileUtil.removeExtension(rel.pathString)
+
+		def blog = project.extensions.getByType(BlogPluginExtension)
+		def c = new Context()
+		c.setVariable('blog', blog)
+		c.setVariable('content',[path: path, date: new Date()])
+		def dir = project.file("$destinationDir/$path")
+		dir.mkdirs()
+		def html = project.file("$dir/index.html")
+		html.withWriter("UTF-8") {
+			te.process(template, c, it)
+		}
 	}
 
 	def makeEngine() {
