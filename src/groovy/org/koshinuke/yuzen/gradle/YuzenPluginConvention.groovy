@@ -12,6 +12,7 @@ class YuzenPluginConvention {
 	final BlogTaskConvention blog = new BlogTaskConvention()
 
 	String contentsDirName = '_contents'
+	String fragmentsDirName = 'fragments'
 	String templatePrefix = 'templates'
 	String templateSuffix = ".html"
 	String destinationDirName = 'yuzen'
@@ -21,7 +22,7 @@ class YuzenPluginConvention {
 	}
 
 	FileTree getContents() {
-		project.fileTree(contentsDirName) { include '**/*.md' }
+		project.fileTree(contentsDirName) { exclude "$fragmentsDirName/**" }
 	}
 
 	File getDestinationDir() {

@@ -28,6 +28,13 @@ class YuzenPluginTest {
 
 		f = this.project.file("_contents/profile.md")
 		f.text = "# profile\n* profile profile"
+
+		f = this.project.file("_contents/moge.markdown")
+		f.text = "zzzz"
+
+		f = this.project.file("_contents/entry/moge/fuga.txt")
+		f.parentFile.mkdirs()
+		f.text = "yyyy"
 	}
 
 	@Test
@@ -53,5 +60,11 @@ class YuzenPluginTest {
 		def profile = project.file("$project.buildDir/yuzen/blog/profile/index.html")
 		assert profile.exists()
 		println profile.text
+
+		def markdown = project.file("$project.buildDir/yuzen/blog/moge.markdown")
+		assert markdown.exists()
+
+		def txt = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
+		assert txt.exists()
 	}
 }

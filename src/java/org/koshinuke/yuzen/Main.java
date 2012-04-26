@@ -16,11 +16,9 @@ public class Main {
 
 		ResourceHandler rh = new ResourceHandler();
 		rh.setResourceBase("templates/blog");
-		ResourceHandler b = new ResourceHandler();
-		b.setResourceBase("build");
 
 		HandlerList hl = new HandlerList();
-		hl.setHandlers(new Handler[] { b, rh, new DefaultHandler() });
+		hl.setHandlers(new Handler[] { rh, new DefaultHandler() });
 
 		server.setHandler(hl);
 

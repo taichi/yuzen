@@ -2,9 +2,12 @@ package org.koshinuke.yuzen.gradle
 
 import java.io.File;
 
+import org.gradle.api.Task;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.internal.ConventionTask
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -19,11 +22,14 @@ import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.TemplateResolver;
+import com.google.common.io.*;
 
 /**
  * @author taichi
  */
 class BlogTask extends ConventionTask implements ContentsTask {
+
+	static Logger LOG = Logging.getLogger(BlogTask)
 
 	@InputFiles
 	FileTree contents
@@ -53,18 +59,27 @@ class BlogTask extends ConventionTask implements ContentsTask {
 					visitDir : {
 					},
 					visitFile : {
-						processTemplate(te, it.relativePath) }
+						def path = FileUtil.removeExtension(it.path)
+						def ln = it.relativePath.lastName
+						def ext = Files.getFileExtension(ln)
+						if(ext == 'md') {
+							processTemplate(te, it.relativePath, path)
+						} else {
+							if(ext ==~ /[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn]|[Mm][Dd]/) {
+								BlogTask.LOG.warn("extension of $ext is not supported. rename $it.path to ${path}.md")
+							}
+							it.copyTo(project.file("$destinationDir/$it.path"))
+						}
+					}
 				] as FileVisitor)
 	}
 
-	def processTemplate(te, rel) {
+	def processTemplate(te, rel, path) {
 		def template = rel.lastName
 		if(1 < rel.segments.length) {
 			template = rel.segments[0]
 		}
 		template = FileUtil.removeExtension(template)
-		String path = FileUtil.removeExtension(rel.pathString)
-
 		def blog = project.extensions.getByType(BlogPluginExtension)
 		def c = new Context()
 		c.setVariable('blog', blog)
