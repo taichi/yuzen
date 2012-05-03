@@ -1,6 +1,7 @@
 package org.koshinuke.yuzen.file;
 
 import java.io.IOException;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -24,35 +26,39 @@ import javax.annotation.Nonnull;
 
 import org.koshinuke._;
 import org.koshinuke.yuzen.util.WatchServiceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author taichi
  */
 public class PathSentinel {
 
-	ConcurrentSkipListSet<PathEvent> events = new ConcurrentSkipListSet<>();
+	static Logger LOG = LoggerFactory.getLogger(PathSentinel.class);
 
-	CopyOnWriteArrayList<PathEventListener> listeners = new CopyOnWriteArrayList<>();
+	protected ConcurrentSkipListSet<PathEvent> events = new ConcurrentSkipListSet<>();
 
-	Map<WatchEvent.Kind<?>, PathEventDispatcher> dispatchers = new HashMap<>();
+	protected CopyOnWriteArrayList<PathEventListener> listeners = new CopyOnWriteArrayList<>();
 
-	WatchService watchService = WatchServiceUtil.newWatchService();
+	protected Map<WatchEvent.Kind<?>, PathEventDispatcher> dispatchers = new HashMap<>();
 
-	ScheduledExecutorService watcherPool;
+	protected WatchService watchService = WatchServiceUtil.newWatchService();
 
-	ExecutorService workerPool;
+	protected ExecutorService watcherExecutor;
+
+	protected ScheduledExecutorService workerExecutor;
 
 	public PathSentinel() {
-		this(Executors.newScheduledThreadPool(1), Executors
-				.newFixedThreadPool(1));
+		this(Executors.newFixedThreadPool(1), Executors
+				.newScheduledThreadPool(1));
 	}
 
-	public PathSentinel(@Nonnull ScheduledExecutorService watcherPool,
-			@Nonnull ExecutorService workerPool) {
-		Objects.requireNonNull(watcherPool);
-		Objects.requireNonNull(workerPool);
-		this.watcherPool = watcherPool;
-		this.workerPool = workerPool;
+	public PathSentinel(@Nonnull ExecutorService watcherExecutor,
+			@Nonnull ScheduledExecutorService workerExecutor) {
+		Objects.requireNonNull(watcherExecutor);
+		Objects.requireNonNull(workerExecutor);
+		this.watcherExecutor = watcherExecutor;
+		this.workerExecutor = workerExecutor;
 		this.setUpDispatchers();
 	}
 
@@ -92,12 +98,12 @@ public class PathSentinel {
 	}
 
 	protected void startWatcher() {
-		this.watcherPool.schedule(new Callable<_>() {
+		this.watcherExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {
-				WatchKey key = PathSentinel.this.watchService.poll(5,
-						TimeUnit.MILLISECONDS);
-				if (key != null) {
+				try {
+					LOG.debug("take watchkey");
+					WatchKey key = PathSentinel.this.watchService.take();
 					Path path = Path.class.cast(key.watchable());
 					for (WatchEvent<?> i : key.pollEvents()) {
 						WatchEvent.Kind<?> kind = i.kind();
@@ -105,28 +111,49 @@ public class PathSentinel {
 								.context()));
 						DefaultPathEvent event = new DefaultPathEvent(kind,
 								resolved);
-						PathSentinel.this.events.add(event);
+						if (PathSentinel.this.events.add(event)) {
+							LOG.debug("queued {}", event);
+						} else {
+							LOG.debug("duplicated {}", event);
+						}
 					}
+					key.reset();
+					PathSentinel.this.watcherExecutor.submit(this);
+					return _._;
+				} catch (ClosedWatchServiceException
+						| RejectedExecutionException e) {
+					LOG.debug("any time no problem.", e);
+					throw e;
+				} catch (Exception e) {
+					LOG.error(e.getMessage(), e);
+					throw e;
 				}
-				key.reset();
-				return _._;
 			}
-		}, 5, TimeUnit.MILLISECONDS);
+		});
 	}
 
 	protected void startWorker() {
 		this.addRecursivePathWatcher();
-		this.workerPool.submit(new Callable<_>() {
+		this.workerExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {
-				for (Iterator<PathEvent> i = PathSentinel.this.events
-						.iterator(); i.hasNext();) {
-					PathEvent event = i.next();
-					i.remove();
-					PathSentinel.this.dispatch(event);
+				try {
+					for (Iterator<PathEvent> i = PathSentinel.this.events
+							.iterator(); i.hasNext();) {
+						PathEvent event = i.next();
+						i.remove();
+						PathSentinel.this.dispatch(event);
+					}
+					PathSentinel.this.workerExecutor.schedule(this, 10,
+							TimeUnit.MILLISECONDS);
+					return _._;
+				} catch (RejectedExecutionException e) {
+					LOG.debug("any time no problem.", e);
+					throw e;
+				} catch (Exception e) {
+					LOG.error(e.getMessage(), e);
+					throw e;
 				}
-				PathSentinel.this.workerPool.submit(this);
-				return _._;
 			}
 		});
 	}
@@ -167,6 +194,7 @@ public class PathSentinel {
 	}
 
 	protected void dispatch(PathEvent event) throws IOException {
+		LOG.debug("dispatch {}", event);
 		PathEventDispatcher dispatcher = this.dispatchers.get(event.getKind());
 		if (dispatcher != null) {
 			for (PathEventListener listener : this.listeners) {
@@ -192,7 +220,7 @@ public class PathSentinel {
 		this.listeners.clear();
 		this.events.clear();
 		WatchServiceUtil.close(this.watchService);
-		this.watcherPool.shutdownNow();
-		this.workerPool.shutdownNow();
+		this.watcherExecutor.shutdownNow();
+		this.workerExecutor.shutdownNow();
 	}
 }

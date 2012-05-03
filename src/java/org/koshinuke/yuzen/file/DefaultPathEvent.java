@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 /**
  * @author taichi
  */
-public class DefaultPathEvent implements PathEvent {
+public class DefaultPathEvent implements PathEvent, Comparable<PathEvent> {
 
 	final Kind<?> kind;
 
@@ -30,6 +30,15 @@ public class DefaultPathEvent implements PathEvent {
 	@Override
 	public Path getPath() {
 		return this.path;
+	}
+
+	@Override
+	public int compareTo(PathEvent o) {
+		int result = o.getPath().compareTo(this.getPath());
+		if (result == 0) {
+			result = o.getKind().name().compareTo(this.getKind().name());
+		}
+		return result;
 	}
 
 	@Override
@@ -57,6 +66,17 @@ public class DefaultPathEvent implements PathEvent {
 		PathEvent other = (PathEvent) obj;
 		return this.kind.equals(other.getKind())
 				&& this.path.equals(other.getPath());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DefaultPathEvent [kind=");
+		builder.append(this.kind);
+		builder.append(", path=");
+		builder.append(this.path);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }
