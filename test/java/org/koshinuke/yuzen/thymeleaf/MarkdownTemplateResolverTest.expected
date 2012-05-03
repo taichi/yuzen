@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <pre><code>	public static void main(String[] args) {
 		System.out.println(&quot;Hello World!&quot;);
 	}

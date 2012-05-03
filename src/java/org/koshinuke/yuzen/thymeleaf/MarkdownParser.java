@@ -41,7 +41,8 @@ public class MarkdownParser implements ITemplateParser {
 			char[] src = md.toCharArray();
 			String html = this.toHtml(src);
 			Document doc = this.delegate.parseTemplate(configuration,
-					documentName, new StringReader("<div>" + html + "</div>"));
+					documentName, new StringReader("<!DOCTYPE html><div>"
+							+ html + "</div>"));
 			NestableNode node = (NestableNode) doc.getFirstChild();
 			// remove trick nodes.
 			doc.setChildren(node.getChildren());

@@ -30,7 +30,7 @@ dependencies {
 	compile 'xerces:xercesImpl:2.10.0'
 	
 	compile 'org.eclipse.jgit:org.eclipse.jgit:1.+'
-	compile 'com.google.guava:guava:11.+'
+	compile 'com.google.guava:guava:12.+'
 	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 
@@ -43,7 +43,7 @@ dependencies {
 	}
 
 	testCompile 'junit:junit:4.+'
-	testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+	// testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 	// TODO: use geb
 	// http://www.gebish.org/manual/current/build-integrations.html#gradle
 }

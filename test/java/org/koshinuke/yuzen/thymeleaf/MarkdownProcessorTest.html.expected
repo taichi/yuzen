@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <div class="ppp"><pre><code>	public static void main(String[] args) {
 		System.out.println(&quot;はろーわーるど&quot;);
 	}
