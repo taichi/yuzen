@@ -2,7 +2,6 @@ package org.koshinuke.yuzen.file;
 
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -74,9 +73,9 @@ public class PathSentinel {
 		return this;
 	}
 
-	public PathSentinel watchAll(@Nonnull Path path) {
+	public PathSentinel watchTree(@Nonnull Path path) {
 		Objects.requireNonNull(path);
-		WatchServiceUtil.watchAll(this.watchService, path);
+		WatchServiceUtil.watchTree(this.watchService, path);
 		return this;
 	}
 
@@ -160,7 +159,6 @@ public class PathSentinel {
 	}
 
 	protected void startWorker() {
-		this.addRecursivePathWatcher();
 		this.workerExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {
@@ -226,18 +224,6 @@ public class PathSentinel {
 				dispatcher.dispatch(listener, event);
 			}
 		}
-	}
-
-	protected void addRecursivePathWatcher() {
-		this.register(new DefaultPathEventListener() {
-			@Override
-			public void created(PathEvent event) throws IOException {
-				Path path = event.getPath();
-				if (Files.isDirectory(path)) {
-					PathSentinel.this.watchAll(path);
-				}
-			}
-		});
 	}
 
 	public void shutdown() {

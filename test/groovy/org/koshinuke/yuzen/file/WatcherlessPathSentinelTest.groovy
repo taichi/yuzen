@@ -26,11 +26,6 @@ class WatcherlessPathSentinelTest {
 					protected void startWatcher() {
 						// do nothing for test
 					}
-
-					@Override
-					protected void addRecursivePathWatcher() {
-						// do nothing for test
-					}
 				}
 		this.target.startUp()
 	}

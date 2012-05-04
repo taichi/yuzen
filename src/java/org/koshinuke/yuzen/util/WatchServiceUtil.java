@@ -10,6 +10,8 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Modifier;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -26,6 +28,30 @@ import org.slf4j.LoggerFactory;
 public class WatchServiceUtil {
 
 	static final Logger LOG = LoggerFactory.getLogger(WatchServiceUtil.class);
+
+	static final WatchEvent.Modifier FILE_TREE;
+
+	static {
+		FILE_TREE = findFileTree();
+	}
+
+	static Modifier findFileTree() {
+		try {
+			Class<?> clazz = Class
+					.forName("com.sun.nio.file.ExtendedWatchEventModifier");
+			for (Object o : clazz.getEnumConstants()) {
+				Modifier mod = (Modifier) o;
+				if ("FILE_TREE".equals(mod.name())) {
+					return mod;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			// nop
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+		return null;
+	}
 
 	public static WatchService newWatchService() {
 		try {
@@ -53,12 +79,19 @@ public class WatchServiceUtil {
 		}
 	}
 
-	public static WatchKey watch(@Nonnull WatchService ws, @Nonnull Path dir) {
+	public static void watchTree(@Nonnull final WatchService ws,
+			@Nonnull Path root) {
+		watch(ws, root, FILE_TREE);
+	}
+
+	public static WatchKey watch(@Nonnull WatchService ws, @Nonnull Path dir,
+			WatchEvent.Modifier... modifiers) {
 		Objects.requireNonNull(ws);
 		Objects.requireNonNull(dir);
 		LOG.debug("watch {}", dir);
 		try {
-			return dir.register(ws, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+			return dir.register(ws, new WatchEvent.Kind<?>[] { ENTRY_CREATE,
+					ENTRY_DELETE, ENTRY_MODIFY }, modifiers);
 		} catch (IOException e) {
 			throw new IORuntimeException(e);
 		}
