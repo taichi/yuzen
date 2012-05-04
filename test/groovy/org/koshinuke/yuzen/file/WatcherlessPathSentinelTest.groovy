@@ -44,17 +44,18 @@ class WatcherlessPathSentinelTest {
 	void consumeOverflowEvent() {
 		CountDownLatch latch = new CountDownLatch(1)
 		def c = false
-		this.target.register({
-			overflowed : {
-				c = true
-				latch.countDown()
-			}
-		} as PathEventListener )
+		this.target.register([
+					overflowed : {
+						c = true
+						latch.countDown()
+					}
+				] as PathEventListener )
 
 		def event = new DefaultPathEvent(StandardWatchEventKinds.OVERFLOW, Paths.get("build/sentinel"))
-		assert this.target.events.add(event)
+		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
+		assert 0 == this.target.events.size()
 	}
 
 	@Test
@@ -62,19 +63,20 @@ class WatcherlessPathSentinelTest {
 		CountDownLatch latch = new CountDownLatch(1)
 		def c = false
 		def e = null
-		this.target.register({
-			created : {
-				c = true
-				e = it
-				latch.countDown()
-			}
-		} as PathEventListener )
+		this.target.register([
+					created : {
+						c = true
+						e = it
+						latch.countDown()
+					}
+				] as PathEventListener )
 
 		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_CREATE, Paths.get("build/sentinel"))
-		assert this.target.events.add(event)
+		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
 		assert event == e
+		assert 0 == this.target.events.size()
 	}
 
 	@Test
@@ -82,19 +84,20 @@ class WatcherlessPathSentinelTest {
 		CountDownLatch latch = new CountDownLatch(1)
 		def c = false
 		def e = null
-		this.target.register({
-			deleted : {
-				c = true
-				e = it
-				latch.countDown()
-			}
-		} as PathEventListener )
+		this.target.register([
+					deleted : {
+						c = true
+						e = it
+						latch.countDown()
+					}
+				] as PathEventListener )
 
 		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_DELETE, Paths.get("build/sentinel"))
-		assert this.target.events.add(event)
+		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
 		assert event == e
+		assert 0 == this.target.events.size()
 	}
 
 	@Test
@@ -102,18 +105,43 @@ class WatcherlessPathSentinelTest {
 		CountDownLatch latch = new CountDownLatch(1)
 		def c = false
 		def e = null
-		this.target.register({
-			modified : {
-				c = true
-				e = it
-				latch.countDown()
-			}
-		} as PathEventListener )
+		this.target.register([
+					modified : {
+						c = true
+						e = it
+						latch.countDown()
+					}
+				] as PathEventListener )
 
 		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_MODIFY, Paths.get("build/sentinel"))
-		assert this.target.events.add(event)
+		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
 		assert event == e
+		assert 0 == this.target.events.size()
+	}
+
+	@Test
+	void keepEventOrdering() {
+		CountDownLatch latch = new CountDownLatch(3);
+		def act = []
+		this.target.register({
+			act.add it
+			latch.countDown()
+		} as PathEventListener)
+
+		def exp = [
+			makeEvent(StandardWatchEventKinds.ENTRY_DELETE),
+			makeEvent(StandardWatchEventKinds.ENTRY_CREATE),
+			makeEvent(StandardWatchEventKinds.ENTRY_MODIFY)
+		]
+		exp.each { target.add it }
+
+		assert latch.await(30, TimeUnit.MILLISECONDS)
+		assert exp == act
+	}
+
+	def makeEvent(kind) {
+		new DefaultPathEvent(kind, Paths.get("build/sentinel"))
 	}
 }

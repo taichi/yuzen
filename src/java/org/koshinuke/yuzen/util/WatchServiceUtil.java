@@ -56,6 +56,7 @@ public class WatchServiceUtil {
 	public static WatchKey watch(@Nonnull WatchService ws, @Nonnull Path dir) {
 		Objects.requireNonNull(ws);
 		Objects.requireNonNull(dir);
+		LOG.debug("watch {}", dir);
 		try {
 			return dir.register(ws, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 		} catch (IOException e) {

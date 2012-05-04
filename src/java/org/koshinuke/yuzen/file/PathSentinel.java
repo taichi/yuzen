@@ -9,12 +9,12 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,7 +36,7 @@ public class PathSentinel {
 
 	static Logger LOG = LoggerFactory.getLogger(PathSentinel.class);
 
-	protected ConcurrentSkipListSet<PathEvent> events = new ConcurrentSkipListSet<>();
+	protected Deque<PathEvent> events = new LinkedList<>();
 
 	protected CopyOnWriteArrayList<PathEventListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -111,11 +111,7 @@ public class PathSentinel {
 								.context()));
 						DefaultPathEvent event = new DefaultPathEvent(kind,
 								resolved);
-						if (PathSentinel.this.events.add(event)) {
-							LOG.debug("queued {}", event);
-						} else {
-							LOG.debug("duplicated {}", event);
-						}
+						PathSentinel.this.add(event);
 					}
 					key.reset();
 					PathSentinel.this.watcherExecutor.submit(this);
@@ -132,16 +128,45 @@ public class PathSentinel {
 		});
 	}
 
+	protected boolean add(PathEvent event) {
+		synchronized (this.events) {
+			if (this.events.contains(event)) {
+				LOG.debug("duplicated {}", event);
+				return false;
+			} else {
+				LOG.debug("queued {}", event);
+				this.events.add(event);
+				return true;
+			}
+		}
+	}
+
+	protected void clearEvents() {
+		synchronized (this.events) {
+			this.events.clear();
+		}
+	}
+
+	protected boolean hasEvents() {
+		synchronized (this.events) {
+			return this.events.isEmpty() == false;
+		}
+	}
+
+	protected PathEvent take() {
+		synchronized (this.events) {
+			return this.events.removeFirst();
+		}
+	}
+
 	protected void startWorker() {
 		this.addRecursivePathWatcher();
 		this.workerExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {
 				try {
-					for (Iterator<PathEvent> i = PathSentinel.this.events
-							.iterator(); i.hasNext();) {
-						PathEvent event = i.next();
-						i.remove();
+					while (PathSentinel.this.hasEvents()) {
+						PathEvent event = PathSentinel.this.take();
 						PathSentinel.this.dispatch(event);
 					}
 					PathSentinel.this.workerExecutor.schedule(this, 10,
@@ -209,8 +234,7 @@ public class PathSentinel {
 			public void created(PathEvent event) throws IOException {
 				Path path = event.getPath();
 				if (Files.isDirectory(path)) {
-					WatchServiceUtil.watchAll(PathSentinel.this.watchService,
-							path);
+					PathSentinel.this.watchAll(path);
 				}
 			}
 		});
@@ -218,7 +242,7 @@ public class PathSentinel {
 
 	public void shutdown() {
 		this.listeners.clear();
-		this.events.clear();
+		this.clearEvents();
 		WatchServiceUtil.close(this.watchService);
 		this.watcherExecutor.shutdownNow();
 		this.workerExecutor.shutdownNow();
