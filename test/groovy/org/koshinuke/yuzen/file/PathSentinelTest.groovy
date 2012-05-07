@@ -2,6 +2,8 @@ package org.koshinuke.yuzen.file;
 
 import static org.junit.Assert.*;
 
+import java.io.File
+import java.nio.file.StandardWatchEventKinds
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -26,11 +28,11 @@ class PathSentinelTest {
 			FileUtils.delete(this.rootDir, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
 		}
 		assert this.rootDir.mkdirs()
-		target = new PathSentinel()
+		this.target = new PathSentinel()
 
-		target.watchTree(this.rootDir.toPath())
+		this.target.watchTree(this.rootDir.toPath())
 
-		target.startUp()
+		this.target.startUp()
 	}
 
 	@Test
@@ -56,8 +58,32 @@ class PathSentinelTest {
 		assert exp == act
 	}
 
+	@Test
+	void createAndDelete() {
+		def act = []
+		CountDownLatch latch = new CountDownLatch(2)
+		this.target.register({
+			act.add it
+			latch.countDown()
+		} as PathEventListener)
+
+		def subDir = new File(this.rootDir, "aaa")
+		subDir.mkdirs()
+		subDir.deleteDir()
+
+		assert latch.await(50, TimeUnit.MILLISECONDS)
+		assert 3 == act.size()
+
+		assert subDir.toPath() == act[0].path
+		assert StandardWatchEventKinds.ENTRY_CREATE == act[0].kind
+		assert subDir.toPath() == act[1].path
+		assert StandardWatchEventKinds.ENTRY_MODIFY == act[1].kind
+		assert subDir.toPath() == act[2].path
+		assert StandardWatchEventKinds.ENTRY_DELETE == act[2].kind
+	}
+
 	@After
 	void tearDown() {
-		target.shutdown()
+		this.target.shutdown()
 	}
 }

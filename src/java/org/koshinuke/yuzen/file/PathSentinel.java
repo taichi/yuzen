@@ -159,6 +159,7 @@ public class PathSentinel {
 	}
 
 	protected void startWorker() {
+		// TODO use more worker tasks ...
 		this.workerExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {

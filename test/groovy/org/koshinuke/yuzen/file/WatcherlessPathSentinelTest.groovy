@@ -46,7 +46,7 @@ class WatcherlessPathSentinelTest {
 					}
 				] as PathEventListener )
 
-		def event = new DefaultPathEvent(StandardWatchEventKinds.OVERFLOW, Paths.get("build/sentinel"))
+		def event = makeEvent(StandardWatchEventKinds.OVERFLOW)
 		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
@@ -66,7 +66,7 @@ class WatcherlessPathSentinelTest {
 					}
 				] as PathEventListener )
 
-		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_CREATE, Paths.get("build/sentinel"))
+		def event = makeEvent(StandardWatchEventKinds.ENTRY_CREATE)
 		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
@@ -87,7 +87,7 @@ class WatcherlessPathSentinelTest {
 					}
 				] as PathEventListener )
 
-		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_DELETE, Paths.get("build/sentinel"))
+		def event = makeEvent(StandardWatchEventKinds.ENTRY_DELETE)
 		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c
@@ -108,7 +108,7 @@ class WatcherlessPathSentinelTest {
 					}
 				] as PathEventListener )
 
-		def event = new DefaultPathEvent(StandardWatchEventKinds.ENTRY_MODIFY, Paths.get("build/sentinel"))
+		def event = makeEvent(StandardWatchEventKinds.ENTRY_MODIFY)
 		assert this.target.add(event)
 		assert latch.await(20, TimeUnit.MILLISECONDS)
 		assert c

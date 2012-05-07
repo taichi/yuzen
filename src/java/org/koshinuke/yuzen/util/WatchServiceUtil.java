@@ -71,7 +71,7 @@ public class WatchServiceUtil {
 				public FileVisitResult preVisitDirectory(Path dir,
 						BasicFileAttributes attrs) throws IOException {
 					watch(ws, dir);
-					return super.preVisitDirectory(dir, attrs);
+					return FileVisitResult.CONTINUE;
 				}
 			});
 		} catch (IOException e) {
@@ -81,7 +81,11 @@ public class WatchServiceUtil {
 
 	public static void watchTree(@Nonnull final WatchService ws,
 			@Nonnull Path root) {
-		watch(ws, root, FILE_TREE);
+		if (FILE_TREE == null) {
+			watchAll(ws, root);
+		} else {
+			watch(ws, root, FILE_TREE);
+		}
 	}
 
 	public static WatchKey watch(@Nonnull WatchService ws, @Nonnull Path dir,

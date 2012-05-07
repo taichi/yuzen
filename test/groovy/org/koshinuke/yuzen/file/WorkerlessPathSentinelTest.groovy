@@ -64,7 +64,7 @@ class WorkerlessPathSentinelTest {
 		f.text = "moge" + new Date()
 		Thread.sleep(10)
 
-		target.events.clear()
+		this.target.events.clear()
 
 		3.times {
 			f.text = "hogehoge" + new Date()
