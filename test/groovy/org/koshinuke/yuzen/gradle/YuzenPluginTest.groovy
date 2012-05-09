@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File
 
 import org.gradle.api.Project
+import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
@@ -51,7 +52,7 @@ class YuzenPluginTest {
 	}
 
 	@Test
-	void executeTest() {
+	void executeBlogTest() {
 		project.tasks.blog.execute()
 		def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
 		assert dest.exists()
@@ -66,5 +67,48 @@ class YuzenPluginTest {
 
 		def txt = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
 		assert txt.exists()
+	}
+
+	@Test
+	void executeServerTask() {
+		Task task = project.tasks.findByName('startBlog')
+		assert task != null
+		try {
+			task.bootServer()
+			def actf = this.project.file("_contents/entry/moge/piro.md")
+			actf.parentFile.mkdirs()
+			actf.text = "** test test"
+			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
+			for(int i=0; i < 100; i++) {
+				Thread.sleep(10)
+				if(dest.exists()) {
+					return
+				}
+			}
+			assert dest.exists()
+		} finally {
+			task.stopServer()
+		}
+	}
+
+	@Test
+	void copyResource() {
+		Task task = project.tasks.findByName('startBlog')
+		assert task != null
+		try {
+			task.bootServer()
+			File actf = this.project.file("_contents/entry/moge/fuga.txt")
+			actf.text = "** test test"
+			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
+			for(int i=0; i < 100; i++) {
+				Thread.sleep(10)
+				if(dest.exists()) {
+					return
+				}
+			}
+			assert dest.exists()
+		} finally {
+			task.stopServer()
+		}
 	}
 }

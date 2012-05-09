@@ -1,13 +1,22 @@
 package org.koshinuke.yuzen.gradle
 
+import java.io.File
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Pattern;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
+import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask;
+import org.gradle.api.internal.file.DefaultFileTreeElement;
 import org.gradle.api.tasks.TaskAction;
+import org.koshinuke.yuzen.file.PathEventListener
+import org.koshinuke.yuzen.file.PathSentinel
 
 /**
  * @author taichi
@@ -20,15 +29,19 @@ class StartServerTask extends ConventionTask {
 
 	String templatePrefix
 
-	@TaskAction
+	PathSentinel sentinel
+
+	Server server
+
 	def bootServer() {
-		Server server = new Server(port)
-		server.stopAtShutdown = true
+		this.sentinel = startSentinel()
+		this.server = new Server(this.port)
+		this.server.stopAtShutdown = true
 		def users = new ResourceHandler()
-		users.setBaseResource(Resource.newResource(rootDir))
+		users.setBaseResource(Resource.newResource(this.rootDir))
 
 		def yuzens = new ResourceHandler()
-		yuzens.setBaseResource(Resource.newClassPathResource(templatePrefix))
+		yuzens.setBaseResource(Resource.newClassPathResource(this.templatePrefix))
 
 		def hl = new HandlerList()
 		hl.setHandlers([
@@ -37,8 +50,76 @@ class StartServerTask extends ConventionTask {
 			new DefaultHandler()
 		]
 		as Handler[])
-		server.setHandler(hl)
-		server.start()
-		server.join()
+		this.server.setHandler(hl)
+		this.server.start()
+	}
+
+	@TaskAction
+	def startServer() {
+		bootServer()
+		this.server.join()
+	}
+
+	def stopServer() {
+		this.sentinel.shutdown()
+		this.server.stop()
+	}
+
+	def startSentinel() {
+		PathSentinel sentinel = new PathSentinel()
+		eachContents {
+			sentinel.watchTree(it.contentsDir.toPath())
+		}
+		sentinel.register([
+					overflowed : { logger.warn("overflowed ...") },
+					created : {
+						logger.info("created {}", it.path)
+						make(it.path)
+					},
+					modified : {
+						logger.info("modified {}", it.path)
+						make(it.path)
+					},
+					deleted : {
+						logger.info("deleted {}", it.path)
+						delete(it.path)
+					}
+				] as PathEventListener)
+		sentinel.startUp()
+		return sentinel
+	}
+
+	def eachContents(Closure closure) {
+		this.dependsOn.findAll { it instanceof ContentsTask }.each closure
+	}
+
+	def to(Path path) {
+		YuzenPluginConvention ypc = this.project.convention.getByType(YuzenPluginConvention)
+		File root = ypc.contentsDir
+		def segments = root.toPath().relativize(path).toFile().getPath().split(Pattern.quote(File.separator))
+		def rel = new RelativePath(Files.isDirectory(path) == false, segments)
+		return new DefaultFileTreeElement(path.toFile().absoluteFile, rel)
+	}
+
+	def make(path) {
+		handle(path) {
+			it.processFile(to(path))
+		}
+	}
+
+	def handle(path, Closure closure) {
+		if(Files.isDirectory(path) == false) {
+			eachContents {
+				if(path.startsWith(it.contentsDir.toPath())) {
+					closure(it)
+				}
+			}
+		}
+	}
+
+	def delete(path) {
+		handle(path) {
+			it.deleteFile(to(path))
+		}
 	}
 }

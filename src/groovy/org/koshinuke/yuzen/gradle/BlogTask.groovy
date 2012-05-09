@@ -2,15 +2,13 @@ package org.koshinuke.yuzen.gradle
 
 import java.io.File;
 
-import org.gradle.api.Task;
-import org.gradle.api.file.FileTree;
+import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.logging.Logger;
-import org.gradle.api.logging.Logging;
+import org.gradle.api.logging.*;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
@@ -29,10 +27,8 @@ import com.google.common.io.*;
  */
 class BlogTask extends ConventionTask implements ContentsTask {
 
-	static Logger LOG = Logging.getLogger(BlogTask)
-
-	@InputFiles
-	FileTree contents
+	@InputDirectory
+	File contentsDir
 
 	@Input
 	String templatePrefix
@@ -45,7 +41,7 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	BlogTask() {
 		this.group = BasePlugin.BUILD_GROUP
 		def ypc = project.convention.getByType(YuzenPluginConvention)
-		this.contents = ypc.contents
+		this.contentsDir = ypc.contentsDir
 		this.templatePrefix = "$ypc.templatePrefix/$ypc.blog.dirName/"
 		this.templateSuffix = ypc.templateSuffix
 		this.destinationDir = project.file("$ypc.destinationDir/$ypc.blog.dirName")
@@ -55,26 +51,53 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	def generate() {
 		def te = makeEngine()
 		// process main contents
-		this.contents.visit([
+		def ypc = project.convention.getByType(YuzenPluginConvention)
+		this.project.fileTree(this.contentsDir, ypc.blog.contentsFilter).visit([
 					visitDir : {
 					},
-					visitFile : {
-						def path = FileUtil.removeExtension(it.path)
-						def ln = it.relativePath.lastName
-						def ext = Files.getFileExtension(ln)
-						if(ext == 'md') {
-							processTemplate(te, it.relativePath, path)
-						} else {
-							if(ext ==~ /[Mm][Aa][Rr][Kk][Dd][Oo][Ww][Nn]|[Mm][Dd]/) {
-								BlogTask.LOG.warn("extension of $ext is not supported. rename $it.path to ${path}.md")
-							}
-							it.copyTo(project.file("$destinationDir/$it.path"))
-						}
-					}
+					visitFile : { processFile(te, it) }
 				] as FileVisitor)
 	}
 
-	def processTemplate(te, rel, path) {
+	def processFile(engine, FileTreeElement file) {
+		logger.info("processFile $file.path")
+		def ext = Files.getFileExtension(file.path)
+		if(ext == 'md') {
+			processTemplate(engine, file)
+		} else {
+			File to = calcFileOutput(file)
+			to.parentFile.mkdirs()
+			file.copyTo(to)
+		}
+	}
+
+	void processFile(FileTreeElement file) {
+		processFile(makeEngine(), file)
+	}
+
+	def calcHtmlOutput(file) {
+		def path = FileUtil.removeExtension(file.path)
+		this.project.file("$destinationDir/$path/index.html")
+	}
+
+	def calcFileOutput(file) {
+		this.project.file("$destinationDir/$file.path")
+	}
+
+	void deleteFile(FileTreeElement file) {
+		def ext = Files.getFileExtension(file.path)
+		def target = null
+		if(ext == 'md') {
+			target = calcHtmlOutput(file)
+		} else {
+			target = calcFileOutput(file)
+		}
+		target?.delete()
+	}
+
+	def processTemplate(engine, file) {
+		def path = FileUtil.removeExtension(file.path)
+		def rel = file.relativePath
 		def template = rel.lastName
 		if(1 < rel.segments.length) {
 			template = rel.segments[0]
@@ -84,18 +107,17 @@ class BlogTask extends ConventionTask implements ContentsTask {
 		def c = new Context()
 		c.setVariable('blog', blog)
 		c.setVariable('content',[path: path, date: new Date()])
-		def dir = project.file("$destinationDir/$path")
-		dir.mkdirs()
-		def html = project.file("$dir/index.html")
+		def html = calcHtmlOutput(file)
+		html.parentFile.mkdirs()
 		html.withWriter("UTF-8") {
-			te.process(template, c, it)
+			engine.process(template, c, it)
 		}
 	}
 
 	def makeEngine() {
 		def rr = new FileResourceResolver()
 		def md = new MarkdownTemplateResolver(rr)
-		md.prefix = "$contents.dir.path/"
+		md.prefix = "$contentsDir/"
 
 		def r = new TemplateResolver()
 		r.resourceResolver = rr
