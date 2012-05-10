@@ -14,7 +14,10 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.internal.file.DefaultFileTreeElement;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.logging.ProgressLogger
+import org.gradle.logging.ProgressLoggerFactory
 import org.koshinuke.yuzen.file.PathEventListener
 import org.koshinuke.yuzen.file.PathSentinel
 
@@ -25,6 +28,7 @@ class StartServerTask extends ConventionTask {
 
 	int port = 8080
 
+	@InputDirectory
 	File rootDir
 
 	String templatePrefix
@@ -37,6 +41,7 @@ class StartServerTask extends ConventionTask {
 		this.sentinel = startSentinel()
 		this.server = new Server(this.port)
 		this.server.stopAtShutdown = true
+		Resource.setDefaultUseCaches(false)
 		def users = new ResourceHandler()
 		users.setBaseResource(Resource.newResource(this.rootDir))
 
@@ -56,8 +61,19 @@ class StartServerTask extends ConventionTask {
 
 	@TaskAction
 	def startServer() {
-		bootServer()
-		this.server.join()
+		ProgressLoggerFactory factory = this.services.get(ProgressLoggerFactory)
+		ProgressLogger plogger = factory.newOperation(StartServerTask)
+		plogger.setDescription("Start Jetty8")
+		def version = Server.version
+		plogger.setShortDescription("Starting $version")
+		plogger.started()
+		try {
+			bootServer()
+			plogger.progress("Running $version at localhost:$port on $rootDir")
+			this.server.join()
+		} finally {
+			plogger.completed()
+		}
 	}
 
 	def stopServer() {
@@ -86,6 +102,7 @@ class StartServerTask extends ConventionTask {
 					}
 				] as PathEventListener)
 		sentinel.startUp()
+		addShutdownHook { sentinel.shutdown() }
 		return sentinel
 	}
 

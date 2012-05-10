@@ -2,8 +2,8 @@ import org.koshinuke.yuzen.gradle.BlogTask;
 
 buildscript {
 	repositories {
-		mavenCentral()
 		flatDir { dirs '../../../build/libs' }
+		mavenCentral()
 	}
 	dependencies {
 		classpath 'org.thymeleaf:thymeleaf:2.0.+'
@@ -11,7 +11,7 @@ buildscript {
 		// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
 		classpath 'xerces:xercesImpl:2.10.0'
 		
-		classpath 'com.google.guava:guava:11.+'
+		classpath 'com.google.guava:guava:12.+'
 		classpath 'org.pegdown:pegdown:1.1.+'
 		classpath 'org.koshinuke:yuzen:0.0.1-SNAPSHOT'
 		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
