@@ -36,6 +36,9 @@ class YuzenPluginTest {
 		f = this.project.file("_contents/entry/moge/fuga.txt")
 		f.parentFile.mkdirs()
 		f.text = "yyyy"
+
+		f = this.project.file("$project.buildDir/yuzen/blog")
+		f.mkdirs()
 	}
 
 	@Test

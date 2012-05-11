@@ -11,6 +11,7 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.internal.file.DefaultFileTreeElement;
@@ -42,15 +43,19 @@ class StartServerTask extends ConventionTask {
 		this.server = new Server(this.port)
 		this.server.stopAtShutdown = true
 		Resource.setDefaultUseCaches(false)
-		def users = new ResourceHandler()
-		users.setBaseResource(Resource.newResource(this.rootDir))
+
+		ResourceCollection rs = new ResourceCollection(
+				[
+					Resource.newResource(this.rootDir),
+					Resource.newClassPathResource(this.templatePrefix)
+				]
+				as Resource[])
 
 		def yuzens = new ResourceHandler()
-		yuzens.setBaseResource(Resource.newClassPathResource(this.templatePrefix))
+		yuzens.setBaseResource(rs)
 
 		def hl = new HandlerList()
 		hl.setHandlers([
-			users,
 			yuzens,
 			new DefaultHandler()
 		]
