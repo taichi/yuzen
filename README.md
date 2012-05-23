@@ -3,7 +3,7 @@ static contents generator.
 
 ## Requirements
 * java7 or more tested by 1.7.0_02
-* gradle 1.0-milestone-9 (for development and build)
+* gradle 1.0-rc-3 (for development and build)
 * eclipse 3.7.2 (for development)
     * [Groovy-Eclipse 2.6.1](http://groovy.codehaus.org/Eclipse+Plugin)
 

@@ -34,18 +34,11 @@ dependencies {
 	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 	
-	[
-		'java:bayeux-api',
-		'java:cometd-java-server',
-		'javascript:cometd-javascript-common'
-	].each {
-		compile "org.cometd.$it:2.4.+"
-	}
-
 	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
 	[
 		'jetty-server',
-		'jetty-servlet'
+		'jetty-servlet',
+		'jetty-websocket'
 	].each {
 		providedCompile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 	}

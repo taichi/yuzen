@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File
 
+import org.eclipse.jgit.util.FileUtils;
 import org.gradle.api.Project
 import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder
@@ -38,6 +39,7 @@ class YuzenPluginTest {
 		f.text = "yyyy"
 
 		f = this.project.file("$project.buildDir/yuzen/blog")
+		FileUtils.delete(f, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
 		f.mkdirs()
 	}
 
@@ -82,13 +84,14 @@ class YuzenPluginTest {
 			actf.parentFile.mkdirs()
 			actf.text = "** test test"
 			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
-			for(int i=0; i < 100; i++) {
+			for(int i=0; i < 1000; i++) {
 				Thread.sleep(10)
-				if(dest.exists()) {
-					return
+				if(dest.exists() && 0 < dest.length()) {
+					break
 				}
 			}
 			assert dest.exists()
+			assert 0 < dest.length()
 		} finally {
 			task.stopServer()
 		}

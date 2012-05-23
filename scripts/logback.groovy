@@ -13,6 +13,6 @@ appender("CONSOLE", ConsoleAppender) {
 	encoder(PatternLayoutEncoder) { pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" }
 }
 
-logger 'org.thymeleaf', INFO, ['CONSOLE']
-logger 'org.eclipse.jetty', INFO, ['CONSOLE']
+logger 'org.thymeleaf', INFO
+logger 'org.eclipse.jetty', INFO
 root INFO, ['CONSOLE']
