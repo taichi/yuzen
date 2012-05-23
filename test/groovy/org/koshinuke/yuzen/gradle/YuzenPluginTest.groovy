@@ -3,6 +3,8 @@ package org.koshinuke.yuzen.gradle;
 import static org.junit.Assert.*;
 
 import java.io.File
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jgit.util.FileUtils;
 import org.gradle.api.Project
@@ -10,6 +12,7 @@ import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
+import org.koshinuke.yuzen.file.PathEventListener
 
 
 /**
@@ -80,21 +83,32 @@ class YuzenPluginTest {
 		assert task != null
 		try {
 			task.bootServer()
+			def latch = makeLatch(task)
 			def actf = this.project.file("_contents/entry/moge/piro.md")
 			actf.parentFile.mkdirs()
 			actf.text = "** test test"
 			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
-			for(int i=0; i < 1000; i++) {
-				Thread.sleep(10)
-				if(dest.exists() && 0 < dest.length()) {
-					break
-				}
-			}
+			assert latch.await(2, TimeUnit.SECONDS)
 			assert dest.exists()
 			assert 0 < dest.length()
 		} finally {
 			task.stopServer()
 		}
+	}
+
+	def makeLatch(task) {
+		// TODO PathSentinelのdispatch処理が
+		// リスナーをそれぞれスレッドプールにキューイングするまでの暫定処置
+		CountDownLatch latch = new CountDownLatch(1)
+		task.sentinel.register([
+					overflowed : {  },
+					created : {
+					},
+					modified : { latch.countDown() },
+					deleted : {
+					}
+				] as PathEventListener)
+		return latch
 	}
 
 	@Test
@@ -103,16 +117,13 @@ class YuzenPluginTest {
 		assert task != null
 		try {
 			task.bootServer()
+			def latch = makeLatch(task)
 			File actf = this.project.file("_contents/entry/moge/fuga.txt")
 			actf.text = "** test test"
 			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
-			for(int i=0; i < 100; i++) {
-				Thread.sleep(10)
-				if(dest.exists()) {
-					return
-				}
-			}
+			assert latch.await(2, TimeUnit.SECONDS)
 			assert dest.exists()
+			assert 0 < dest.length()
 		} finally {
 			task.stopServer()
 		}

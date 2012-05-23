@@ -3,15 +3,23 @@ package org.koshinuke.yuzen.gradle
 import java.io.File
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern;
 
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
+import org.eclipse.jetty.websocket.WebSocket
+import org.eclipse.jetty.websocket.WebSocket.Connection;
+import org.eclipse.jetty.websocket.WebSocketClient;
+import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.internal.file.DefaultFileTreeElement;
@@ -21,6 +29,8 @@ import org.gradle.logging.ProgressLogger
 import org.gradle.logging.ProgressLoggerFactory
 import org.koshinuke.yuzen.file.PathEventListener
 import org.koshinuke.yuzen.file.PathSentinel
+import org.koshinuke.yuzen.reload.PaththroughServlet
+import org.koshinuke.yuzen.util.WebSocketUtil;
 
 /**
  * @author taichi
@@ -38,11 +48,19 @@ class StartServerTask extends ConventionTask {
 
 	Server server
 
+	URI serverURI
+	WebSocketClientFactory factory
+	WebSocketClient client
+
 	def bootServer() {
 		this.sentinel = startSentinel()
 		this.server = new Server(this.port)
 		this.server.stopAtShutdown = true
 		Resource.setDefaultUseCaches(false)
+
+		ServletContextHandler servlets = new ServletContextHandler()
+		servlets.contextPath = '/'
+		servlets.addServlet(PaththroughServlet, "/*")
 
 		ResourceCollection rs = new ResourceCollection(
 				[
@@ -56,12 +74,25 @@ class StartServerTask extends ConventionTask {
 
 		def hl = new HandlerList()
 		hl.setHandlers([
+			servlets,
 			yuzens,
 			new DefaultHandler()
 		]
 		as Handler[])
 		this.server.setHandler(hl)
 		this.server.start()
+
+		this.serverURI = toServerURI(server)
+		this.factory = new WebSocketClientFactory()
+		this.factory.start()
+		this.client = this.factory.newWebSocketClient()
+	}
+
+	def toServerURI(Server s) {
+		Connector c = s.getConnectors()[0]
+		def host = c.host
+		host = host == null ? 'localhost' : host
+		new URI("ws://$host:$c.localPort")
 	}
 
 	@TaskAction
@@ -82,6 +113,7 @@ class StartServerTask extends ConventionTask {
 	}
 
 	def stopServer() {
+		this.factory.stop()
 		this.sentinel.shutdown()
 		this.server.stop()
 	}
@@ -132,10 +164,31 @@ class StartServerTask extends ConventionTask {
 	def handle(path, Closure closure) {
 		if(Files.isDirectory(path) == false) {
 			eachContents {
-				if(path.startsWith(it.contentsDir.toPath())) {
+				def parent = it.contentsDir.toPath()
+				if(path.startsWith(parent)) {
 					closure(it)
+					publish(parent.relativize(path))
 				}
 			}
+		}
+	}
+
+	def publish(path) {
+		Future<Connection> future = this.client.open(this.serverURI, [
+					onOpen: {
+						logger.debug('onOpen {}',it)
+					},
+					onClose: { c, m ->
+					},
+					onMessage : {
+						logger.debug('onMessage {}', it)
+					}
+				] as WebSocket.OnTextMessage)
+		Connection c = future.get(1, TimeUnit.SECONDS)
+		try {
+			c.sendMessage(path.toString().replace(File.separatorChar, '/' as char))
+		} finally {
+			WebSocketUtil.close(c)
 		}
 	}
 
