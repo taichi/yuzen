@@ -45,7 +45,7 @@ class WorkerlessPathSentinelTest {
 		assert target.events.isEmpty()
 		File f = new File(rootDir, "c")
 		assert f.mkdirs()
-		Thread.sleep(10)
+		Thread.sleep(20)
 		assert 1 == target.events.size()
 	}
 
@@ -54,7 +54,7 @@ class WorkerlessPathSentinelTest {
 		assert target.events.isEmpty()
 		File f = new File(rootDir, "hoge.txt")
 		f.text = "moge" + new Date()
-		Thread.sleep(10)
+		Thread.sleep(20)
 		assert 2 == target.events.size()
 	}
 
@@ -68,7 +68,7 @@ class WorkerlessPathSentinelTest {
 
 		3.times {
 			f.text = "hogehoge" + new Date()
-			Thread.sleep(10)
+			Thread.sleep(20)
 			assert 1 == target.events.size()
 		}
 	}

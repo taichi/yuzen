@@ -81,8 +81,8 @@ class YuzenPluginTest {
 	void executeServerTask() {
 		Task task = project.tasks.findByName('startBlog')
 		assert task != null
+		task.bootServer()
 		try {
-			task.bootServer()
 			def latch = makeLatch(task)
 			def actf = this.project.file("_contents/entry/moge/piro.md")
 			actf.parentFile.mkdirs()
@@ -115,8 +115,8 @@ class YuzenPluginTest {
 	void copyResource() {
 		Task task = project.tasks.findByName('startBlog')
 		assert task != null
+		task.bootServer()
 		try {
-			task.bootServer()
 			def latch = makeLatch(task)
 			File actf = this.project.file("_contents/entry/moge/fuga.txt")
 			actf.text = "** test test"

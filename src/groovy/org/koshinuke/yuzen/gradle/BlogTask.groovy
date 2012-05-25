@@ -62,13 +62,15 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	def processFile(engine, FileTreeElement file) {
 		logger.info("processFile $file.path")
 		def ext = Files.getFileExtension(file.path)
+		def dest
 		if(ext == 'md') {
-			processTemplate(engine, file)
+			dest = processTemplate(engine, file)
 		} else {
-			File to = calcFileOutput(file)
-			to.parentFile.mkdirs()
-			file.copyTo(to)
+			dest = calcFileOutput(file)
+			dest.parentFile.mkdirs()
+			file.copyTo(dest)
 		}
+		return dest
 	}
 
 	void processFile(FileTreeElement file) {
@@ -112,6 +114,7 @@ class BlogTask extends ConventionTask implements ContentsTask {
 		html.withWriter("UTF-8") {
 			engine.process(template, c, it)
 		}
+		return html
 	}
 
 	def makeEngine() {

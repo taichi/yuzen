@@ -48,7 +48,7 @@ class WatcherlessPathSentinelTest {
 
 		def event = makeEvent(StandardWatchEventKinds.OVERFLOW)
 		assert this.target.add(event)
-		assert latch.await(20, TimeUnit.MILLISECONDS)
+		assert latch.await(1, TimeUnit.SECONDS)
 		assert c
 		assert 0 == this.target.events.size()
 	}
@@ -68,7 +68,7 @@ class WatcherlessPathSentinelTest {
 
 		def event = makeEvent(StandardWatchEventKinds.ENTRY_CREATE)
 		assert this.target.add(event)
-		assert latch.await(20, TimeUnit.MILLISECONDS)
+		assert latch.await(1, TimeUnit.SECONDS)
 		assert c
 		assert event == e
 		assert 0 == this.target.events.size()
@@ -89,7 +89,7 @@ class WatcherlessPathSentinelTest {
 
 		def event = makeEvent(StandardWatchEventKinds.ENTRY_DELETE)
 		assert this.target.add(event)
-		assert latch.await(20, TimeUnit.MILLISECONDS)
+		assert latch.await(1, TimeUnit.SECONDS)
 		assert c
 		assert event == e
 		assert 0 == this.target.events.size()
@@ -110,7 +110,7 @@ class WatcherlessPathSentinelTest {
 
 		def event = makeEvent(StandardWatchEventKinds.ENTRY_MODIFY)
 		assert this.target.add(event)
-		assert latch.await(20, TimeUnit.MILLISECONDS)
+		assert latch.await(1, TimeUnit.SECONDS)
 		assert c
 		assert event == e
 		assert 0 == this.target.events.size()
@@ -132,7 +132,7 @@ class WatcherlessPathSentinelTest {
 		]
 		exp.each { target.add it }
 
-		assert latch.await(30, TimeUnit.MILLISECONDS)
+		assert latch.await(1, TimeUnit.SECONDS)
 		assert exp == act
 	}
 

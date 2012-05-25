@@ -17,7 +17,8 @@ buildscript {
 		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
 		[
 			'jetty-server',
-			'jetty-servlet'
+			'jetty-servlet',
+			'jetty-websocket'
 		].each {
 			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 		}

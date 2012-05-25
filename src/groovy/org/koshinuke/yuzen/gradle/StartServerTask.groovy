@@ -13,7 +13,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.websocket.WebSocket
@@ -29,7 +28,7 @@ import org.gradle.logging.ProgressLogger
 import org.gradle.logging.ProgressLoggerFactory
 import org.koshinuke.yuzen.file.PathEventListener
 import org.koshinuke.yuzen.file.PathSentinel
-import org.koshinuke.yuzen.reload.PaththroughServlet
+import org.koshinuke.yuzen.reload.PaththroughHandler
 import org.koshinuke.yuzen.util.WebSocketUtil;
 
 /**
@@ -58,10 +57,6 @@ class StartServerTask extends ConventionTask {
 		this.server.stopAtShutdown = true
 		Resource.setDefaultUseCaches(false)
 
-		ServletContextHandler servlets = new ServletContextHandler()
-		servlets.contextPath = '/'
-		servlets.addServlet(PaththroughServlet, "/*")
-
 		ResourceCollection rs = new ResourceCollection(
 				[
 					Resource.newResource(this.rootDir),
@@ -71,15 +66,16 @@ class StartServerTask extends ConventionTask {
 
 		def yuzens = new ResourceHandler()
 		yuzens.setBaseResource(rs)
+		def ws = new PaththroughHandler()
+		this.server.handler = ws
 
 		def hl = new HandlerList()
 		hl.setHandlers([
-			servlets,
 			yuzens,
 			new DefaultHandler()
 		]
 		as Handler[])
-		this.server.setHandler(hl)
+		ws.handler = hl
 		this.server.start()
 
 		this.serverURI = toServerURI(server)

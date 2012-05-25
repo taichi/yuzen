@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.websocket.WebSocket.Connection;
 import org.eclipse.jetty.websocket.WebSocket
 import org.eclipse.jetty.websocket.WebSocketClient
@@ -18,12 +17,12 @@ import org.junit.AfterClass
 import org.junit.Before;
 import org.junit.BeforeClass
 import org.junit.Test;
-import org.koshinuke.yuzen.reload.PaththroughServlet;
+import org.koshinuke.yuzen.reload.PaththroughHandler;
 
 /**
  * @author taichi
  */
-class PaththroughServletTest {
+class PaththroughHandlerTest {
 
 	static Server server
 	static URI serverUri
@@ -34,10 +33,7 @@ class PaththroughServletTest {
 	@BeforeClass
 	static void setUpClass() {
 		server = new Server(0)
-		ServletContextHandler context = new ServletContextHandler()
-		context.contextPath = '/'
-		server.handler = context
-		context.addServlet(PaththroughServlet, "/*")
+		server.handler = new PaththroughHandler()
 
 		server.start()
 
