@@ -30,6 +30,8 @@ apply plugin: 'yuzen'
 blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
+	head "css"
+	autoload false
 }
 
 task blog(overwrite: true, type: BlogTask) {

@@ -16,6 +16,8 @@ class BlogPluginExtension {
 
 	String head = 'less'
 
+	boolean autoload = false
+
 	def recentposts = [] // TODO ...
 	BlogPluginExtension(Project project) {
 		this.project = project;

@@ -57,15 +57,16 @@ class StartServerTask extends ConventionTask {
 		this.server.stopAtShutdown = true
 		Resource.setDefaultUseCaches(false)
 
-		ResourceCollection rs = new ResourceCollection(
-				[
-					Resource.newResource(this.rootDir),
-					Resource.newClassPathResource(this.templatePrefix)
-				]
-				as Resource[])
+		def rl = []
+		rl.add Resource.newResource(this.rootDir)
+		File f = new File(this.templatePrefix)
+		if(f.exists()) {
+			rl.add Resource.newResource(this.templatePrefix)
+		}
+		rl.add Resource.newClassPathResource(this.templatePrefix)
 
 		def yuzens = new ResourceHandler()
-		yuzens.setBaseResource(rs)
+		yuzens.baseResource = new ResourceCollection( rl as Resource[])
 		def ws = new PaththroughHandler()
 		this.server.handler = ws
 
