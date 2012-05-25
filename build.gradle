@@ -71,8 +71,8 @@ tasks.withType(AbstractCompile) each { encoding it.options }
 tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
 
 jar {
-	into('templates') {
-		from 'templates'
+	into('_templates') {
+		from '_templates'
 	}
 }
 

@@ -13,7 +13,7 @@ class YuzenPluginConvention {
 	final BlogTaskConvention blog = new BlogTaskConvention()
 
 	String contentsDirName = '_contents'
-	String templatePrefix = 'templates'
+	String templatePrefix = '_templates'
 	String templateSuffix = ".html"
 	String destinationDirName = 'yuzen'
 
