@@ -173,7 +173,7 @@ class StartServerTask extends ConventionTask {
 	def publish(path) {
 		Future<Connection> future = this.client.open(this.serverURI, [
 					onOpen: {
-						logger.debug('onOpen {}',it)
+						logger.debug('onOpen {}', it)
 					},
 					onClose: { c, m ->
 					},

@@ -31,6 +31,10 @@ class YuzenPluginTest {
 		f.parentFile.mkdirs()
 		f.text = "* testdata"
 
+		f = this.project.file("_contents/entry/L'Arc～en～Ciel/2011/12/21/ごが.md")
+		f.parentFile.mkdirs()
+		f.text = "# ほげほげ\n* ごがごが"
+
 		f = this.project.file("_contents/profile.md")
 		f.text = "# profile\n* profile profile"
 
@@ -127,5 +131,16 @@ class YuzenPluginTest {
 		} finally {
 			task.stopServer()
 		}
+	}
+
+	@Test
+	void recentPosts() {
+		def blog = project.extensions.getByType(BlogPluginExtension)
+		def expected = [
+			[url:'/entry/L%27Arc%EF%BD%9Een%EF%BD%9ECiel/2011/12/21/%E3%81%94%E3%81%8C', title:'ほげほげ'],
+			[url:'/entry/moge/piro', title:'piro'],
+			[url:'/profile', title:'profile']
+		]
+		assert expected == blog.recentPosts
 	}
 }

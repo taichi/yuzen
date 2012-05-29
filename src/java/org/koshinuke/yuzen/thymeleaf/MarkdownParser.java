@@ -6,10 +6,7 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.pegdown.Extensions;
-import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
-import org.pegdown.ToHtmlSerializer;
-import org.pegdown.ast.RootNode;
 import org.thymeleaf.Configuration;
 import org.thymeleaf.dom.Document;
 import org.thymeleaf.dom.NestableNode;
@@ -38,8 +35,7 @@ public class MarkdownParser implements ITemplateParser {
 			String documentName, Reader source) {
 		try {
 			String md = CharStreams.toString(source);
-			char[] src = md.toCharArray();
-			String html = this.toHtml(src);
+			String html = this.toHtml(md);
 			Document doc = this.delegate.parseTemplate(configuration,
 					documentName, new StringReader("<!DOCTYPE html><div>"
 							+ html + "</div>"));
@@ -52,14 +48,13 @@ public class MarkdownParser implements ITemplateParser {
 		}
 	}
 
-	protected String toHtml(char[] src) {
-		RootNode root = this.pegDownProcessor.parseMarkdown(src);
-		return new ToHtmlSerializer(new LinkRenderer()).toHtml(root);
+	protected String toHtml(String src) {
+		return this.pegDownProcessor.markdownToHtml(src);
 	}
 
 	@Override
 	public List<Node> parseFragment(Configuration configuration, String fragment) {
-		String html = this.toHtml(fragment.toCharArray());
+		String html = this.toHtml(fragment);
 		return this.delegate.parseFragment(configuration, html);
 	}
 

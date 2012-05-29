@@ -1,4 +1,3 @@
-import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency;
 import org.gradle.plugins.ide.eclipse.model.AbstractLibrary;
 import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory;
 
@@ -6,7 +5,6 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'war'
 apply plugin: 'eclipse'
-
 
 group = 'org.koshinuke'
 version = '0.0.1-SNAPSHOT'

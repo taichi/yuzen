@@ -5,7 +5,7 @@ if ("WebSocket" in window) {
 	ws.onopen = function() {
 		console.log("connected...");
 	};
-	ws.onmessage = function() {
+	ws.onmessage = function(event) {
 		console.log(event.data);
 		location.reload();
 	};

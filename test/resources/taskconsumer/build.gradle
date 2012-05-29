@@ -31,7 +31,7 @@ blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
 	head "css"
-	autoload false
+	autoload true
 }
 
 task blog(overwrite: true, type: BlogTask) {

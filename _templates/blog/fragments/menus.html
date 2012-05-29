@@ -13,7 +13,7 @@
 		<div class="menu recents">
 			<h3>Recent Posts</h3>
 			<ul class="unstyled">
-				<li th:each="r : ${blog.recentposts}" ><a th:href="*{url}" th:text="*{title}">たいとる</a></li>
+				<li th:each="r : ${blog.recentPosts}" ><a th:href="*{url}" th:text="*{title}">たいとる</a></li>
 				<li th:remove="all"><a href="">たいとる</a></li>
 			</ul>
 		</div>
