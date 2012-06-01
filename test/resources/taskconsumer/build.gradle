@@ -32,7 +32,6 @@ apply plugin: 'yuzen'
 blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
-	autoload true
 }
 
 def dest = file("${project.buildDir}/html")
@@ -48,13 +47,18 @@ task copyJs(type: Copy) {
 	into "$dest/js"
 }
 
-task blog2(overwrite: true, type: BlogTask, dependsOn: [less, copyJs]) {
+task writeBlog(type: BlogTask, dependsOn: [less, copyJs]) {
+	destinationDir dest
+	doFirst {
+		blog.head 'css'
+		blog.autoload true
+	}
+}
+
+task designBlog(type: BlogTask) {
 	destinationDir dest
 	doFirst {
 		blog.head 'less'
 		blog.autoload true
-	}
-	doLast {
-		println "xxx $destinationDir"
 	}
 }
