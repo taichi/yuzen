@@ -1,4 +1,6 @@
+import org.gradle.api.tasks.Copy;
 import org.koshinuke.yuzen.gradle.BlogTask;
+import org.koshinuke.yuzen.gradle.LessCompile;
 
 buildscript {
 	repositories {
@@ -10,7 +12,7 @@ buildscript {
 		// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
 		// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
 		classpath 'xerces:xercesImpl:2.10.0'
-		
+		classpath 'org.lesscss:lesscss:1.3.+'
 		classpath 'com.google.guava:guava:12.+'
 		classpath 'org.pegdown:pegdown:1.1.+'
 		classpath 'org.koshinuke:yuzen:0.0.1-SNAPSHOT'
@@ -30,19 +32,28 @@ apply plugin: 'yuzen'
 blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
-	head "css"
 	autoload true
 }
 
-task blog(overwrite: true, type: BlogTask) {
-	destinationDir = file("${project.buildDir}/html")
-	doLast {
-		println "xxx $destinationDir"
-	}
+def dest = file("${project.buildDir}/html")
+
+task less(type: LessCompile) {
+	source file("_templates/blog/less/main.less")
+	destinationDir file("$dest/css")
+	compress true
 }
 
-task blog2(type: BlogTask) {
-	destinationDir = file("${project.buildDir}/bb")
+task copyJs(type: Copy) {
+	from "_templates/blog/js"
+	into "$dest/js"
+}
+
+task blog2(overwrite: true, type: BlogTask, dependsOn: [less, copyJs]) {
+	destinationDir dest
+	doFirst {
+		blog.head 'less'
+		blog.autoload true
+	}
 	doLast {
 		println "xxx $destinationDir"
 	}

@@ -63,7 +63,6 @@ class StartServerTask extends ConventionTask {
 		if(f.exists()) {
 			rl.add Resource.newResource(this.templatePrefix)
 		}
-		rl.add Resource.newClassPathResource(this.templatePrefix)
 
 		def yuzens = new ResourceHandler()
 		yuzens.baseResource = new ResourceCollection( rl as Resource[])

@@ -23,7 +23,7 @@ class BlogPluginExtension {
 
 	String subtitle
 
-	String head = 'less'
+	String head = 'css'
 
 	boolean autoload = false
 

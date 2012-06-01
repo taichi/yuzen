@@ -30,6 +30,8 @@ dependencies {
 	compile 'com.google.guava:guava:12.+'
 	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
+
+	compile 'org.lesscss:lesscss:1.3.+'
 	
 	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
 	[
@@ -48,9 +50,6 @@ dependencies {
 
 buildscript {
 	repositories { mavenCentral() }
-	dependencies {
-		classpath 'org.lesscss:lesscss:1.3.+'
-	}
 }
 
 sourceSets {
@@ -74,14 +73,7 @@ def encoding = { it.encoding = 'UTF-8' }
 tasks.withType(AbstractCompile) each { encoding it.options }
 tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
 
-task less << {
-	def lc = new org.lesscss.LessCompiler()
-	lc.compress = true
-	lc.compile(file("_templates/blog/less/main.less"), file("${project.buildDir}/_templates/blog/css/main.css"))
-}
-
 jar {
-	dependsOn less
 	into('_templates') {
 		from '_templates'
 		from "${project.buildDir}/_templates"
