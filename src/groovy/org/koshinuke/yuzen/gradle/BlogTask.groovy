@@ -114,8 +114,7 @@ class BlogTask extends ConventionTask implements ContentsTask {
 		}
 		template = FileUtil.removeExtension(template)
 		def c = new Context()
-		def extensions = project.extensions.extensionsStorage.asMap
-		c.setVariables(extensions)
+		c.setVariables(project.properties)
 		c.setVariable('content',[path: path, date: new Date()])
 		def html = calcHtmlOutput(file)
 		html.parentFile.mkdirs()
