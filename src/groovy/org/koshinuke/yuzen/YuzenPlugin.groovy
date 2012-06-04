@@ -4,6 +4,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy;
+import org.koshinuke.yuzen.github.GitHubPluginExtension
 import org.koshinuke.yuzen.gradle.BlogPluginExtension;
 import org.koshinuke.yuzen.gradle.BlogTask;
 import org.koshinuke.yuzen.gradle.ContentsTask;
@@ -23,6 +24,7 @@ class YuzenPlugin implements Plugin<Project> {
 		project.plugins.apply(BasePlugin)
 
 		YuzenPluginConvention ypc = project.convention.create('yuzen', YuzenPluginConvention, project)
+		project.extensions.create('github', GitHubPluginExtension, project)
 		project.extensions.create('blog', BlogPluginExtension, project)
 
 		addRule(project, 'start', 'start Jetty of a task.') { name, task ->

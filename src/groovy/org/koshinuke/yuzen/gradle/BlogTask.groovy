@@ -113,9 +113,9 @@ class BlogTask extends ConventionTask implements ContentsTask {
 			template = rel.segments[0]
 		}
 		template = FileUtil.removeExtension(template)
-		def blog = project.extensions.getByType(BlogPluginExtension)
 		def c = new Context()
-		c.setVariable('blog', blog)
+		def extensions = project.extensions.extensionsStorage.asMap
+		c.setVariables(extensions)
 		c.setVariable('content',[path: path, date: new Date()])
 		def html = calcHtmlOutput(file)
 		html.parentFile.mkdirs()
@@ -144,9 +144,9 @@ class BlogTask extends ConventionTask implements ContentsTask {
 		def te = new TemplateEngine()
 		te.addTemplateModeHandler(StandardTemplateModeHandlers.HTML5)
 		te.addTemplateModeHandler(MarkdownTemplateResolver.MARKDOWN)
-		te.addTemplateResolver(md)
-		te.addTemplateResolver(r)
 		te.addTemplateResolver(cr)
+		te.addTemplateResolver(r)
+		te.addTemplateResolver(md)
 		te.addDialect(new YuzenDialect(md))
 		return te
 	}

@@ -27,6 +27,9 @@ class YuzenPluginTest {
 	@Before
 	void setUp() {
 		this.project = ProjectBuilder.builder().build()
+
+		TestData.overwrite(this.project.ext)
+
 		project.apply plugin: 'yuzen'
 
 		def f = this.project.file("_contents/entry/moge/piro.md")

@@ -2,3 +2,4 @@
 /build
 /gradle-app.setting
 /_templates
+/gradle.properties
