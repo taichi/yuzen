@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
+import org.koshinuke.yuzen.YuzenPluginConvention;
 import org.koshinuke.yuzen.util.FileUtil;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;

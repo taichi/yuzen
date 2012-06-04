@@ -26,6 +26,7 @@ import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.logging.ProgressLogger
 import org.gradle.logging.ProgressLoggerFactory
+import org.koshinuke.yuzen.YuzenPluginConvention;
 import org.koshinuke.yuzen.file.PathEventListener
 import org.koshinuke.yuzen.file.PathSentinel
 import org.koshinuke.yuzen.reload.PaththroughHandler

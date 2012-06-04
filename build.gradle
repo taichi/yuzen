@@ -41,6 +41,8 @@ dependencies {
 	].each {
 		providedCompile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 	}
+	
+	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 
 	testCompile 'junit:junit:4.+'
 	// testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'

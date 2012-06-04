@@ -7,6 +7,8 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.koshinuke.yuzen.YuzenPlugin;
+import org.koshinuke.yuzen.YuzenPluginConvention;
 
 /**
  * @author taichi

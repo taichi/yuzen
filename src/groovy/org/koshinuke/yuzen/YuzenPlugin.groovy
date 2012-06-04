@@ -1,9 +1,15 @@
-package org.koshinuke.yuzen.gradle
+package org.koshinuke.yuzen
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy;
+import org.koshinuke.yuzen.gradle.BlogPluginExtension;
+import org.koshinuke.yuzen.gradle.BlogTask;
+import org.koshinuke.yuzen.gradle.ContentsTask;
+import org.koshinuke.yuzen.gradle.InitTemplateTask;
+import org.koshinuke.yuzen.gradle.LessCompile;
+import org.koshinuke.yuzen.gradle.StartServerTask;
 
 
 

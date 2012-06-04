@@ -1,6 +1,5 @@
-package org.koshinuke.yuzen.gradle
+package org.koshinuke.yuzen
 
-import groovy.lang.Closure;
 
 import org.gradle.api.Project;
 
@@ -9,8 +8,6 @@ import org.gradle.api.Project;
  */
 class YuzenPluginConvention {
 	final Project project
-
-	final BlogTaskConvention blog = new BlogTaskConvention()
 
 	String contentsDirName = '_contents'
 	String templatePrefix = '_templates'
@@ -28,13 +25,4 @@ class YuzenPluginConvention {
 	File getDestinationDir() {
 		this.project.file("$project.buildDir/$destinationDirName")
 	}
-}
-
-class BlogTaskConvention {
-	String dirName = 'blog'
-	/**
-	 * The given closure is used to configure the filter.A {@link org.gradle.api.tasks.util.PatternFilterable} is
-	 * passed to the closure as it's delegate
-	 */
-	Closure contentsFilter = { exclude "fragments/**" }
 }

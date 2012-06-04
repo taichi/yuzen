@@ -1,5 +1,7 @@
 package org.koshinuke.yuzen.gradle
 
+import groovy.lang.Closure;
+
 import java.io.File;
 
 import org.gradle.api.file.FileTreeElement
@@ -11,6 +13,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction
+import org.koshinuke.yuzen.YuzenPluginConvention;
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
 import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
 import org.koshinuke.yuzen.util.FileUtil;
@@ -38,21 +41,26 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	@OutputDirectory
 	File destinationDir
 
+	/**
+	 * The given closure is used to configure the filter.A {@link org.gradle.api.tasks.util.PatternFilterable} is
+	 * passed to the closure as it's delegate
+	 */
+	Closure contentsFilter = { exclude "fragments/**" }
+
 	BlogTask() {
 		this.group = BasePlugin.BUILD_GROUP
 		def ypc = project.convention.getByType(YuzenPluginConvention)
 		this.contentsDir = ypc.contentsDir
-		this.templatePrefix = "$ypc.templatePrefix/$ypc.blog.dirName/"
+		this.templatePrefix = "$ypc.templatePrefix/blog/"
 		this.templateSuffix = ypc.templateSuffix
-		this.destinationDir = project.file("$ypc.destinationDir/$ypc.blog.dirName")
+		this.destinationDir = project.file("$ypc.destinationDir/blog")
 	}
 
 	@TaskAction
 	def generate() {
 		def te = makeEngine()
 		// process main contents
-		def ypc = project.convention.getByType(YuzenPluginConvention)
-		this.project.fileTree(this.contentsDir, ypc.blog.contentsFilter).visit([
+		this.project.fileTree(this.contentsDir, this.contentsFilter).visit([
 					visitDir : {
 					},
 					visitFile : { processFile(te, it) }

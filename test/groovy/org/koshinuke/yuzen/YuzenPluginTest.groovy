@@ -1,4 +1,4 @@
-package org.koshinuke.yuzen.gradle;
+package org.koshinuke.yuzen;
 
 import static org.junit.Assert.*;
 
@@ -13,6 +13,8 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.file.PathEventListener
+import org.koshinuke.yuzen.gradle.BlogPluginExtension;
+import org.koshinuke.yuzen.gradle.BlogTask;
 
 
 /**
