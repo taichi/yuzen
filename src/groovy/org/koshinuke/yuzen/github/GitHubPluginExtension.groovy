@@ -18,6 +18,8 @@ class GitHubPluginExtension {
 
 	def reposFilter = [type: 'public']
 
+	def repos
+
 	GitHubPluginExtension(Project project) {
 		this.project = project
 		this.user = project.property('github_user')
@@ -31,10 +33,16 @@ class GitHubPluginExtension {
 	}
 
 	def getRepos() {
-		makeRepositoryService().getRepositories(this.reposFilter)
+		if(this.repos == null) {
+			this.repos = makeRepositoryService().getRepositories(this.reposFilter)
+		}
+		return this.repos
 	}
 
 	def getOrgRepos(org) {
-		makeRepositoryService().getOrgRepositories(org, this.reposFilter)
+		if(this.repos == null) {
+			this.repos = makeRepositoryService().getOrgRepositories(org, this.reposFilter)
+		}
+		return this.repos
 	}
 }

@@ -20,10 +20,9 @@
 		<div class="menu github">
 			<h3>GitHub Repos</h3>
 			<ul class="unstyled repos" th:each="r : ${github.repos}">
-				<li><a th:href="${r.htmlUrl}" th:text="${r.name}">りぽじとり</a></li>
-				<li th:remove="all"><a
-					href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
-					<p>Download libraries from maven2 repository without maven2.</p></li>
+				<li><a th:href="${r.htmlUrl}" th:text="${r.name}">りぽじとり</a>
+					<p th:text="${r.description}">Download libraries from maven2
+						repository without maven2.</p></li>
 				<li th:remove="all"><a
 					href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
 					<p>Download libraries from maven2 repository without maven2.</p></li>
