@@ -37,4 +37,12 @@ class GitHubPluginExtensionTest {
 		assert 0 < repos.size()
 		repos.each { println "$it.name $it.htmlUrl" }
 	}
+
+	@Test
+	void orgRepos() {
+		def repos = this.target.getOrgRepos('koshinuke')
+		assert repos != null
+		assert 0 < repos.size()
+		repos.each { println "$it.name $it.htmlUrl" }
+	}
 }

@@ -18,6 +18,8 @@ class GitHubPluginExtension {
 
 	def reposFilter = [type: 'public']
 
+	int recentReposSize = 5
+
 	def repos
 
 	GitHubPluginExtension(Project project) {
@@ -32,17 +34,26 @@ class GitHubPluginExtension {
 		new RepositoryService(gc)
 	}
 
-	def getRepos() {
+	def getFirstPage(Closure closure) {
 		if(this.repos == null) {
-			this.repos = makeRepositoryService().getRepositories(this.reposFilter)
+			def sv = makeRepositoryService()
+			def itr = closure(sv)
+			if(itr.hasNext()) {
+				this.repos = itr.next()
+			}
 		}
 		return this.repos
 	}
 
-	def getOrgRepos(org) {
-		if(this.repos == null) {
-			this.repos = makeRepositoryService().getOrgRepositories(org, this.reposFilter)
+	def getRepos() {
+		getFirstPage {
+			it.pageRepositories(this.reposFilter, this.recentReposSize)
 		}
-		return this.repos
+	}
+
+	def getOrgRepos(org) {
+		getFirstPage {
+			it.pageOrgRepositories(org, this.reposFilter, this.recentReposSize)
+		}
 	}
 }
