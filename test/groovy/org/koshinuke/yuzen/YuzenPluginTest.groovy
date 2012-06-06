@@ -2,6 +2,8 @@ package org.koshinuke.yuzen;
 
 import static org.junit.Assert.*;
 
+import groovy.xml.XmlUtil;
+
 import java.io.File
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +40,7 @@ class YuzenPluginTest {
 
 		f = this.project.file("_contents/entry/L'Arc～en～Ciel/2011/12/21/ごが.md")
 		f.parentFile.mkdirs()
-		f.text = "# ほげほげ\n* ごがごが"
+		f.text = "# ほげほげ\n* ごがごが\n* でででん"
 
 		f = this.project.file("_contents/profile.md")
 		f.text = "# profile\n* profile profile"
@@ -146,6 +148,14 @@ class YuzenPluginTest {
 			[url:'/entry/moge/piro', title:'piro'],
 			[url:'/profile', title:'profile']
 		]
-		assert expected == blog.recentPosts
+
+		3.times {
+			def actual = blog.recentPosts[it]
+			assert expected[it].url == actual.url
+			assert expected[it].title == actual.title
+			assert actual.timestamp != null
+			assert actual.summary != null
+			println XmlUtil.serialize(actual.summary)
+		}
 	}
 }

@@ -2,16 +2,14 @@ package org.koshinuke.yuzen.gradle
 
 
 
+
+
 import groovy.io.FileType;
 
 import java.nio.file.Path;
-import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
-import org.koshinuke.yuzen.YuzenPluginConvention;
-import org.koshinuke.yuzen.util.FileUtil;
-import org.pegdown.Extensions;
-import org.pegdown.PegDownProcessor;
+import org.koshinuke.yuzen.YuzenPluginConvention
 
 /**
  * @author taichi
@@ -48,21 +46,11 @@ class BlogPluginExtension {
 					recents.remove(recentPostsSize)
 				}
 			}
-			PegDownProcessor md = new PegDownProcessor(Extensions.ALL)
 			Path root = ypc.contentsDir.toPath()
 			this.recentPosts = recents.collect {
-				def segments = root.relativize(it.toPath()).toFile().path.split(Pattern.quote(File.separator))
-				def path = segments.collect { URLEncoder.encode(it, 'UTF-8') }.join('/').replace('.md', '')
-				[url: '/' + path, title: pickTitle(md, it)]
+				new Content(root, it)
 			}
 		}
 		return this.recentPosts
-	}
-
-	def pickTitle(md, file) {
-		def txt = md.markdownToHtml(file.text)
-		def html = new XmlParser().parseText("<div>$txt</div>")
-		def title = html.depthFirst().find { it.name() ==~ /h\d/ }?.depthFirst().find { it.text() }?.text()
-		return title == null ? FileUtil.removeExtension(file.name) : title
 	}
 }
