@@ -8,7 +8,6 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.koshinuke.yuzen.YuzenPlugin;
-import org.koshinuke.yuzen.YuzenPluginConvention;
 
 /**
  * @author taichi
@@ -23,21 +22,20 @@ class InitTemplateTask extends ConventionTask {
 
 	InitTemplateTask() {
 		this.group = BasePlugin.BUILD_GROUP
-		def ypc = project.convention.getByType(YuzenPluginConvention)
-		this.destinationDir = project.file("$ypc.templatePrefix")
 	}
 
 	@TaskAction
 	def initTemplate() {
 		def pluginURL = YuzenPlugin.protectionDomain.codeSource.location.toExternalForm()
 		def tmp = "$temporaryDir/yuzen"
+		def base = "_templates/$templateName"
 		project.copy {
-			from project.zipTree(pluginURL).matching { include "_templates/$templateName/**" }
+			from project.zipTree(pluginURL).matching { include "$base/**" }
 			into tmp
 		}
-		def dest = this.destinationDir
+		def dest = this.getDestinationDir()
 		project.copy {
-			from "$tmp/_templates"
+			from "$tmp/$base"
 			into dest
 		}
 	}

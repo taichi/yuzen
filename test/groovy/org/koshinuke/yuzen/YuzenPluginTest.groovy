@@ -16,7 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.file.PathEventListener
 import org.koshinuke.yuzen.gradle.BlogPluginExtension;
-import org.koshinuke.yuzen.gradle.BlogTask;
+import org.koshinuke.yuzen.gradle.DefaultContentsTask;
 
 
 /**
@@ -55,36 +55,48 @@ class YuzenPluginTest {
 		f = this.project.file("$project.buildDir/yuzen/blog")
 		FileUtils.delete(f, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
 		f.mkdirs()
+
+		def src = new File("_templates/blog/")
+		assert src.exists()
+		project.copy {
+			from src.toURI().path
+			into project.file('_templates/')
+		}
 	}
 
 	@Test
 	void defaultConfigureTest() {
-		assert new File(project.buildDir,'yuzen/blog') == project.tasks.blog.destinationDir
+		def blog = project.tasks.blog
+		assert project.file('_contents') == blog.contentsDir
+		assert new File(project.buildDir,'yuzen') == blog.destinationDir
+		assert '_templates' == blog.templatePrefix
+		assert '.html' == blog.templateSuffix
 	}
 
 	@Test
 	void overwriteTest() {
 		def f = project.file("hoge/moge/blog")
 		project.tasks.blog.destinationDir = f
-		project.task([overwrite:true, type: BlogTask],'blog', { it.destinationDir = f })
+		project.task([overwrite:true, type: DefaultContentsTask],'blog', { it.destinationDir = f })
 		assert f == project.tasks.blog.destinationDir
 	}
 
 	@Test
 	void executeBlogTest() {
 		project.tasks.blog.execute()
-		def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
+
+		def dest = project.file("$project.buildDir/yuzen/entry/moge/piro/index.html")
 		assert dest.exists()
 		println dest.text
 
-		def profile = project.file("$project.buildDir/yuzen/blog/profile/index.html")
+		def profile = project.file("$project.buildDir/yuzen/profile/index.html")
 		assert profile.exists()
 		println profile.text
 
-		def markdown = project.file("$project.buildDir/yuzen/blog/moge.markdown")
+		def markdown = project.file("$project.buildDir/yuzen/moge.markdown")
 		assert markdown.exists()
 
-		def txt = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
+		def txt = project.file("$project.buildDir/yuzen/entry/moge/fuga.txt")
 		assert txt.exists()
 	}
 
@@ -98,7 +110,7 @@ class YuzenPluginTest {
 			def actf = this.project.file("_contents/entry/moge/piro.md")
 			actf.parentFile.mkdirs()
 			actf.text = "** test test"
-			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/piro/index.html")
+			def dest = project.file("$project.buildDir/yuzen/entry/moge/piro/index.html")
 			assert latch.await(2, TimeUnit.SECONDS)
 			assert dest.exists()
 			assert 0 < dest.length()
@@ -131,7 +143,7 @@ class YuzenPluginTest {
 			def latch = makeLatch(task)
 			File actf = this.project.file("_contents/entry/moge/fuga.txt")
 			actf.text = "** test test"
-			def dest = project.file("$project.buildDir/yuzen/blog/entry/moge/fuga.txt")
+			def dest = project.file("$project.buildDir/yuzen/entry/moge/fuga.txt")
 			assert latch.await(2, TimeUnit.SECONDS)
 			assert dest.exists()
 			assert 0 < dest.length()

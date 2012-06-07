@@ -1,5 +1,5 @@
 import org.gradle.api.tasks.Copy;
-import org.koshinuke.yuzen.gradle.BlogTask;
+import org.koshinuke.yuzen.gradle.DefaultContentsTask;
 import org.koshinuke.yuzen.gradle.LessCompile;
 
 buildscript {
@@ -48,7 +48,7 @@ task copyJs(type: Copy) {
 	into "$dest/js"
 }
 
-task writeBlog(type: BlogTask, dependsOn: [less, copyJs]) {
+task writeBlog(type: DefaultContentsTask, dependsOn: [less, copyJs]) {
 	destinationDir dest
 	doFirst {
 		blog.head 'css'
@@ -56,7 +56,7 @@ task writeBlog(type: BlogTask, dependsOn: [less, copyJs]) {
 	}
 }
 
-task designBlog(type: BlogTask) {
+task designBlog(type: DefaultContentsTask) {
 	destinationDir dest
 	doFirst {
 		blog.head 'less'

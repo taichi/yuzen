@@ -15,6 +15,8 @@ public interface ContentsTask {
 
 	String templatePrefix
 
+	String templateSuffix
+
 	void processFile(FileTreeElement file)
 
 	void deleteFile(FileTreeElement file)

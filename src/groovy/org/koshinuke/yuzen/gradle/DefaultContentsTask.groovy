@@ -13,7 +13,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction
-import org.koshinuke.yuzen.YuzenPluginConvention;
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
 import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
 import org.koshinuke.yuzen.util.FileUtil;
@@ -21,14 +20,13 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.TemplateResolver;
 import com.google.common.io.*;
 
 /**
  * @author taichi
  */
-class BlogTask extends ConventionTask implements ContentsTask {
+class DefaultContentsTask extends ConventionTask implements ContentsTask {
 
 	@InputDirectory
 	File contentsDir
@@ -36,6 +34,7 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	@Input
 	String templatePrefix
 
+	@Input
 	String templateSuffix
 
 	@OutputDirectory
@@ -47,20 +46,15 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	 */
 	Closure contentsFilter = { exclude "fragments/**" }
 
-	BlogTask() {
+	DefaultContentsTask() {
 		this.group = BasePlugin.BUILD_GROUP
-		def ypc = project.convention.getByType(YuzenPluginConvention)
-		this.contentsDir = ypc.contentsDir
-		this.templatePrefix = "$ypc.templatePrefix/blog/"
-		this.templateSuffix = ypc.templateSuffix
-		this.destinationDir = project.file("$ypc.destinationDir/blog")
 	}
 
 	@TaskAction
 	def generate() {
 		def te = makeEngine()
 		// process main contents
-		this.project.fileTree(this.contentsDir, this.contentsFilter).visit([
+		this.project.fileTree(this.getContentsDir(), this.getContentsFilter()).visit([
 					visitDir : {
 					},
 					visitFile : { processFile(te, it) }
@@ -87,11 +81,11 @@ class BlogTask extends ConventionTask implements ContentsTask {
 
 	def calcHtmlOutput(file) {
 		def path = FileUtil.removeExtension(file.path)
-		this.project.file("$destinationDir/$path/index.html")
+		new File(this.getDestinationDir(), "$path/index.html")
 	}
 
 	def calcFileOutput(file) {
-		this.project.file("$destinationDir/$file.path")
+		new File(this.getDestinationDir(), "$file.path")
 	}
 
 	void deleteFile(FileTreeElement file) {
@@ -115,7 +109,7 @@ class BlogTask extends ConventionTask implements ContentsTask {
 		template = FileUtil.removeExtension(template)
 		def c = new Context()
 		c.setVariables(project.properties)
-		c.setVariable('content',[path: path, date: new Date()])
+		c.setVariable('content', [path: path, date: new Date(file.lastModified)])
 		def html = calcHtmlOutput(file)
 		html.parentFile.mkdirs()
 		html.withWriter("UTF-8") {
@@ -127,23 +121,17 @@ class BlogTask extends ConventionTask implements ContentsTask {
 	def makeEngine() {
 		def rr = new FileResourceResolver()
 		def md = new MarkdownTemplateResolver(rr)
-		md.prefix = "$contentsDir/"
+		md.prefix = this.getContentsDir().toURI().path
 
 		def r = new TemplateResolver()
 		r.resourceResolver = rr
 		r.templateMode = 'HTML5'
-		r.prefix = this.templatePrefix
-		r.suffix = this.templateSuffix
-
-		def cr = new ClassLoaderTemplateResolver()
-		cr.templateMode = 'HTML5'
-		cr.prefix = this.templatePrefix
-		cr.suffix = this.templateSuffix
+		r.prefix = this.project.file(this.getTemplatePrefix()).toURI().path
+		r.suffix = this.getTemplateSuffix()
 
 		def te = new TemplateEngine()
 		te.addTemplateModeHandler(StandardTemplateModeHandlers.HTML5)
 		te.addTemplateModeHandler(MarkdownTemplateResolver.MARKDOWN)
-		te.addTemplateResolver(cr)
 		te.addTemplateResolver(r)
 		te.addTemplateResolver(md)
 		te.addDialect(new YuzenDialect(md))
