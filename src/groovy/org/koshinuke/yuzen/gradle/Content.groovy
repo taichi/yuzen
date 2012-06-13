@@ -34,14 +34,21 @@ class Content {
 
 		if(title == null) {
 			this.title = FileUtil.removeExtension(file.name)
-			this.summary = html.children()[0]
+			this.summary = toHtml(html.children()[0])
 		} else {
 			this.title = title.text()
 			def siblings = title.parent().children()
 			def index = siblings.indexOf(title)
 			if((index + 1) < siblings.size()) {
-				this.summary = siblings.get(index + 1)
+				this.summary = toHtml(siblings.get(index + 1))
 			}
 		}
+	}
+
+	def toHtml(node) {
+		StringWriter sw = new StringWriter()
+		XmlNodePrinter nw = new XmlNodePrinter(new PrintWriter(sw))
+		nw.print(node)
+		return sw.toString()
 	}
 }

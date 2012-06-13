@@ -184,6 +184,12 @@ class YuzenPluginTest {
 
 	@Test
 	void paging() {
-		project.paging.execute()
+		def paging = project.paging
+
+		assert paging.getTemplatePrefix() != null
+		assert paging.getTemplateSuffix() != null
+		assert paging.getDestinationDir() != null
+
+		paging.execute()
 	}
 }
