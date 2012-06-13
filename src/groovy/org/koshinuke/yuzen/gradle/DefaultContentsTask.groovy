@@ -1,16 +1,16 @@
 package org.koshinuke.yuzen.gradle
 
-import groovy.lang.Closure;
 
 import java.io.File;
 
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.logging.*;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
@@ -26,10 +26,10 @@ import com.google.common.io.*;
 /**
  * @author taichi
  */
-class DefaultContentsTask extends ConventionTask implements ContentsTask {
+class DefaultContentsTask extends ConventionTask implements WatchableTask {
 
-	@InputDirectory
-	File contentsDir
+	@InputFiles
+	ConfigurableFileTree contents
 
 	@Input
 	String templatePrefix
@@ -40,12 +40,6 @@ class DefaultContentsTask extends ConventionTask implements ContentsTask {
 	@OutputDirectory
 	File destinationDir
 
-	/**
-	 * The given closure is used to configure the filter.A {@link org.gradle.api.tasks.util.PatternFilterable} is
-	 * passed to the closure as it's delegate
-	 */
-	Closure contentsFilter = { exclude "fragments/**" }
-
 	DefaultContentsTask() {
 		this.group = BasePlugin.BUILD_GROUP
 	}
@@ -54,7 +48,7 @@ class DefaultContentsTask extends ConventionTask implements ContentsTask {
 	def generate() {
 		def te = makeEngine()
 		// process main contents
-		this.project.fileTree(this.getContentsDir(), this.getContentsFilter()).visit([
+		this.getContents().visit([
 					visitDir : {
 					},
 					visitFile : { processFile(te, it) }
@@ -121,7 +115,7 @@ class DefaultContentsTask extends ConventionTask implements ContentsTask {
 	def makeEngine() {
 		def rr = new FileResourceResolver()
 		def md = new MarkdownTemplateResolver(rr)
-		md.prefix = this.getContentsDir().toURI().path
+		md.prefix = this.getContents().dir.toURI().path
 
 		def r = new TemplateResolver()
 		r.resourceResolver = rr

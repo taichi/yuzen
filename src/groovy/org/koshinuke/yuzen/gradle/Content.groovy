@@ -1,8 +1,7 @@
 package org.koshinuke.yuzen.gradle
 
-import java.nio.file.Path;
-import java.util.regex.Pattern;
 
+import org.gradle.api.file.FileTreeElement;
 import org.koshinuke.yuzen.util.FileUtil;
 import org.pegdown.Extensions
 import org.pegdown.PegDownProcessor;
@@ -18,16 +17,15 @@ class Content {
 	def timestamp
 	def summary
 
-	Content(Path root, File file) {
-		this.timestamp = new Date(file.lastModified())
+	Content(FileTreeElement file) {
+		this.timestamp = new Date(file.lastModified)
 
-		def segments = root.relativize(file.toPath()).toFile().path.split(Pattern.quote(File.separator))
-		this.url = '/' + segments.collect {
+		this.url = '/' + file.relativePath.segments.collect {
 			URLEncoder.encode(it, 'UTF-8')
-		}.join('/').replace('.md', '')
+		}.join('/').replaceAll(/\.md$/, "")
 
 		PegDownProcessor md = new PegDownProcessor(Extensions.ALL)
-		def txt = md.markdownToHtml(file.text)
+		def txt = md.markdownToHtml(file.file.text)
 		def html = new XmlParser().parseText("<div>$txt</div>")
 
 		def title = html.depthFirst().find {

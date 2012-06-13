@@ -4,12 +4,10 @@ package org.koshinuke.yuzen.gradle
 
 
 
-import groovy.io.FileType;
 
-import java.nio.file.Path;
 
 import org.gradle.api.Project;
-import org.koshinuke.yuzen.YuzenPluginConvention
+import org.gradle.api.file.FileVisitor;
 
 /**
  * @author taichi
@@ -29,27 +27,32 @@ class BlogPluginExtension {
 	def recentPostsSize = 5
 	def recentPosts = null
 
+	def pagingUnitSize = 5
+
+	def contentsComparator = { l, r ->
+		r.lastModified <=> l.lastModified
+	}
+
 	BlogPluginExtension(Project project) {
 		this.project = project;
 	}
 
 	def getRecentPosts() {
 		if(this.recentPosts == null) {
-			YuzenPluginConvention ypc = project.convention.getByType(YuzenPluginConvention)
 			def recents = []
-			ypc.contentsDir.traverse(type: FileType.FILES, nameFilter: ~/.*\.md$/) {
-				recents.add it
-				if(recentPostsSize < recents.size()) {
-					recents.sort { l, r ->
-						r.lastModified() <=> l.lastModified()
+			project.fileTree (project.yuzen.contentsDir, { include '**/*.md' }).visit([
+				visitDir : {
+				},
+				visitFile : {
+					recents.add it
+					if(recentPostsSize < recents.size()) {
+						recents.sort getContentsComparator()
+						recents.remove(recentPostsSize)
 					}
-					recents.remove(recentPostsSize)
 				}
-			}
-			Path root = ypc.contentsDir.toPath()
-			this.recentPosts = recents.collect {
-				new Content(root, it)
-			}
+			] as FileVisitor)
+			recents.sort getContentsComparator()
+			this.recentPosts = recents.collect { new Content(it) }
 		}
 		return this.recentPosts
 	}

@@ -5,6 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy;
 import org.koshinuke.yuzen.github.GitHubPluginExtension
+import org.koshinuke.yuzen.gradle.BlogPagingTask
 import org.koshinuke.yuzen.gradle.BlogPluginExtension;
 import org.koshinuke.yuzen.gradle.DefaultContentsTask;
 import org.koshinuke.yuzen.gradle.ContentsTask;
@@ -56,8 +57,13 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.into "$task.destinationDir/js"
 		}
 
+		def paging = project.tasks.add 'paging', BlogPagingTask
+		paging.description = "make static blog pagination files"
+
 		project.tasks.withType(ContentsTask) {
-			it.conventionMapping.contentsDir = { ypc.contentsDir }
+			it.conventionMapping.contents = {
+				project.fileTree ypc.contentsDir, {}
+			}
 			it.conventionMapping.templatePrefix = { ypc.templatePrefix }
 			it.conventionMapping.templateSuffix = { ypc.templateSuffix }
 			it.conventionMapping.destinationDir = { ypc.destinationDir }

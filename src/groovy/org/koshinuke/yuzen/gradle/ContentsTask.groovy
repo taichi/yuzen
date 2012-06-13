@@ -1,7 +1,8 @@
 package org.koshinuke.yuzen.gradle;
 
 import java.io.File;
-import org.gradle.api.file.FileTreeElement;
+
+import org.gradle.api.file.ConfigurableFileTree;
 
 
 /**
@@ -9,15 +10,11 @@ import org.gradle.api.file.FileTreeElement;
  */
 public interface ContentsTask {
 
-	File contentsDir
+	ConfigurableFileTree contents
 
 	File destinationDir
 
 	String templatePrefix
 
 	String templateSuffix
-
-	void processFile(FileTreeElement file)
-
-	void deleteFile(FileTreeElement file)
 }

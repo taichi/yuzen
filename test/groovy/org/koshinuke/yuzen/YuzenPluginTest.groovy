@@ -15,7 +15,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.file.PathEventListener
-import org.koshinuke.yuzen.gradle.BlogPluginExtension;
 import org.koshinuke.yuzen.gradle.DefaultContentsTask;
 
 
@@ -34,13 +33,17 @@ class YuzenPluginTest {
 
 		project.apply plugin: 'yuzen'
 
+		def today = new Date()
+
 		def f = this.project.file("_contents/entry/moge/piro.md")
 		f.parentFile.mkdirs()
 		f.text = "* testdata"
+		f.lastModified = (today - 2).time
 
 		f = this.project.file("_contents/entry/L'Arc～en～Ciel/2011/12/21/ごが.md")
 		f.parentFile.mkdirs()
 		f.text = "# ほげほげ\n* ごがごが\n* でででん"
+		f.lastModified = (today - 1).time
 
 		f = this.project.file("_contents/profile.md")
 		f.text = "# profile\n* profile profile"
@@ -51,6 +54,14 @@ class YuzenPluginTest {
 		f = this.project.file("_contents/entry/moge/fuga.txt")
 		f.parentFile.mkdirs()
 		f.text = "yyyy"
+
+		14.times {
+			f = this.project.file("_contents/entry/hoehoe${it}.md")
+			f.parentFile.mkdirs()
+			f.text = "# aaaaa$it \n* testdata\n* testtest$it"
+			f.lastModified = (today - (3 + it)).time
+		}
+
 
 		f = this.project.file("$project.buildDir/yuzen/blog")
 		FileUtils.delete(f, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
@@ -67,7 +78,7 @@ class YuzenPluginTest {
 	@Test
 	void defaultConfigureTest() {
 		def blog = project.tasks.blog
-		assert project.file('_contents') == blog.contentsDir
+		assert project.fileTree(project.file('_contents'),{}).dir == blog.contents.dir
 		assert new File(project.buildDir,'yuzen') == blog.destinationDir
 		assert '_templates' == blog.templatePrefix
 		assert '.html' == blog.templateSuffix
@@ -154,11 +165,11 @@ class YuzenPluginTest {
 
 	@Test
 	void recentPosts() {
-		def blog = project.extensions.getByType(BlogPluginExtension)
+		def blog = project.blog
 		def expected = [
+			[url:'/profile', title:'profile'],
 			[url:'/entry/L%27Arc%EF%BD%9Een%EF%BD%9ECiel/2011/12/21/%E3%81%94%E3%81%8C', title:'ほげほげ'],
-			[url:'/entry/moge/piro', title:'piro'],
-			[url:'/profile', title:'profile']
+			[url:'/entry/moge/piro', title:'piro']
 		]
 
 		3.times {
@@ -169,5 +180,10 @@ class YuzenPluginTest {
 			assert actual.summary != null
 			println XmlUtil.serialize(actual.summary)
 		}
+	}
+
+	@Test
+	void paging() {
+		project.paging.execute()
 	}
 }

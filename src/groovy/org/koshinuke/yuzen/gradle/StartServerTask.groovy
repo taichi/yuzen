@@ -118,7 +118,7 @@ class StartServerTask extends ConventionTask {
 	def startSentinel() {
 		PathSentinel sentinel = new PathSentinel()
 		eachContents {
-			sentinel.watchTree(it.contentsDir.toPath())
+			sentinel.watchTree(it.contents.dir.toPath())
 		}
 		sentinel.register([
 					overflowed : { logger.warn("overflowed ...") },
@@ -141,7 +141,7 @@ class StartServerTask extends ConventionTask {
 	}
 
 	def eachContents(Closure closure) {
-		this.dependsOn.findAll { it instanceof ContentsTask }.each closure
+		this.dependsOn.findAll { it instanceof WatchableTask }.each closure
 	}
 
 	def to(Path path) {
@@ -161,7 +161,7 @@ class StartServerTask extends ConventionTask {
 	def handle(path, Closure closure) {
 		if(Files.isDirectory(path) == false) {
 			eachContents {
-				def parent = it.contentsDir.toPath()
+				def parent = it.contents.dir.toPath()
 				if(path.startsWith(parent)) {
 					closure(it)
 					publish(parent.relativize(path))
