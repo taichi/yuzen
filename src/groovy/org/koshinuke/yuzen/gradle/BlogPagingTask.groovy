@@ -58,20 +58,21 @@ class BlogPagingTask extends ConventionTask implements ContentsTask {
 		entries.sort project.blog.getContentsComparator()
 
 		def engine = makeEngine()
-		entries.collate(project.blog.pagingUnitSize).eachWithIndex { v, i ->
-			processTemplate(engine, v.collect { new Content(it) }, i)
+		def pages = entries.collate(project.blog.pagingUnitSize)
+		pages.eachWithIndex { v, i ->
+			def page = new Page(v.collect { new Content(it) }, i, this.getPagingPrefix(), pages.size)
+			processTemplate(engine, page, i)
 		}
 	}
 
-	def processTemplate(engine, summaries, index) {
+	def processTemplate(engine, page, index) {
 		def c = new Context()
 		c.setVariables(project.properties)
-		c.setVariable("contents", summaries)
-		c.setVariable("index", index)
+		c.setVariable("page", page)
 
 		def path = ""
 		if(0 < index) {
-			path = getPagingPrefix() + "/" + index
+			path = getPagingPrefix() + "/" + (index + 1)
 		}
 
 		def html = new File(this.getDestinationDir(), "$path/index.html")

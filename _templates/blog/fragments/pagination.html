@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+</head>
+<body>
+	<div th:fragment="small">
+		<ul>
+			<li th:class="${page.isFirst()}? 'disabled'"><a href="#"
+				th:href="${page.prevUrl}">Prev</a></li>
+			<li th:class="${page.isFirst()}? 'active'"><a href="/">1</a></li>
+			<li class="active" th:each="p : ${page.pages}"
+				th:class="${page.current == p}? 'active'"><a href="#"
+				th:href="${page.getPageUrl(p)}" th:text="${p}">2</a></li>
+			<li th:class="${page.isLast()}? 'disabled'"><a href="#"
+				th:href="${page.nextUrl}">Next</a></li>
+		</ul>
+	</div>
+	<div th:fragment="dots_right"></div>
+	<div th:fragment="dots_left"></div>
+	<div th:fragment="dots_twice"></div>
+</body>
+</html>

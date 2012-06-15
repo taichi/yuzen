@@ -31,9 +31,27 @@ header hgroup, header .navbar, .footer {
 	article {
 		margin-top: 1em;
 		padding: 0.5em;
+		
+		.more {
+			.clearfix;
+			a {
+				float: right;
+			}
+		}
 	}
 	article:first-child {
 		margin-top: 0;
+	}
+}
+.pagination {
+	ul {
+		background: @grayLighter;
+	}
+	a:hover {
+		background-color: @grayLight;
+	}
+	.active a {
+		background-color: @gray;
 	}
 }
 

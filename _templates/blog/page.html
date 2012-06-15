@@ -27,19 +27,22 @@
 	</header>
 	<div class="main container-fluid">
 		<div class="row-fluid">
-			<div class="contents span9" th:each="c : ${contents}">
-				<article>
+			<div class="contents span9">
+				<article th:each="c : ${page.contents}">
 					<header>
 						<h6 th:text="${#dates.format(c.timestamp,'yyyy/MM/dd HH:mm:ss')}">2012/03/26 03:02:11</h6>
 						<h2>
 							<a href="" th:href="${c.url}" th:text="${c.title}">たいとる</a>
 						</h2>
 					</header>
-					<div class="content" th:text="${c.summary}">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+					<div class="content" th:utext="${c.summary}">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
 						incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
 						nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
+					<div class="more">
+						<a href="" th:href="${c.url}">Read More ...</a>
+					</div>
 				</article>
 				<article th:remove="all">
 					<header>
@@ -53,6 +56,9 @@
 						nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
+					<div class="more">
+						<a href="" th:href="${c.url}">Read More ...</a>
+					</div>
 				</article>
 				<article th:remove="all">
 					<header>
@@ -66,6 +72,9 @@
 						nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
+					<div class="more">
+						<a href="" th:href="${c.url}">Read More ...</a>
+					</div>
 				</article>
 				<article th:remove="all">
 					<header>
@@ -79,10 +88,29 @@
 						nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
+					<div class="more">
+						<a href="" th:href="${c.url}">Read More ...</a>
+					</div>
 				</article>
+				<div class="pagination pagination-centered" th:include="fragments/pagination::${page.pagination}">
+					<ul>
+						<li><a href="#">Prev</a></li>
+						<li class="active">
+							<a href="#">1</a>
+						</li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li class="disabled"><a href="#">...</a></li>
+						<li><a href="#">22</a></li>
+						<li><a href="#">23</a></li>
+						<li><a href="#">24</a></li>
+						<li><a href="#">Next</a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="sidemenu span3 hidden-phone">
-				<div class="menus">
+				<div class="menus" th:include="fragments/menus::menus">
 					<div class="menu profile">
 						<img
 							src="https://twimg0-a.akamaihd.net/profile_images/769940966/226710936a3042d473708005333d57118c925cac_normal.png" />
