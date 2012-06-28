@@ -35,6 +35,8 @@ class SlideHtmlSerializerTest {
 		String actual = "# hogehoge\n"
 		String expected = "<section><h1>hogehoge</h1></section>"
 		assert expected == toHtml(actual)
+		assert "hogehoge" == this.target.title
+		assert 1 == this.target.pages
 	}
 
 	@Test
@@ -42,6 +44,8 @@ class SlideHtmlSerializerTest {
 		String actual = "# hogehoge\n###mogemoge\n"
 		String expected = "<section><h1>hogehoge</h1><h3>mogemoge</h3></section>"
 		assert expected == toHtml(actual)
+		assert "hogehoge" == this.target.title
+		assert 1 == this.target.pages
 	}
 
 	@Test
@@ -50,6 +54,8 @@ class SlideHtmlSerializerTest {
 		String expected = "<section><h1>hogehoge</h1><p>mogemoge</p></section>" +
 				"<section><h2>piropiro</h2></section>"
 		assert expected == toHtml(actual)
+		assert "hogehoge" == this.target.title
+		assert 2 == this.target.pages
 	}
 
 	@Test
@@ -62,5 +68,7 @@ class SlideHtmlSerializerTest {
   <li>ccc</li>
 </ul></section>"""
 		assert expected == toHtml(actual)
+		assert "hogehoge" == this.target.title
+		assert 2 == this.target.pages
 	}
 }
