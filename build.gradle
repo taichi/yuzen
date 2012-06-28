@@ -25,14 +25,14 @@ dependencies {
 	// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
 	// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
 	compile 'xerces:xercesImpl:2.10.0'
-	
-	compile 'org.eclipse.jgit:org.eclipse.jgit:1.+'
+
+	compile 'org.eclipse.jgit:org.eclipse.jgit:2.+'
 	compile 'com.google.guava:guava:12.+'
 	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 
 	compile 'org.lesscss:lesscss:1.3.+'
-	
+
 	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
 	[
 		'jetty-server',
@@ -41,7 +41,7 @@ dependencies {
 	].each {
 		providedCompile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 	}
-	
+
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 
 	testCompile 'junit:junit:4.+'
@@ -50,9 +50,7 @@ dependencies {
 	// http://www.gebish.org/manual/current/build-integrations.html#gradle
 }
 
-buildscript {
-	repositories { mavenCentral() }
-}
+buildscript { repositories { mavenCentral() } }
 
 sourceSets {
 	main {
@@ -98,7 +96,6 @@ eclipse {
 				} each { it.sourcePath = ref }
 			}
 			withXml {
-				// for tailing classpath container
 				def n = it.asNode()
 				def gp = [
 					'GROOVY_SUPPORT',
@@ -106,10 +103,9 @@ eclipse {
 				]
 				n.children().removeAll { gp.contains(it.@path) }
 
-				// gradleApi has there entries
-				//gp.each {
-				//	n.appendNode 'classpathentry', [kind: 'con', path: it]
-				//}
+				gp.each {
+					n.appendNode 'classpathentry', [kind: 'con', path: it]
+				}
 			}
 		}
 	}
