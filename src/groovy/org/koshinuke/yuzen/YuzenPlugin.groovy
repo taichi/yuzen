@@ -11,6 +11,7 @@ import org.koshinuke.yuzen.gradle.DefaultContentsTask;
 import org.koshinuke.yuzen.gradle.ContentsTask;
 import org.koshinuke.yuzen.gradle.InitTemplateTask;
 import org.koshinuke.yuzen.gradle.LessCompile;
+import org.koshinuke.yuzen.gradle.SlideTask;
 import org.koshinuke.yuzen.gradle.StartServerTask;
 
 
@@ -42,7 +43,7 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
 		}
 		blog.description = "make static blog"
-		blog.dependsOn 'lessBlog', 'jsBlog'
+		blog.dependsOn 'lessBlog', 'jsBlog', 'paging'
 
 		addRule(project, 'less', "compile less to css") { name, task ->
 			def newone = project.tasks.add name, LessCompile
@@ -51,14 +52,21 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.destinationDir project.file("$task.destinationDir/css")
 		}
 
-		addRule(project, 'js', 'copy js from template') { name, task ->
-			def newone = project.tasks.add name, Copy
-			newone.from "$task.templatePrefix/js"
-			newone.into "$task.destinationDir/js"
-		}
+		addCopyRule(project, 'js')
+		addCopyRule(project, 'css')
+		addCopyRule(project, 'assets')
 
 		def paging = project.tasks.add 'paging', BlogPagingTask
 		paging.description = "make static blog pagination files"
+
+		def slide = project.tasks.add 'slide', SlideTask
+		addRule(project, 'init', 'init Template') { name, task ->
+			def newone = project.tasks.add name, InitTemplateTask
+			newone.templateName = slide.name
+			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
+		}
+		slide.description = "make html slide"
+		slide.dependsOn 'jsSlide', 'cssSlide', 'assetsSlide'
 
 		project.tasks.withType(ContentsTask) {
 			it.conventionMapping.contents = {
@@ -82,6 +90,14 @@ class YuzenPlugin implements Plugin<Project> {
 			if(task != null) {
 				closure(name, task)
 			}
+		}
+	}
+
+	def addCopyRule(Project project, String resource) {
+		addRule(project, resource, 'copy $resource from template') { name, task ->
+			def newone = project.tasks.add name, Copy
+			newone.from "$task.templatePrefix/$resource"
+			newone.into "$task.destinationDir/$resource"
 		}
 	}
 }
