@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title th:text="${slide.title}">Slide Title</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style"
+	content="black-translucent" />
+<link
+	href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic'
+	rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/print.css" type="text/css"
+	media="print">
+<link rel="stylesheet" href="lib/zenburn.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="state-background"></div>
+		<div class="slides" th:utext="${slide.sections}">
+			<section th:remove="all">
+				<h2>たいとる</h2>
+			</section>
+			<section th:remove="all">
+				<h3>名前</h3>
+				<p>自己紹介</p>
+			</section>
+			<section th:remove="all">
+				<h2>アジェンダ</h2>
+				<ul>
+					<li>ほげ</li>
+					<li>ふが</li>
+					<li>もげ</li>
+					<li>ぴろ</li>
+				</ul>
+			</section>
+			<section th:remove="all">
+				<h2>御清聴有難うございました</h2>
+			</section>
+		</div>
+		<aside class="controls">
+			<a class="left" href="#">&#x25C4;</a> <a class="right" href="#">&#x25BA;</a>
+			<a class="up" href="#">&#x25B2;</a> <a class="down" href="#">&#x25BC;</a>
+		</aside>
+		<div class="progress">
+			<span></span>
+		</div>
+	</div>
+	<script src="lib/highlight.js"></script>
+	<script src="lib/log.js"></script>
+	<script src="lib/classList.js"></script>
+	<script src="js/reveal.js"></script>
+	<script>
+		var query = {};
+		location.search.replace(/[A-Z0-9]+?=(\w*)/gi, function(a) {
+			query[a.split('=').shift()] = a.split('=').pop();
+		});
+		Reveal.initialize({
+			// Display controls in the bottom right corner
+			controls : true,
+
+			// Display a presentation progress bar
+			progress : true,
+
+			// If true; each slide will be pushed to the browser history
+			history : true,
+
+			// Loops the presentation, defaults to false
+			loop : false,
+
+			// Flags if mouse wheel navigation should be enabled
+			mouseWheel : true,
+
+			// Apply a 3D roll to links on hover
+			rollingLinks : true,
+
+			// UI style
+			theme : query.theme || 'default', // default/neon
+
+			// Transition style
+			transition : query.transition || 'default' // default/cube/page/concave/linear(2d)
+		});
+	</script>
+</body>
+</html>
