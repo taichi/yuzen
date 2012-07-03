@@ -1,21 +1,19 @@
-package org.koshinuke.yuzen;
+package org.koshinuke.yuzen
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
+import groovy.xml.XmlUtil
 
-import groovy.xml.XmlUtil;
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
-import java.io.File
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jgit.util.FileUtils;
+import org.eclipse.jgit.util.FileUtils
 import org.gradle.api.Project
-import org.gradle.api.Task;
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.file.PathEventListener
-import org.koshinuke.yuzen.gradle.DefaultContentsTask;
+import org.koshinuke.yuzen.gradle.DefaultContentsTask
 
 
 /**
@@ -191,5 +189,16 @@ class YuzenPluginTest {
 		assert paging.getDestinationDir() != null
 
 		paging.execute()
+	}
+
+	@Test
+	void initTemplate() {
+		def init = project.initblog
+		init.fromTree = {
+			project.fileTree('_templates/', {})
+		}
+		init.execute()
+		def f = new File(project.projectDir, "_templates/page.html")
+		assert f.exists()
 	}
 }

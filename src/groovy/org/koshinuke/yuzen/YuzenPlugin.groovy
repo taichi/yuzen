@@ -1,18 +1,18 @@
 package org.koshinuke.yuzen
 
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Copy;
+import org.gradle.api.tasks.Copy
 import org.koshinuke.yuzen.github.GitHubPluginExtension
 import org.koshinuke.yuzen.gradle.BlogPagingTask
-import org.koshinuke.yuzen.gradle.BlogPluginExtension;
-import org.koshinuke.yuzen.gradle.DefaultContentsTask;
-import org.koshinuke.yuzen.gradle.ContentsTask;
-import org.koshinuke.yuzen.gradle.InitTemplateTask;
-import org.koshinuke.yuzen.gradle.LessCompile;
-import org.koshinuke.yuzen.gradle.SlideTask;
-import org.koshinuke.yuzen.gradle.StartServerTask;
+import org.koshinuke.yuzen.gradle.BlogPluginExtension
+import org.koshinuke.yuzen.gradle.ContentsTask
+import org.koshinuke.yuzen.gradle.DefaultContentsTask
+import org.koshinuke.yuzen.gradle.InitTemplateTask
+import org.koshinuke.yuzen.gradle.LessCompile
+import org.koshinuke.yuzen.gradle.SlideTask
+import org.koshinuke.yuzen.gradle.StartServerTask
 
 
 
@@ -29,7 +29,7 @@ class YuzenPlugin implements Plugin<Project> {
 		project.extensions.create('github', GitHubPluginExtension, project)
 		project.extensions.create('blog', BlogPluginExtension, project)
 
-		addRule(project, 'start', 'start Jetty of a task.') { name, task ->
+		addRule(project, 'start', 'start Jetty of a task.') { base, name, task ->
 			def newone = project.tasks.add name, StartServerTask
 			newone.dependsOn task
 			newone.rootDir = task.destinationDir
@@ -37,15 +37,16 @@ class YuzenPlugin implements Plugin<Project> {
 		}
 
 		def blog = project.tasks.add 'blog', DefaultContentsTask
-		addRule(project, 'init', 'init Template') { name, task ->
+
+		addRule(project, 'init', 'init Template') { base, name, task ->
 			def newone = project.tasks.add name, InitTemplateTask
-			newone.templateName = blog.name
+			newone.templateName = base
 			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
 		}
 		blog.description = "make static blog"
 		blog.dependsOn 'lessBlog', 'jsBlog', 'paging'
 
-		addRule(project, 'less', "compile less to css") { name, task ->
+		addRule(project, 'less', "compile less to css") { base, name, task ->
 			def newone = project.tasks.add name, LessCompile
 			newone.compress true
 			newone.source project.file("$task.templatePrefix/less/main.less")
@@ -60,11 +61,6 @@ class YuzenPlugin implements Plugin<Project> {
 		paging.description = "make static blog pagination files"
 
 		def slide = project.tasks.add 'slide', SlideTask
-		addRule(project, 'init', 'init Template') { name, task ->
-			def newone = project.tasks.add name, InitTemplateTask
-			newone.templateName = slide.name
-			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
-		}
 		slide.description = "make html slide"
 		slide.dependsOn 'jsSlide', 'cssSlide', 'assetsSlide'
 
@@ -88,13 +84,13 @@ class YuzenPlugin implements Plugin<Project> {
 				base.equalsIgnoreCase(it.name)
 			}
 			if(task != null) {
-				closure(name, task)
+				closure(base, name, task)
 			}
 		}
 	}
 
 	def addCopyRule(Project project, String resource) {
-		addRule(project, resource, 'copy $resource from template') { name, task ->
+		addRule(project, resource, 'copy $resource from template') { base, name, task ->
 			def newone = project.tasks.add name, Copy
 			newone.from "$task.templatePrefix/$resource"
 			newone.into "$task.destinationDir/$resource"
