@@ -2,19 +2,17 @@ package org.koshinuke.yuzen.gradle
 
 
 
-import java.io.File;
-
-import org.gradle.api.file.ConfigurableFileTree;
-import org.gradle.api.file.FileVisitor;
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.ConfigureUtil;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+import org.gradle.util.ConfigureUtil
+import org.thymeleaf.TemplateEngine
+import org.thymeleaf.context.Context
 import org.thymeleaf.resourceresolver.FileResourceResolver
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers
 import org.thymeleaf.templateresolver.TemplateResolver
@@ -37,9 +35,11 @@ class BlogPagingTask extends ConventionTask implements ContentsTask {
 	File destinationDir
 
 	@Input
-	String pagingPrefix = "page"
+	String pagingPrefix
 
-	def entriesFilter = { include 'entry/**/*.md' }
+	def entryDirName
+
+	def entriesFilter = { include "$entryDirName/**/*.md" }
 
 	BlogPagingTask() {
 		this.group = BasePlugin.BUILD_GROUP

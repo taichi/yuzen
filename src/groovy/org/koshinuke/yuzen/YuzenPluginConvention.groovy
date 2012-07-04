@@ -1,7 +1,7 @@
 package org.koshinuke.yuzen
 
 
-import org.gradle.api.Project;
+import org.gradle.api.Project
 
 /**
  * @author taichi
@@ -13,6 +13,10 @@ class YuzenPluginConvention {
 	String templatePrefix = '_templates'
 	String templateSuffix = ".html"
 	String destinationDirName = 'yuzen'
+
+	String pagingPrefix = 'page'
+	String entryDirName = 'entry'
+	String entryPattern = '%1$tY/%1$tm/%1$td/%2$s.md'
 
 	YuzenPluginConvention(Project project) {
 		this.project = project

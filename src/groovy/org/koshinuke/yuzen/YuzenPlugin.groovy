@@ -12,6 +12,7 @@ import org.koshinuke.yuzen.gradle.ContentsTask
 import org.koshinuke.yuzen.gradle.DefaultContentsTask
 import org.koshinuke.yuzen.gradle.InitTemplateTask
 import org.koshinuke.yuzen.gradle.LessCompile
+import org.koshinuke.yuzen.gradle.NewEntryTask;
 import org.koshinuke.yuzen.gradle.SlideTask
 import org.koshinuke.yuzen.gradle.StartServerTask
 
@@ -43,7 +44,7 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
 		}
 
-		addBlogTasks(project)
+		addBlogTasks(project, ypc)
 		addSlideTasks(project)
 
 		project.tasks.withType(ContentsTask) {
@@ -54,25 +55,6 @@ class YuzenPlugin implements Plugin<Project> {
 			it.conventionMapping.templateSuffix = { ypc.templateSuffix }
 			it.conventionMapping.destinationDir = { ypc.destinationDir }
 		}
-	}
-
-	def addBlogTasks(Project project) {
-		def blog = project.tasks.add 'blog', DefaultContentsTask
-		blog.description = "make static blog"
-		addLessTask(project, blog)
-		addCopyTask(project, blog, 'js')
-
-		def paging = project.tasks.add 'paging', BlogPagingTask
-		paging.description = "make static blog pagination files"
-		blog.dependsOn paging
-	}
-
-	def addSlideTasks(Project project) {
-		def slide = project.tasks.add 'slide', SlideTask
-		slide.description = "make html slide"
-		addCopyTask(project, slide, 'js')
-		addCopyTask(project, slide, 'css')
-		addCopyTask(project, slide, 'assets')
 	}
 
 	def addRule(Project project, String prefix, String desc, Closure closure) {
@@ -90,6 +72,34 @@ class YuzenPlugin implements Plugin<Project> {
 		}
 	}
 
+	def addBlogTasks(Project project, YuzenPluginConvention ypc) {
+		def blog = project.tasks.add 'blog', DefaultContentsTask
+		blog.description = "make static blog"
+		addLessTask(project, blog)
+		addCopyTask(project, blog, 'js')
+
+		def paging = project.tasks.add 'paging', BlogPagingTask
+		paging.description = "make static blog pagination files"
+		paging.conventionMapping.entryDirName = { ypc.entryDirName }
+		paging.conventionMapping.pagingPrefix = { ypc.pagingPrefix }
+
+		blog.dependsOn paging
+
+		def post = project.tasks.add 'post', NewEntryTask
+		post.conventionMapping.title = {
+			def key = "title"
+			if(project.hasProperty(key)) {
+				return project.property(key)
+			}
+			return "newEntry"
+		}
+		post.conventionMapping.newEntry = {
+			def name = String.format("${ypc.entryDirName}/${ypc.entryPattern}", new Date(), post.getTitle())
+			return new File(ypc.contentsDir, name)
+		}
+		post.description = "make new post. example > gradlew post -Ptitle=[new entry title]"
+	}
+
 	def addLessTask(Project project, Task task) {
 		def newone = project.tasks.add "${task.name}less", LessCompile
 		newone.description = "compile less to css"
@@ -97,6 +107,14 @@ class YuzenPlugin implements Plugin<Project> {
 		newone.source project.file("$task.templatePrefix/less/main.less")
 		newone.destinationDir project.file("$task.destinationDir/css")
 		task.dependsOn newone
+	}
+
+	def addSlideTasks(Project project) {
+		def slide = project.tasks.add 'slide', SlideTask
+		slide.description = "make html slide"
+		addCopyTask(project, slide, 'js')
+		addCopyTask(project, slide, 'css')
+		addCopyTask(project, slide, 'assets')
 	}
 
 	def addCopyTask(Project project, Task task, String resource) {

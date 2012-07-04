@@ -188,6 +188,12 @@ class YuzenPluginTest {
 		assert paging.getTemplatePrefix() != null
 		assert paging.getTemplateSuffix() != null
 		assert paging.getDestinationDir() != null
+		assert paging.pagingPrefix == 'page'
+		assert paging.entryDirName == 'entry'
+
+		def s = 'pagepage'
+		project.yuzen.pagingPrefix = s
+		assert paging.pagingPrefix == s
 
 		paging.execute()
 	}
@@ -214,4 +220,5 @@ class YuzenPluginTest {
 		project.plugins.apply(ProjectReportsPlugin)
 		project.tasks.taskReport.execute()
 	}
+
 }
