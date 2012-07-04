@@ -1,23 +1,22 @@
-package org.koshinuke.yuzen.reload;
+package org.koshinuke.yuzen.reload
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.websocket.WebSocket.Connection;
+import org.eclipse.jetty.server.Connector
+import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.websocket.WebSocket
 import org.eclipse.jetty.websocket.WebSocketClient
 import org.eclipse.jetty.websocket.WebSocketClientFactory
-import org.junit.After;
+import org.eclipse.jetty.websocket.WebSocket.Connection
+import org.junit.After
 import org.junit.AfterClass
-import org.junit.Before;
+import org.junit.Before
 import org.junit.BeforeClass
-import org.junit.Test;
-import org.koshinuke.yuzen.reload.PaththroughHandler;
+import org.junit.Test
 
 /**
  * @author taichi
@@ -82,7 +81,7 @@ class PaththroughHandlerTest {
 		Connection c = future.get(1, TimeUnit.SECONDS)
 		c.sendMessage(expected)
 		c.close()
-		assert latch.await(1, TimeUnit.SECONDS)
+		assert latch.await(3, TimeUnit.SECONDS)
 		assert 1000 == code
 		assert expected == msg
 	}
@@ -114,7 +113,7 @@ class PaththroughHandlerTest {
 
 		connects.each { it.close() }
 
-		assert latch.await(1, TimeUnit.SECONDS)
+		assert latch.await(3, TimeUnit.SECONDS)
 		assert [expected, expected]== msg
 	}
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit
 import org.eclipse.jgit.util.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.ProjectReportsPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
@@ -200,5 +201,17 @@ class YuzenPluginTest {
 		init.execute()
 		def f = new File(project.projectDir, "_templates/page.html")
 		assert f.exists()
+	}
+
+	/**
+	 * Rule で追加されるTaskに対する依存性があると、gradle tasksでイテレート中に、project.tasksを変更する事になるので、
+	 * ConcurrentModificationException が送出される。<br/>
+	 * 問題が解決されるまでは、Ruleで生成されるTaskへ依存性を持つTaskを記述してはならない。
+	 * @see http://issues.gradle.org/browse/GRADLE-2023
+	 */
+	@Test
+	void GRADLE_2023() {
+		project.plugins.apply(ProjectReportsPlugin)
+		project.tasks.taskReport.execute()
 	}
 }
