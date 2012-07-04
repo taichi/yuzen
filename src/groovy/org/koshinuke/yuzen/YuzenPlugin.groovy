@@ -15,6 +15,7 @@ import org.koshinuke.yuzen.gradle.LessCompile
 import org.koshinuke.yuzen.gradle.NewEntryTask;
 import org.koshinuke.yuzen.gradle.SlideTask
 import org.koshinuke.yuzen.gradle.StartServerTask
+import org.koshinuke.yuzen.util.FileUtil;
 
 
 
@@ -87,17 +88,31 @@ class YuzenPlugin implements Plugin<Project> {
 
 		def post = project.tasks.add 'post', NewEntryTask
 		post.conventionMapping.title = {
-			def key = "title"
-			if(project.hasProperty(key)) {
-				return project.property(key)
-			}
-			return "newEntry"
+			getInput(project, 'title', 'newEntry')
 		}
 		post.conventionMapping.newEntry = {
 			def name = String.format("${ypc.entryDirName}/${ypc.entryPattern}", new Date(), post.getTitle())
 			return new File(ypc.contentsDir, name)
 		}
-		post.description = "make new post. example > gradlew post -Ptitle=[new entry title]"
+		post.description = "make new post. example -> gradlew post -Ptitle=HelloWorld"
+
+		def page = project.tasks.add 'page', NewEntryTask
+		page.conventionMapping.title = {
+			def n = page.getNewEntry().name
+			return FileUtil.removeExtension(n)
+		}
+		page.conventionMapping.newEntry = {
+			def name = getInput(project, "pagename", "newPage")
+			return new File(ypc.contentsDir, name)
+		}
+		page.description = "make new page. example -> gradlew page -Ppagename=pages/profile.md"
+	}
+
+	def getInput(project, key, defaultValue) {
+		if(project.hasProperty(key)) {
+			return project.property(key)
+		}
+		return defaultValue
 	}
 
 	def addLessTask(Project project, Task task) {

@@ -34,4 +34,16 @@ class NewEntryTaskTest {
 		assert "${project.title}.md" == list[0].name
 		assert 0 < list[0].text.length()
 	}
+
+	@Test
+	void newPage() {
+		project.pagename = "pages/profile.md"
+		project.tasks.page.execute()
+		def tree = project.fileTree (project.yuzen.contentsDir, { include '**/*.md' })
+		def list = new ArrayList<File>(tree.filter { it.isFile() }.files)
+		assert 1 == list.size()
+		assert 0 < list[0].text.length()
+		assert "profile" == project.tasks.page.getTitle()
+		assert "profile.md" == list[0].name
+	}
 }
