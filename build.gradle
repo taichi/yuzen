@@ -43,8 +43,14 @@ dependencies {
 	}
 
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
+	compile 'commons-net:commons-net:3.+'
 
 	testCompile 'junit:junit:4.+'
+	testCompile ('org.apache.ftpserver:ftpserver:1.0.6') {
+		exclude group: 'org.springframework'
+		exclude group: 'log4j'
+		exclude group: 'org.slf4j'
+	}
 	// testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 	// TODO: use geb
 	// http://www.gebish.org/manual/current/build-integrations.html#gradle

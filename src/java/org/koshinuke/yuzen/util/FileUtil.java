@@ -1,5 +1,8 @@
 package org.koshinuke.yuzen.util;
 
+import java.io.File;
+import java.nio.file.Path;
+
 /**
  * @author taichi
  */
@@ -13,4 +16,17 @@ public class FileUtil {
 		}
 		return result;
 	}
+
+	public static String slashify(Path p) {
+		return slashify(p.toString());
+	}
+
+	public static String slashify(String path) {
+		String p = path;
+		if (File.separatorChar != '/') {
+			p = p.replace(File.separatorChar, '/');
+		}
+		return p;
+	}
+
 }
