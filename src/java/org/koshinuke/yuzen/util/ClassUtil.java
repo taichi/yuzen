@@ -5,10 +5,9 @@ package org.koshinuke.yuzen.util;
  */
 public class ClassUtil {
 
-	public static String getPackagePath(Class<?> clazz) {
+	public static String getPackageName(Class<?> clazz) {
 		Package p = clazz.getPackage();
 		String name = "";
-
 		if (p == null) {
 			String s = clazz.getName();
 			int i = s.lastIndexOf('.');
@@ -16,6 +15,11 @@ public class ClassUtil {
 		} else {
 			name = p.getName();
 		}
+		return name;
+	}
+
+	public static String getPackagePath(Class<?> clazz) {
+		String name = getPackageName(clazz);
 		return name.replace('.', '/');
 	}
 

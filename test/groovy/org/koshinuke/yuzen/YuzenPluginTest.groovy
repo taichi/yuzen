@@ -44,9 +44,6 @@ class YuzenPluginTest {
 		f.text = "# ほげほげ\n* ごがごが\n* でででん"
 		f.lastModified = (today - 1).time
 
-		f = this.project.file("_contents/profile.md")
-		f.text = "# profile\n* profile profile"
-
 		f = this.project.file("_contents/moge.markdown")
 		f.text = "zzzz"
 
@@ -98,10 +95,6 @@ class YuzenPluginTest {
 		def dest = project.file("$project.buildDir/yuzen/entry/moge/piro/index.html")
 		assert dest.exists()
 		println dest.text
-
-		def profile = project.file("$project.buildDir/yuzen/profile/index.html")
-		assert profile.exists()
-		println profile.text
 
 		def markdown = project.file("$project.buildDir/yuzen/moge.markdown")
 		assert markdown.exists()
@@ -166,12 +159,11 @@ class YuzenPluginTest {
 	void recentPosts() {
 		def blog = project.blog
 		def expected = [
-			[url:'/profile', title:'profile'],
 			[url:'/entry/L%27Arc%EF%BD%9Een%EF%BD%9ECiel/2011/12/21/%E3%81%94%E3%81%8C', title:'ほげほげ'],
 			[url:'/entry/moge/piro', title:'piro']
 		]
 
-		3.times {
+		2.times {
 			def actual = blog.recentPosts[it]
 			assert expected[it].url == actual.url
 			assert expected[it].title == actual.title

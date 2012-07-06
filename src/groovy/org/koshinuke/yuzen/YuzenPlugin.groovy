@@ -39,14 +39,8 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.templatePrefix = task.templatePrefix
 		}
 
-		addRule(project, 'init', 'init Template') { base, name, task ->
-			def newone = project.tasks.add name, InitTemplateTask
-			newone.templateName = base
-			newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
-		}
-
 		addBlogTasks(project, ypc)
-		addSlideTasks(project)
+		addSlideTasks(project, ypc)
 
 		project.tasks.withType(ContentsTask) {
 			it.conventionMapping.contents = {
@@ -73,7 +67,28 @@ class YuzenPlugin implements Plugin<Project> {
 		}
 	}
 
+	def addInitTask(Project project, YuzenPluginConvention ypc, name) {
+		def newone = project.tasks.add "init$name", InitTemplateTask
+		newone.templateName = name
+		newone.conventionMapping.destinationDir = { project.file("$ypc.templatePrefix") }
+		newone.description = "init $name Template"
+		return newone
+	}
+
 	def addBlogTasks(Project project, YuzenPluginConvention ypc) {
+		Task init = addInitTask(project, ypc, 'blog')
+		NewEntryTask profile = project.tasks.add 'makeProfile', NewEntryTask
+		profile.title = 'Profile'
+		profile.newEntry = new File(ypc.contentsDir, 'profile.md')
+		profile.description = 'make default profile page.'
+		profile << {
+			logger.info(Markers.HELP, "Write your profile to $profile.newEntry.path")
+			logger.info(Markers.HELP, "Then write a new post")
+			logger.info(Markers.HELP, "gradlew post -Ptitle=HelloWorld")
+		}
+
+		init.doLast { profile.execute() }
+
 		def blog = project.tasks.add 'blog', DefaultContentsTask
 		blog.description = "make static blog"
 		addLessTask(project, blog)
@@ -102,13 +117,13 @@ class YuzenPlugin implements Plugin<Project> {
 			return FileUtil.removeExtension(n)
 		}
 		page.conventionMapping.newEntry = {
-			def name = getInput(project, "pagename", "newPage")
+			def name = getInput(project, "pagename", "newPage.md")
 			return new File(ypc.contentsDir, name)
 		}
 		page.description = "make new page. example -> gradlew page -Ppagename=pages/profile.md"
 	}
 
-	def getInput(project, key, defaultValue) {
+	def getInput(Project project, key, defaultValue) {
 		if(project.hasProperty(key)) {
 			return project.property(key)
 		}
@@ -124,7 +139,17 @@ class YuzenPlugin implements Plugin<Project> {
 		task.dependsOn newone
 	}
 
-	def addSlideTasks(Project project) {
+	def addSlideTasks(Project project, YuzenPluginConvention ypc) {
+		Task init = addInitTask(project, ypc, 'slide')
+		NewEntryTask index = project.tasks.add 'defaultSlide', NewEntryTask
+		index.title = 'Slide Title'
+		index.newEntry = new File(ypc.contentsDir, 'index.md')
+		index.description = 'default slide page'
+		index << {
+			logger.info(Markers.HELP, "Write slide to $index.newEntry.path")
+		}
+		init.doLast { index.execute() }
+
 		def slide = project.tasks.add 'slide', SlideTask
 		slide.description = "make html slide"
 		addCopyTask(project, slide, 'js')
