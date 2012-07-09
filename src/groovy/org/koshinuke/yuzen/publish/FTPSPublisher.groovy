@@ -28,7 +28,7 @@ class FTPSPublisher implements Publisher {
 	def String username
 	def String password
 
-	def String dirPrefix
+	def String dirPrefix = "/"
 
 	@Override
 	public void publish(File rootDir) {
@@ -38,7 +38,7 @@ class FTPSPublisher implements Publisher {
 			ftps.connect(this.host)
 			if(ftps.login(this.username, this.password)) {
 				ftps.enterLocalPassiveMode()
-				transferFiles(ftps)
+				transferFiles(ftps, rootDir)
 				ftps.noop()
 				ftps.logout()
 			} else {
@@ -59,12 +59,19 @@ class FTPSPublisher implements Publisher {
 		ftps.setFileType(FTP.BINARY_FILE_TYPE)
 
 		final Path root = rootDir.toPath().toAbsolutePath()
+		if(ftps.changeWorkingDirectory(this.dirPrefix) == false) {
+			throw new IllegalStateException("cannot access to ${dirPrefix}")
+		}
+
+		def concatPath = { dir ->
+			def p = FileUtil.slashify(root.relativize(dir))
+			"${dirPrefix}${p}"
+		}
 		Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
 					@Override
 					public FileVisitResult preVisitDirectory(Path dir,
 					BasicFileAttributes attrs) throws IOException {
-						def p = FileUtil.slashify(root.relativize(dir))
-						def path = "$dirPrefix/$p"
+						def path = concatPath dir
 						LOG.debug(Markers.BOUNDARY, "CWD $path")
 						if(ftps.changeWorkingDirectory(path) == false) {
 							LOG.debug(Markers.BOUNDARY, "MKD $path")
@@ -83,8 +90,7 @@ class FTPSPublisher implements Publisher {
 					@Override
 					public FileVisitResult visitFile(Path file,
 					BasicFileAttributes attrs) throws IOException {
-						def p = FileUtil.slashify(root.relativize(file))
-						def path = "$dirPrefix/$p"
+						def path = concatPath file
 						def local = file.toFile()
 						local.withInputStream {
 							LOG.debug(Markers.BOUNDARY, "STOR $path $file")

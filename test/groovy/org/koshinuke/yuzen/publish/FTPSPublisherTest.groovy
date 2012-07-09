@@ -2,10 +2,98 @@ package org.koshinuke.yuzen.publish;
 
 import static org.junit.Assert.*;
 
+import java.nio.file.Files;
+
+import org.apache.ftpserver.FtpServer
+import org.apache.ftpserver.FtpServerFactory
+import org.apache.ftpserver.ftplet.User
+import org.apache.ftpserver.ftplet.UserManager
+import org.apache.ftpserver.listener.ListenerFactory
+import org.apache.ftpserver.ssl.SslConfigurationFactory
+import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory
+import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor
+import org.apache.ftpserver.usermanager.impl.BaseUser
+import org.apache.ftpserver.usermanager.impl.WritePermission
+import org.eclipse.jgit.util.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.koshinuke.yuzen.publish.ftps.PrefixFileSystemFactory
+
 /**
  * @author taichi
  */
 class FTPSPublisherTest {
-	// TODO boot FTPserver for testing
-	// TODO file transfer testing.
+
+	def tmpDir
+	def ftpDir
+	FtpServer server
+	User user
+
+	@Before
+	void setUp() {
+		this.tmpDir = Files.createTempDirectory("ftps-test").toFile()
+		FtpServerFactory serverFactory = new FtpServerFactory()
+
+		setUpSSL(serverFactory)
+		setUpUsers(serverFactory)
+
+		this.ftpDir = new File(tmpDir, "dataDir")
+		ftpDir.mkdirs()
+		serverFactory.fileSystem = new PrefixFileSystemFactory(ftpDir)
+
+		server = serverFactory.createServer()
+		server.start();
+	}
+
+	protected setUpSSL(FtpServerFactory serverFactory) {
+		ListenerFactory factory = new ListenerFactory()
+		SslConfigurationFactory ssl = new SslConfigurationFactory()
+		// ユニットテスト用の自己署名キーストア
+		ssl.setKeystoreFile(new File("test/resources/ftps.jks"))
+		ssl.setKeystorePassword("password")
+		factory.setSslConfiguration(ssl.createSslConfiguration())
+		//factory.setImplicitSsl(true)
+		serverFactory.addListener("default", factory.createListener())
+	}
+
+	protected setUpUsers(FtpServerFactory serverFactory) {
+		def passwd = new File(tmpDir, "users.properties")
+		passwd.createNewFile()
+		PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory()
+		userManagerFactory.setFile(passwd)
+		userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor())
+		UserManager um = userManagerFactory.createUserManager()
+		serverFactory.userManager = um
+
+		this.user = new BaseUser()
+		user.setName("testUser")
+		user.setPassword("testPass")
+		user.setAuthorities([new WritePermission()])
+		user.setHomeDirectory("testHome")
+		um.save(user)
+	}
+
+	@After
+	void tearDown() {
+		server.stop()
+		FileUtils.delete(this.tmpDir, FileUtils.RECURSIVE)
+	}
+
+	@Test
+	void test() {
+		FTPSPublisher target = new FTPSPublisher()
+		target.host = "localhost"
+		target.username = user.name
+		target.password = user.password
+
+		File root = new File("test/resources/taskconsumer/_contents")
+		target.publish(root)
+
+		File home = new File(this.ftpDir, user.homeDirectory)
+		assert home.exists()
+
+		assert new File(home, "profile.md").exists()
+		assert new File(home, "entry/2012-04-29/staticcontents.md").exists()
+	}
 }
