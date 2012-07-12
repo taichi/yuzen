@@ -1,4 +1,4 @@
-package org.koshinuke.yuzen.publish.ftps;
+package org.koshinuke.yuzen.ftpserver;
 
 import java.io.File;
 

@@ -13,6 +13,7 @@ import org.koshinuke.yuzen.gradle.DefaultContentsTask
 import org.koshinuke.yuzen.gradle.InitTemplateTask
 import org.koshinuke.yuzen.gradle.LessCompile
 import org.koshinuke.yuzen.gradle.NewEntryTask;
+import org.koshinuke.yuzen.gradle.PublishTask
 import org.koshinuke.yuzen.gradle.SlideTask
 import org.koshinuke.yuzen.gradle.StartServerTask
 import org.koshinuke.yuzen.util.FileUtil;
@@ -50,6 +51,9 @@ class YuzenPlugin implements Plugin<Project> {
 			it.conventionMapping.templateSuffix = { ypc.templateSuffix }
 			it.conventionMapping.destinationDir = { ypc.destinationDir }
 		}
+
+		def publish = project.tasks.add 'publish', PublishTask
+		publish.conventionMapping.rootDir = { ypc.destinationDir }
 	}
 
 	def addRule(Project project, String prefix, String desc, Closure closure) {
