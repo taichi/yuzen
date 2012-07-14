@@ -108,6 +108,8 @@ eclipse {
 					'GROOVY_DSL_SUPPORT'
 				]
 				n.children().removeAll { gp.contains(it.@path) }
+				// 単純にsortするとgradle周りのアレソレが高い優先順位に移動しがち
+				// n.children().sort { it.@path.split('/').last() }
 
 				gp.each {
 					n.appendNode 'classpathentry', [kind: 'con', path: it]
