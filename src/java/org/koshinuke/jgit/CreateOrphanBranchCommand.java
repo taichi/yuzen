@@ -2,6 +2,7 @@ package org.koshinuke.jgit;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 
 	String name;
 
-	boolean force;
-
 	String startPoint = null;
 
 	RevCommit startCommit;
 
-	List<String> toBeDeleted;
+	List<String> conflicts = Collections.emptyList();
+
+	List<String> toBeDeleted = Collections.emptyList();
 
 	public CreateOrphanBranchCommand(@Nonnull Repository repository) {
 		super(repository);
@@ -55,12 +56,6 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 	public CreateOrphanBranchCommand setName(@Nonnull String name) {
 		this.checkCallable();
 		this.name = name;
-		return this;
-	}
-
-	public CreateOrphanBranchCommand setForce(boolean force) {
-		this.checkCallable();
-		this.force = force;
 		return this;
 	}
 
@@ -79,7 +74,9 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 	}
 
 	@Override
-	public Ref call() throws GitAPIException {
+	public Ref call() throws GitAPIException, RefNotFoundException,
+			CheckoutConflictException, InvalidRefNameException,
+			RefAlreadyExistsException {
 		this.checkCallable();
 		try {
 			this.processOptions();
@@ -119,7 +116,8 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 		return Constants.R_HEADS + this.name;
 	}
 
-	protected void checkoutStartPoint() throws GitAPIException, IOException {
+	protected void checkoutStartPoint() throws GitAPIException,
+			RefNotFoundException, CheckoutConflictException, IOException {
 		ObjectId sp = this.getStartPoint();
 		if (sp != null) {
 			this.checkout(sp);
@@ -142,7 +140,7 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 	}
 
 	protected void checkout(ObjectId fromId) throws GitAPIException,
-			IOException {
+			CheckoutConflictException, IOException {
 		RevWalk rw = new RevWalk(this.getRepository());
 		try {
 			Ref headRef = this.repo.getRef(Constants.HEAD);
@@ -158,17 +156,22 @@ public class CreateOrphanBranchCommand extends GitCommand<Ref> {
 	}
 
 	protected void checkout(RevTree headTree, RevTree fromTree)
-			throws GitAPIException, IOException {
+			throws GitAPIException, CheckoutConflictException, IOException {
+		// DirCacheCheckout free lock of DirCache
 		DirCacheCheckout dco = new DirCacheCheckout(this.getRepository(),
 				headTree, this.repo.lockDirCache(), fromTree);
 		dco.setFailOnConflict(true);
 		try {
-			if (dco.checkout() == false) {
-				this.toBeDeleted = dco.getToBeDeleted();
-			}
+			dco.checkout();
+			this.toBeDeleted = dco.getToBeDeleted();
 		} catch (org.eclipse.jgit.errors.CheckoutConflictException e) {
+			this.conflicts = dco.getConflicts();
 			throw new CheckoutConflictException(dco.getConflicts(), e);
 		}
+	}
+
+	public List<String> getConflicts() {
+		return this.conflicts;
 	}
 
 	public List<String> getToBeDeleted() {
