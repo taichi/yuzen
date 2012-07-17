@@ -3,6 +3,8 @@ package org.koshinuke.yuzen.file;
 import static org.junit.Assert.*;
 
 import java.io.File
+import java.nio.file.Files;
+import java.nio.file.Path
 import java.nio.file.StandardWatchEventKinds
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -19,18 +21,14 @@ import org.junit.Test
 class PathSentinelTest {
 
 	PathSentinel target
-	File rootDir
+	Path rootDir
 
 	@Before
 	void setUp() {
-		this.rootDir = new File('build/sentinel')
-		if(rootDir.exists()) {
-			FileUtils.delete(this.rootDir, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
-		}
-		assert this.rootDir.mkdirs()
+		this.rootDir = Files.createTempDirectory("sentinel")
 		this.target = new PathSentinel()
 
-		this.target.watchTree(this.rootDir.toPath())
+		this.target.watchTree(this.rootDir)
 
 		this.target.startUp()
 	}
@@ -47,7 +45,7 @@ class PathSentinelTest {
 					modified: {
 					}
 				] as PathEventListener)
-		def subDir = new File(this.rootDir,"aaa/bbb")
+		def subDir = new File(this.rootDir.toFile(), "aaa/bbb")
 		subDir.mkdirs()
 		assert latch.await(50, TimeUnit.MILLISECONDS)
 
@@ -67,7 +65,7 @@ class PathSentinelTest {
 			latch.countDown()
 		} as PathEventListener)
 
-		def subDir = new File(this.rootDir, "aaa")
+		def subDir = new File(this.rootDir.toFile(), "aaa")
 		subDir.mkdirs()
 		subDir.deleteDir()
 
@@ -85,5 +83,6 @@ class PathSentinelTest {
 	@After
 	void tearDown() {
 		this.target.shutdown()
+		FileUtils.delete(this.rootDir.toFile(), FileUtils.RECURSIVE)
 	}
 }
