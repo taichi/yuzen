@@ -2,12 +2,15 @@ package org.koshinuke.yuzen.gradle;
 
 import static org.junit.Assert.*;
 
+import org.eclipse.jgit.api.Git
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before;
 import org.junit.Test
+import org.koshinuke.jgit.GGitUtil;
 import org.koshinuke.yuzen.TestData
+import org.koshinuke.yuzen.github.GhPagesTestingSupport
 import org.koshinuke.yuzen.publish.FTPSTestingSupport;
 
 /**
@@ -16,42 +19,69 @@ import org.koshinuke.yuzen.publish.FTPSTestingSupport;
 class PublishTaskTest {
 	Project project
 
-	FTPSTestingSupport ftps
-
 	@Before
 	void setUp() {
 		this.project = ProjectBuilder.builder().build()
 		TestData.overwrite(this.project.ext)
 		project.apply plugin: 'yuzen'
-
-		this.ftps = new FTPSTestingSupport()
-		this.ftps.initialize()
 	}
 
 	@After
 	void tearDown() {
-		this.ftps.dispose()
 	}
 
 	@Test
-	void publish() {
-		this.project.yuzen.publish {
-			ftps {
-				host = "localhost"
-				username = ftps.user.name
-				password = ftps.user.password
+	void ftps() {
+		def support = new FTPSTestingSupport()
+		try {
+			support.initialize()
+
+			this.project.yuzen.publish {
+				ftps {
+					host = "localhost"
+					username = support.user.name
+					password = support.user.password
+				}
 			}
+
+			File root = new File("test/resources/taskconsumer/_contents")
+			def publish = project.tasks.publish
+			publish.rootDir = root
+			publish.execute()
+
+			File home = new File(support.ftpDir, support.user.homeDirectory)
+			assert home.exists()
+
+			assert new File(home, "profile.md").exists()
+			assert new File(home, "entry/2012-04-29/staticcontents.md").exists()
+		} finally {
+			support.dispose()
 		}
+	}
 
-		File root = new File("test/resources/taskconsumer/_contents")
-		def publish = project.tasks.publish
-		publish.rootDir = root
-		publish.execute()
+	@Test
+	void ghpages() {
+		def support = new GhPagesTestingSupport()
+		try {
+			support.initialize()
 
-		File home = new File(this.ftps.ftpDir, this.ftps.user.homeDirectory)
-		assert home.exists()
+			this.project.yuzen.publish {
+				ghpages	repoURI : new File(support.repoDir, ".git").toURI().toASCIIString()
+			}
 
-		assert new File(home, "profile.md").exists()
-		assert new File(home, "entry/2012-04-29/staticcontents.md").exists()
+			File root = new File("test/resources/taskconsumer/_contents")
+			def publish = project.tasks.publish
+			publish.rootDir = root
+			publish.execute()
+
+			Git g = Git.open(new File(support.repoDir, ".git"))
+			GGitUtil.handle(g) {
+				g.checkout().setName("gh-pages").call()
+				assert new File(support.repoDir, "profile.md").exists()
+				assert new File(support.repoDir, "entry/2012-04-29/staticcontents.md").exists()
+			}
+		} finally {
+			support.dispose()
+		}
 	}
 }

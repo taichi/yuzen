@@ -12,9 +12,11 @@ import java.nio.file.Path;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref
-import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.transport.URIish
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.koshinuke.jgit.CreateOrphanBranchCommand
 import org.koshinuke.jgit.GGitUtil;
+import org.koshinuke.jgit.PassphraseProvider
 import org.koshinuke.yuzen.publish.Publisher
 
 import com.google.common.io.Files
@@ -30,8 +32,12 @@ class GitHubPagesPublisher implements Publisher {
 
 	def updateMessage = DEFAULT_UPDATEMESSAGE
 	def String repoURI
-	def CredentialsProvider credentials
 	def File workingDir
+
+	def String username
+	def String password
+
+	def credentials = [null : { new PassphraseProvider() },  'https': { new UsernamePasswordCredentialsProvider(this.username, this.password) }]
 
 	@Override
 	public void publish(File rootDir) {
@@ -43,7 +49,7 @@ class GitHubPagesPublisher implements Publisher {
 			copyDirs(rootDir, dir)
 			git.add().addFilepattern(".").call()
 			git.commit().setMessage(getUpdateMessage()).call()
-			git.push().add(ref).setCredentialsProvider(this.credentials).call()
+			git.push().add(ref).setCredentialsProvider(detectCredentialsProvider()).call()
 		}
 	}
 
@@ -77,5 +83,14 @@ class GitHubPagesPublisher implements Publisher {
 			to.parentFile.mkdirs()
 			Files.copy(it, to)
 		}
+	}
+
+	def detectCredentialsProvider() {
+		URIish uri = new URIish(this.repoURI)
+		def c = credentials[uri.scheme]
+		if(c != null) {
+			return c()
+		}
+		return null
 	}
 }

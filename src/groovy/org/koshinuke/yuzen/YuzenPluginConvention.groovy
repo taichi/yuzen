@@ -38,6 +38,6 @@ class YuzenPluginConvention {
 	}
 
 	def publish(Closure configureClosure) {
-		ConfigureUtil.configure(configureClosure, new DefaultPublisherHandler(getPublishers()))
+		ConfigureUtil.configure(configureClosure, new DefaultPublisherHandler(this.project, getPublishers()))
 	}
 }

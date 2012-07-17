@@ -24,7 +24,6 @@ class PublishTask extends ConventionTask {
 		def dir = getRootDir()
 		logger.info("begin publish $dir")
 		def l = project.yuzen.publishers
-		println l
 		if(dir.isDirectory()) {
 			project.yuzen.publishers*.publish(dir)
 		} else {
