@@ -11,7 +11,11 @@ class TestData {
 		ClassLoader cl = TestData.class.classLoader
 		URL url = cl.getResource('test.properties');
 		props = new Properties()
-		url.withInputStream { props.load(it) }
+		if(url == null) {
+			System.err.println("test.properties doesn't exist");
+		} else {
+			url.withInputStream { props.load(it) }
+		}
 
 		props.each {
 			if(it.key.startsWith('systemProp')) {

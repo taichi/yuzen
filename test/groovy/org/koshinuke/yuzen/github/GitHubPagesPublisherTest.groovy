@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.nio.file.Files
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.util.FileUtils
 import org.junit.After;
 import org.junit.Before
 import org.junit.Test;
@@ -39,18 +40,10 @@ class GitHubPagesPublisherTest {
 
 		Git g = Git.init().setDirectory(this.repoDir).call()
 		GGitUtil.handle(g) {
-			["aaa", "bbb", "ccc"].each {
-				def f = new File(repoDir, "${it}.txt")
-				f.text = it
-			}
+			makeFiles(repoDir, ["aaa", "bbb", "ccc"])
+
 			g.add().addFilepattern(".").call()
 			g.commit().setMessage("commit message").call()
-		}
-
-		["ccc", "ddd"].each {
-			def f = new File(rootDir, "aaa/bbb/${it}.txt")
-			f.parentFile.mkdirs()
-			f.text = it
 		}
 
 		target = new GitHubPagesPublisher()
@@ -58,13 +51,50 @@ class GitHubPagesPublisherTest {
 		target.workingDir = this.workingDir
 	}
 
+	def makeFiles(dir, names) {
+		names.each {
+			def f = new File(dir, "${it}.txt")
+			f.parentFile.mkdirs()
+			f.text = "${it} ${new Date()}"
+		}
+	}
+
 	@After
 	void tearDown() {
-		//FileUtils.delete(this.tmpDir, FileUtils.RECURSIVE)
+		FileUtils.delete(this.tmpDir, FileUtils.RECURSIVE)
 	}
 
 	@Test
 	void publish() {
+		makeFiles(this.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
 		this.target.publish(this.rootDir)
+		Git git = Git.open(new File(this.repoDir, ".git"))
+
+		GGitUtil.handle(git) {
+			git.checkout().setName(GitHubPagesPublisher.PAGES).call()
+
+			File dir = new File(this.repoDir, "aaa/bbb")
+			assert 2 == dir.list().length
+		}
+	}
+
+	@Test
+	void overwrite() {
+		Git git = Git.open(new File(this.repoDir, ".git"))
+		GGitUtil.handle(git) {
+			git.checkout().setCreateBranch(true).setName(GitHubPagesPublisher.PAGES).call()
+			makeFiles(this.repoDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+			git.add().addFilepattern(".").call()
+			git.commit().setMessage("aaa").call()
+			git.checkout().setName("master").call()
+
+			makeFiles(this.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+			this.target.publish(this.rootDir)
+
+			git.checkout().setName(GitHubPagesPublisher.PAGES).call()
+
+			File dir = new File(this.repoDir, "aaa/bbb")
+			assert 2 == dir.list().length
+		}
 	}
 }

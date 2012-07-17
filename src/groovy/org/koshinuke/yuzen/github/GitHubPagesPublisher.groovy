@@ -12,9 +12,9 @@ import java.nio.file.Path;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref
+import org.eclipse.jgit.transport.CredentialsProvider
 import org.koshinuke.jgit.CreateOrphanBranchCommand
 import org.koshinuke.jgit.GGitUtil;
-import org.koshinuke.jgit.PassphraseProvider
 import org.koshinuke.yuzen.publish.Publisher
 
 import com.google.common.io.Files
@@ -30,6 +30,7 @@ class GitHubPagesPublisher implements Publisher {
 
 	def updateMessage = DEFAULT_UPDATEMESSAGE
 	def String repoURI
+	def CredentialsProvider credentials
 	def File workingDir
 
 	@Override
@@ -42,7 +43,7 @@ class GitHubPagesPublisher implements Publisher {
 			copyDirs(rootDir, dir)
 			git.add().addFilepattern(".").call()
 			git.commit().setMessage(getUpdateMessage()).call()
-			git.push().add(ref).setCredentialsProvider(new PassphraseProvider()).call()
+			git.push().add(ref).setCredentialsProvider(this.credentials).call()
 		}
 	}
 
