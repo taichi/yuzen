@@ -12,7 +12,7 @@ class GitHubPluginExtension {
 
 	final Project project
 
-	String user
+	String username
 
 	String password
 
@@ -24,13 +24,13 @@ class GitHubPluginExtension {
 
 	GitHubPluginExtension(Project project) {
 		this.project = project
-		this.user = project.property('github_user')
+		this.username = project.property('github_username')
 		this.password = project.property('github_password')
 	}
 
 	def makeRepositoryService() {
 		GitHubClient gc = new GitHubClient()
-		gc.setCredentials(this.user, this.password)
+		gc.setCredentials(this.username, this.password)
 		new RepositoryService(gc)
 	}
 
