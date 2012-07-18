@@ -85,12 +85,6 @@ class YuzenPlugin implements Plugin<Project> {
 		profile.title = 'Profile'
 		profile.newEntry = new File(ypc.contentsDir, 'profile.md')
 		profile.description = 'make default profile page.'
-		profile << {
-			logger.info(Markers.HELP, "Write your profile to $profile.newEntry.path")
-			logger.info(Markers.HELP, "Then write a new post")
-			logger.info(Markers.HELP, "gradlew post -Ptitle=HelloWorld")
-		}
-
 		init.dependsOn profile
 
 		def blog = project.tasks.add 'blog', DefaultContentsTask
@@ -149,10 +143,7 @@ class YuzenPlugin implements Plugin<Project> {
 		index.title = 'Slide Title'
 		index.newEntry = new File(ypc.contentsDir, 'index.md')
 		index.description = 'default slide page'
-		index << {
-			logger.info(Markers.HELP, "Write slide to $index.newEntry.path")
-		}
-		init.doLast { index.execute() }
+		init.dependsOn index
 
 		def slide = project.tasks.add 'slide', SlideTask
 		slide.description = "make html slide"
