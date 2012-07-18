@@ -25,10 +25,15 @@ buildscript {
 		].each {
 			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 		}
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
 	}
 }
 
 apply plugin: 'yuzen'
+
+yuzen.publish {
+	ghpages	repoURI : "https://github.com/taichi/testYuzen.git"
+}
 
 blog {
 	title "ぶろぐ たいとる"
