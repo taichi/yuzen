@@ -82,7 +82,6 @@ tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
 jar {
 	into('_templates') {
 		from '_templates'
-		from "${project.buildDir}/_templates"
 	}
 }
 
