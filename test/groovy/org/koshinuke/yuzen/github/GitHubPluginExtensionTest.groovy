@@ -2,6 +2,7 @@ package org.koshinuke.yuzen.github;
 
 import static org.junit.Assert.*;
 
+import org.eclipse.jgit.util.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
@@ -26,10 +27,10 @@ class GitHubPluginExtensionTest {
 
 	@Test
 	void props() {
-		assert this.target.username != null
-		assert this.target.password != null
-		assert this.project.github.username != null
-		assert this.project.github.password != null
+		assert StringUtils.isEmptyOrNull(this.target.username) == false
+		assert StringUtils.isEmptyOrNull(this.target.password) == false
+		assert StringUtils.isEmptyOrNull(this.project.github.username) == false
+		assert StringUtils.isEmptyOrNull(this.project.github.password) == false
 	}
 
 	@Test
