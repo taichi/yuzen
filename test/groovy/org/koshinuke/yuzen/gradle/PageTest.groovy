@@ -98,6 +98,7 @@ class PageTest {
 		def c = new Context()
 		StringWriter sw = new StringWriter()
 		c.setVariable("page", page)
+		c.setVariable('relative', "../../")
 		engine.process(template, c, sw)
 		return sw.toString()
 	}

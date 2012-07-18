@@ -13,9 +13,9 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<ul class="nav">
-						<li><a href="/">Home</a></li>
-						<li><a href="/archives">Archives</a></li>
-						<li><a href="/profile">Profile</a></li>
+						<li><a th:href="${relative}" href="/">Home</a></li>
+						<li><a th:href="${relative + 'archives'}" href="/archives">Archives</a></li>
+						<li><a th:href="${relative + 'profile'}" href="/profile">Profile</a></li>
 					</ul>
 				</div>
 			</div>

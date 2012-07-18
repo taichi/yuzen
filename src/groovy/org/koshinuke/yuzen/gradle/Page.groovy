@@ -73,7 +73,7 @@ class Page {
 	}
 
 	def getPageUrl(n) {
-		"/$pagingPrefix/$n"
+		"$pagingPrefix/$n"
 	}
 
 	def getPrevUrl() {
@@ -81,9 +81,9 @@ class Page {
 			return ""
 		}
 		if(this.index == 1) {
-			return "/"
+			return ""
 		}
-		return "/$pagingPrefix/$index"
+		return "$pagingPrefix/$index"
 	}
 
 	def getNextUrl() {
@@ -91,7 +91,7 @@ class Page {
 			return ""
 		}
 		def nxt = this.current + 1
-		return "/$pagingPrefix/$nxt"
+		return "$pagingPrefix/$nxt"
 	}
 
 }

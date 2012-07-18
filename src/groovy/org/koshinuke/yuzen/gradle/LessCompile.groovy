@@ -19,7 +19,7 @@ import org.lesscss.LessCompiler
 class LessCompile extends SourceTask {
 
 	@OutputDirectory
-	def destinationDir
+	def File destinationDir
 
 	LessCompiler compiler
 
@@ -36,7 +36,7 @@ class LessCompile extends SourceTask {
 					visitFile : { FileTreeElement it ->
 						def rel = it.relativePath
 						def newrel = rel.parent.append(true, FileUtil.removeExtension(rel.lastName) + '.css')
-						compiler.compile(it.file, newrel.getFile(destinationDir))
+						compiler.compile(it.file, newrel.getFile(getDestinationDir()))
 					}
 				] as FileVisitor)
 	}

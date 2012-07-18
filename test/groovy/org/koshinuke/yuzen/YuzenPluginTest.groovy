@@ -114,7 +114,7 @@ class YuzenPluginTest {
 			actf.parentFile.mkdirs()
 			actf.text = "** test test"
 			def dest = project.file("$project.buildDir/yuzen/entry/moge/piro/index.html")
-			assert latch.await(2, TimeUnit.SECONDS)
+			assert latch.await(5, TimeUnit.SECONDS)
 			assert dest.exists()
 			assert 0 < dest.length()
 		} finally {
@@ -159,8 +159,8 @@ class YuzenPluginTest {
 	void recentPosts() {
 		def blog = project.blog
 		def expected = [
-			[url:'/entry/L%27Arc%EF%BD%9Een%EF%BD%9ECiel/2011/12/21/%E3%81%94%E3%81%8C', title:'ほげほげ'],
-			[url:'/entry/moge/piro', title:'piro']
+			[url:'entry/L%27Arc%EF%BD%9Een%EF%BD%9ECiel/2011/12/21/%E3%81%94%E3%81%8C', title:'ほげほげ'],
+			[url:'entry/moge/piro', title:'piro']
 		]
 
 		2.times {

@@ -91,12 +91,12 @@ class YuzenPlugin implements Plugin<Project> {
 			logger.info(Markers.HELP, "gradlew post -Ptitle=HelloWorld")
 		}
 
-		init.doLast { profile.execute() }
+		init.dependsOn profile
 
 		def blog = project.tasks.add 'blog', DefaultContentsTask
 		blog.description = "make static blog"
-		addLessTask(project, blog)
-		addCopyTask(project, blog, 'js')
+		addLessTask(project, blog, ypc)
+		addCopyTask(project, blog, ypc, 'js')
 
 		def paging = project.tasks.add 'paging', BlogPagingTask
 		paging.description = "make static blog pagination files"
@@ -134,12 +134,12 @@ class YuzenPlugin implements Plugin<Project> {
 		return defaultValue
 	}
 
-	def addLessTask(Project project, Task task) {
+	def addLessTask(Project project, Task task, YuzenPluginConvention ypc) {
 		def newone = project.tasks.add "${task.name}less", LessCompile
 		newone.description = "compile less to css"
 		newone.compress true
-		newone.source project.file("$task.templatePrefix/less/main.less")
-		newone.destinationDir project.file("$task.destinationDir/css")
+		newone.source project.file("$ypc.templatePrefix/less/main.less")
+		newone.destinationDir project.file("$ypc.destinationDir/css")
 		task.dependsOn newone
 	}
 
@@ -156,15 +156,15 @@ class YuzenPlugin implements Plugin<Project> {
 
 		def slide = project.tasks.add 'slide', SlideTask
 		slide.description = "make html slide"
-		addCopyTask(project, slide, 'js')
-		addCopyTask(project, slide, 'css')
-		addCopyTask(project, slide, 'assets')
+		addCopyTask(project, slide, ypc, 'js')
+		addCopyTask(project, slide, ypc, 'css')
+		addCopyTask(project, slide, ypc, 'assets')
 	}
 
-	def addCopyTask(Project project, Task task, String resource) {
+	def addCopyTask(Project project, Task task, YuzenPluginConvention ypc, String resource) {
 		def newone = project.tasks.add "$task.name$resource", Copy
-		newone.from "$task.templatePrefix/$resource"
-		newone.into "$task.destinationDir/$resource"
+		newone.from "$ypc.templatePrefix/$resource"
+		newone.into "$ypc.destinationDir/$resource"
 		newone.description = "copy $resource from template"
 		task.dependsOn newone
 	}

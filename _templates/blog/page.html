@@ -32,7 +32,7 @@
 					<header>
 						<h6 th:text="${#dates.format(c.timestamp,'yyyy/MM/dd HH:mm:ss')}">2012/03/26 03:02:11</h6>
 						<h2>
-							<a href="" th:href="${c.url}" th:text="${c.title}">たいとる</a>
+							<a href="" th:href="${relative + c.url}" th:text="${c.title}">たいとる</a>
 						</h2>
 					</header>
 					<div class="content" th:utext="${c.summary}">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
@@ -41,7 +41,7 @@
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
 					<div class="more">
-						<a href="" th:href="${c.url}">Read More ...</a>
+						<a href="" th:href="${relative + c.url}">Read More ...</a>
 					</div>
 				</article>
 				<article th:remove="all">
@@ -57,7 +57,7 @@
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
 					<div class="more">
-						<a href="" th:href="${c.url}">Read More ...</a>
+						<a href="">Read More ...</a>
 					</div>
 				</article>
 				<article th:remove="all">
@@ -73,7 +73,7 @@
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
 					<div class="more">
-						<a href="" th:href="${c.url}">Read More ...</a>
+						<a href="">Read More ...</a>
 					</div>
 				</article>
 				<article th:remove="all">
@@ -89,7 +89,7 @@
 						dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
 						deserunt mollit anim id est laborum.</div>
 					<div class="more">
-						<a href="" th:href="${c.url}">Read More ...</a>
+						<a href="">Read More ...</a>
 					</div>
 				</article>
 				<div class="pagination pagination-centered" th:include="fragments/pagination::${page.pagination}">

@@ -4,15 +4,15 @@
 <meta charset="utf-8" />
 <title th:text="${blog.title}">Blog Title</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet/less" type="text/css" href="/less/main.less" />
-<script type="application/javascript" src="/less/less-1.3.0.min.js"></script>
-<script th:if="${blog.autoload}" type="application/javascript" src="/js/reload.js"></script>
+<link rel="stylesheet/less" type="text/css" th:href="${relative + 'less/main.less'}" />
+<script type="application/javascript" th:src="${relative + 'less/less-1.3.0.min.js'}"></script>
+<script th:if="${blog.autoload}" type="application/javascript" th:src="${relative + 'js/reload.js'}"></script>
 </head>
 <head th:fragment="css">
 <meta charset="utf-8" />
 <title th:text="${blog.title}">Blog Title</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" type="text/css" href="/css/main.css" />
-<script th:if="${blog.autoload}" type="application/javascript" src="/js/reload.js"></script>
+<link rel="stylesheet" type="text/css" th:href="${relative + 'css/main.css'}" />
+<script th:if="${blog.autoload}" type="application/javascript" src="${relative + 'js/reload.js'}"></script>
 </head>
 </html>

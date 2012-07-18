@@ -39,8 +39,8 @@ public class MarkdownProcessorTest {
 		TemplateEngine te = new TemplateEngine();
 		te.setTemplateModeHandlers(StandardTemplateModeHandlers.ALL_TEMPLATE_MODE_HANDLERS);
 		te.addTemplateModeHandler(MarkdownTemplateResolver.MARKDOWN);
-		te.addTemplateResolver(md);
 		te.addTemplateResolver(r);
+		te.addTemplateResolver(md);
 		te.addDialect(new YuzenDialect(md));
 
 		Context c = new Context();

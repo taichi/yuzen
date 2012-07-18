@@ -20,7 +20,7 @@ class Content {
 	Content(FileTreeElement file) {
 		this.timestamp = new Date(file.lastModified)
 
-		this.url = '/' + file.relativePath.segments.collect {
+		this.url = file.relativePath.segments.collect {
 			URLEncoder.encode(it, 'UTF-8')
 		}.join('/').replaceAll(/\.md$/, "")
 

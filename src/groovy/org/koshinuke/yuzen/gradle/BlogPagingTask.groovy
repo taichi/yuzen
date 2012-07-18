@@ -11,6 +11,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.ConfigureUtil
+import org.koshinuke.yuzen.util.FileUtil;
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.thymeleaf.resourceresolver.FileResourceResolver
@@ -76,6 +77,13 @@ class BlogPagingTask extends ConventionTask implements ContentsTask {
 		}
 
 		def html = new File(this.getDestinationDir(), "$path/index.html")
+		def relative = ""
+		if(0 < index) {
+			def htmlPath = html.parentFile.toPath()
+			def relPath = htmlPath.relativize(getDestinationDir().toPath())
+			relative = FileUtil.slashify(relPath) + "/"
+		}
+		c.setVariable('relative', relative)
 		html.parentFile.mkdirs()
 		html.withWriter("UTF-8") {
 			engine.process('page', c, it)

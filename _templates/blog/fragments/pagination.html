@@ -3,76 +3,76 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet/less" type="text/css" href="/less/main.less" />
-<script type="application/javascript" src="/less/less-1.3.0.min.js"></script>
+<link rel="stylesheet/less" type="text/css" href="../less/main.less" />
+<script type="application/javascript" src="../less/less-1.3.0.min.js"></script>
 </head>
 <body>
 	<div class="pagination pagination-centered" th:fragment="small">
 		<ul>
 			<li th:class="${page.isFirst()}? 'disabled'"><a href="#"
-				th:href="${page.prevUrl}">Prev</a></li>
-			<li th:class="${page.isFirst()}? 'active'"><a href="/">1</a></li>
+				th:href="${relative + page.prevUrl}">Prev</a></li>
+			<li th:class="${page.isFirst()}? 'active'"><a th:href="${relative}" href="/">1</a></li>
 			<li th:remove="all"><a href="#">2</a></li>
 			<li th:remove="all"><a href="#">3</a></li>
 			<li th:remove="all"><a href="#">4</a></li>
 			<li th:remove="all"><a href="#">5</a></li>
 			<li class="active" th:each="p : ${page.pages}"
 				th:class="${page.current == p}? 'active'"><a href="#"
-				th:href="${page.getPageUrl(p)}" th:text="${p}">6</a></li>
+				th:href="${relative + page.getPageUrl(p)}" th:text="${p}">6</a></li>
 			<li th:remove="all"><a href="#">7</a></li>
 			<li th:class="${page.isLast()}? 'disabled'"><a href="#"
-				th:href="${page.nextUrl}">Next</a></li>
+				th:href="${relative + page.nextUrl}">Next</a></li>
 		</ul>
 	</div>
 	<div class="pagination pagination-centered" th:fragment="dots_right">
 		<ul>
 			<li th:class="${page.isFirst()}? 'disabled'"><a href="#"
-				th:href="${page.prevUrl}">Prev</a></li>
-			<li th:class="${page.isFirst()}? 'active'"><a href="/">1</a></li>
+				th:href="${relative + page.prevUrl}">Prev</a></li>
+			<li th:class="${page.isFirst()}? 'active'"><a th:href="${relative}" href="/">1</a></li>
 			<li class="active" th:each="p : ${page.pages}"
 				th:class="${page.current == p}? 'active'"><a href="#"
-				th:href="${page.getPageUrl(p)}" th:text="${p}">2</a></li>
+				th:href="${relative + page.getPageUrl(p)}" th:text="${p}">2</a></li>
 			<li th:remove="all"><a href="#">3</a></li>
 			<li th:remove="all"><a href="#">4</a></li>
 			<li th:remove="all"><a href="#">5</a></li>
 			<li class="disabled"><a href="#">...</a></li>
-			<li><a href="#" th:href="${page.getPageUrl(page.pageSize)}"
+			<li><a href="#" th:href="${relative + page.getPageUrl(page.pageSize)}"
 				th:text="${page.pageSize}">10</a></li>
-			<li><a href="#" th:href="${page.nextUrl}">Next</a></li>
+			<li><a href="#" th:href="${relative + page.nextUrl}">Next</a></li>
 		</ul>
 	</div>
 	<div class="pagination pagination-centered" th:fragment="dots_left">
 		<ul>
-			<li><a href="#" th:href="${page.prevUrl}">Prev</a></li>
-			<li><a href="/">1</a></li>
+			<li><a href="#" th:href="${relative + page.prevUrl}">Prev</a></li>
+			<li><a th:href="${relative}" href="/">1</a></li>
 			<li class="disabled"><a href="#">...</a></li>
 			<li th:remove="all"><a href="#">6</a></li>
 			<li class="active" th:each="p : ${page.pages}"
 				th:class="${page.current == p}? 'active'"><a href="#"
-				th:href="${page.getPageUrl(p)}" th:text="${p}">7</a></li>
+				th:href="${relative + page.getPageUrl(p)}" th:text="${p}">7</a></li>
 			<li th:remove="all"><a href="#">8</a></li>
 			<li th:remove="all"><a href="#">9</a></li>
 			<li th:remove="all"><a href="#">10</a></li>
 			<li th:class="${page.isLast()}? 'disabled'"><a href="#"
-				th:href="${page.nextUrl}">Next</a></li>
+				th:href="${relative + page.nextUrl}">Next</a></li>
 		</ul>
 	</div>
 	<div class="pagination pagination-centered" th:fragment="dots_twice">
 		<ul>
-			<li><a href="#" th:href="${page.prevUrl}">Prev</a></li>
-			<li><a href="/">1</a></li>
+			<li><a href="#" th:href="${relative + page.prevUrl}">Prev</a></li>
+			<li><a th:href="${relative}" href="/">1</a></li>
 			<li class="disabled"><a href="#">...</a></li>
 			<li th:remove="all"><a href="#">3</a></li>
 			<li th:remove="all"><a href="#">4</a></li>
 			<li class="active" th:each="p : ${page.pages}"
 				th:class="${page.current == p}? 'active'"><a href="#"
-				th:href="${page.getPageUrl(p)}" th:text="${p}">5</a></li>
+				th:href="${relative + page.getPageUrl(p)}" th:text="${p}">5</a></li>
 			<li th:remove="all"><a href="#">6</a></li>
 			<li th:remove="all"><a href="#">7</a></li>
 			<li class="disabled"><a href="#">...</a></li>
-			<li><a href="#" th:href="${page.getPageUrl(page.pageSize)}"
+			<li><a href="#" th:href="${relative + page.getPageUrl(page.pageSize)}"
 				th:text="${page.pageSize}">10</a></li>
-			<li><a href="#" th:href="${page.nextUrl}">Next</a></li>
+			<li><a href="#" th:href="${relative + page.nextUrl}">Next</a></li>
 		</ul>
 	</div>
 </body>
