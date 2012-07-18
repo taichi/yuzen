@@ -54,6 +54,7 @@ class YuzenPlugin implements Plugin<Project> {
 
 		def publish = project.tasks.add 'publish', PublishTask
 		publish.conventionMapping.rootDir = { ypc.destinationDir }
+		publish.description = "publish contents to server."
 	}
 
 	def addRule(Project project, String prefix, String desc, Closure closure) {
