@@ -24,8 +24,15 @@ class GitHubPluginExtension {
 
 	GitHubPluginExtension(Project project) {
 		this.project = project
-		this.username = project.property('github_username')
-		this.password = project.property('github_password')
+		this.username = prop('github_username')
+		this.password = prop('github_password')
+	}
+
+	def prop(key) {
+		if(project.hasProperty(key)) {
+			return project.property(key)
+		}
+		return ""
 	}
 
 	def makeRepositoryService() {

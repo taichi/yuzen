@@ -11,7 +11,12 @@ import java.nio.file.Path;
 
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode
+import org.eclipse.jgit.lib.ConfigConstants;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.URIish
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.koshinuke.jgit.CreateOrphanBranchCommand
@@ -45,11 +50,11 @@ class GitHubPagesPublisher implements Publisher {
 		File workingRepo = new File(dir, ".git")
 		Git git = workingRepo.exists() ? Git.open(dir) : cloneRepo(dir)
 		GGitUtil.handle(git) {
-			Ref ref = checkout(git)
+			checkout(git)
 			copyDirs(rootDir, dir)
 			git.add().addFilepattern(".").call()
 			git.commit().setMessage(getUpdateMessage()).call()
-			git.push().add(ref).setCredentialsProvider(detectCredentialsProvider()).call()
+			git.push().add(PAGES).setCredentialsProvider(detectCredentialsProvider()).call()
 		}
 	}
 
@@ -57,20 +62,23 @@ class GitHubPagesPublisher implements Publisher {
 		workingDir.mkdirs()
 		CloneCommand cmd = Git.cloneRepository()
 		cmd.setURI(this.repoURI)
-		cmd.setNoCheckout(true)
 		cmd.setDirectory(workingDir)
 		cmd.call()
 	}
 
 	def checkout(Git git) {
-		def cmd;
-		if(git.getRepository().getRef(PAGES) == null) {
-			cmd = new CreateOrphanBranchCommand(git.getRepository())
+		Ref ref = git.branchList().setListMode(ListMode.REMOTE).call().find { it.getName().endsWith(PAGES) }
+		if(ref == null) {
+			def cmd = new CreateOrphanBranchCommand(git.getRepository())
+			cmd.setName(PAGES)
+			cmd.call()
 		} else {
-			cmd = git.checkout()
+			StoredConfig config = git.getRepository().getConfig()
+			config.setString(ConfigConstants.CONFIG_BRANCH_SECTION, PAGES, ConfigConstants.CONFIG_KEY_MERGE, Constants.R_HEADS + PAGES)
+			config.save()
+			git.checkout().setName(PAGES).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).setCreateBranch(true).call()
+			git.pull().call()
 		}
-		cmd.setName(PAGES)
-		cmd.call()
 	}
 
 	def copyDirs(File srcDir, File destDir) {

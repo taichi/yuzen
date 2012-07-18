@@ -28,6 +28,8 @@ class GitHubPluginExtensionTest {
 	void props() {
 		assert this.target.username != null
 		assert this.target.password != null
+		assert this.project.github.username != null
+		assert this.project.github.password != null
 	}
 
 	@Test

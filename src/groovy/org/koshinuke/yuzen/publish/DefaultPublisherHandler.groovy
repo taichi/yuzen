@@ -51,10 +51,10 @@ class DefaultPublisherHandler implements PublisherHandler {
 			ghpages.workingDir = new File(project.getBuildDir(), "tmp/ghpages")
 		}
 		if(StringUtils.isEmptyOrNull(ghpages.username)) {
-			ghpages.username = project.property('github_username')
+			ghpages.username = project.github.username
 		}
 		if(StringUtils.isEmptyOrNull(ghpages.password)) {
-			ghpages.password = project.property('github_password')
+			ghpages.password = project.github.password
 		}
 		return ghpages
 	}

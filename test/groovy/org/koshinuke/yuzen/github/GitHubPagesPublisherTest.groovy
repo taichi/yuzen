@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.revwalk.RevCommit
 import org.junit.After;
 import org.junit.Before
 import org.junit.Test;
@@ -26,14 +27,6 @@ class GitHubPagesPublisherTest {
 		target = new GitHubPagesPublisher()
 		target.repoURI = new File(support.repoDir, ".git").toURI().toASCIIString()
 		target.workingDir = support.workingDir
-	}
-
-	def makeFiles(dir, names) {
-		names.each {
-			def f = new File(dir, "${it}.txt")
-			f.parentFile.mkdirs()
-			f.text = "${it} ${new Date()}"
-		}
 	}
 
 	@After
@@ -60,18 +53,26 @@ class GitHubPagesPublisherTest {
 		Git git = Git.open(new File(support.repoDir, ".git"))
 		GGitUtil.handle(git) {
 			git.checkout().setCreateBranch(true).setName(GitHubPagesPublisher.PAGES).call()
-			makeFiles(support.repoDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+			support.makeFiles(support.repoDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
 			git.add().addFilepattern(".").call()
 			git.commit().setMessage("aaa").call()
 			git.checkout().setName("master").call()
 
-			makeFiles(support.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+			support.makeFiles(support.rootDir, [
+				"aaa/bbb/ccc",
+				"aaa/bbb/ddd",
+				"aaa/zzz"
+			])
 			this.target.publish(support.rootDir)
 
 			git.checkout().setName(GitHubPagesPublisher.PAGES).call()
 
 			File dir = new File(support.repoDir, "aaa/bbb")
 			assert 2 == dir.list().length
+			Iterable<RevCommit> logs = git.log().call()
+			int count = 0;
+			logs.each { count++ }
+			assert 3 == count
 		}
 	}
 }
