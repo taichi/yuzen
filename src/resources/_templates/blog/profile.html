@@ -25,6 +25,67 @@
 			</div>
 		</div>
 	</header>
-	<div class="content" yz:markdown="${content.path}">こんてんと</div>
+	<div class="main container-fluid">
+		<div class="row-fluid">
+			<div class="contents span9">
+				<article yz:markdown="${content.path}">
+					プロフィール
+				</article>
+			</div>
+			<div class="sidemenu span3 hidden-phone">
+				<div class="menus" th:include="fragments/menus::menus">
+					<div class="menu profile">
+						<img
+							src="https://twimg0-a.akamaihd.net/profile_images/769940966/226710936a3042d473708005333d57118c925cac_normal.png" />
+						<span> Trick Programmer </span>
+					</div>
+					<div class="menu">
+						<h3>Recent Posts</h3>
+						<ul class="unstyled">
+							<li><a href="">たいとる</a></li>
+							<li><a href="">たいとる</a></li>
+						</ul>
+					</div>
+					<div class="menu">
+						<h3>GitHub Repos</h3>
+						<ul class="unstyled">
+							<li><a href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
+								<p>Download libraries from maven2 repository without maven2.</p></li>
+							<li><a href="https://github.com/taichi/org.handwerkszeug.mvnhack">org.handwerkszeug.mvnhack</a>
+								<p>Download libraries from maven2 repository without maven2.</p></li>
+						</ul>
+					</div>
+					<div class="menu">
+						<h3>Latest Tweets</h3>
+						<ul class="unstyled tweets">
+							<li>
+								<p>
+									<a href="http://twitter.com/ryushi/status/184919217206853632">8h</a>ほほう…。<a href="http://www.ux-xu.com/mofmof/">ux-xu.com/mofmof/</a>
+								</p>
+							</li>
+							<li>
+								<p>
+									<a href="http://twitter.com/ryushi/status/184917246806736896">8h</a>俺もJavaなんつーもう無くなってしまったSUNとかいう会社の独自言語にハマってしまったせいで後れをとってしまった。
+								</p>
+							</li>
+							<li>
+								<p>
+									<a href="http://twitter.com/ryushi/status/184883033185329152">10h</a>とりあえず、メジャーなプログラミング言語は全部潰しておこう。<a
+										href="http://search.twitter.com/search?q=%23studynote">#studynote</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>			
+		</div>
+	</div>
+	<footer th:include="fragments/footer::footer">
+		<div class="footer">
+			<p>
+				Thanks for <a href="http://twitter.github.com/bootstrap">Bootstrap, from Twitter</a>
+			</p>
+		</div>
+	</footer>
 </body>
 </html>

@@ -20,7 +20,6 @@ repositories {
 dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:1.8.+'
 
-	compile gradleApi()
 	compile 'org.thymeleaf:thymeleaf:2.0.+'
 	// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
 	// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
@@ -28,7 +27,6 @@ dependencies {
 
 	compile 'org.eclipse.jgit:org.eclipse.jgit:2.+'
 	compile 'com.google.guava:guava:12.+'
-	compile 'org.yaml:snakeyaml:1.+'
 	compile 'org.pegdown:pegdown:1.1.+'
 
 	compile 'org.lesscss:lesscss:1.3.+'
@@ -44,7 +42,9 @@ dependencies {
 
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 	compile 'commons-net:commons-net:3.+'
-
+	
+	compile gradleApi()
+	
 	testCompile 'junit:junit:4.+'
 	testCompile ('org.apache.ftpserver:ftpserver:1.0.6') {
 		exclude group: 'org.springframework'
