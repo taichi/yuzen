@@ -24,7 +24,7 @@ class SlideTaskTest {
 		f.parentFile.mkdirs()
 		f.text = "# testdata\n* aaa\n* bbb\n"
 
-		def src = new File("_templates/slide/")
+		def src = new File("src/resources/_templates/slide/")
 		assert src.exists()
 		project.copy {
 			from src.toURI().path

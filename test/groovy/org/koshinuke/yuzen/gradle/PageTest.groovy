@@ -80,7 +80,7 @@ class PageTest {
 
 	def processTemplate(template, page) {
 		def files = [
-			new File("_templates/blog"),
+			new File("src/resources/_templates/blog"),
 			testDataDir
 		]
 		def engine = new TemplateEngine()

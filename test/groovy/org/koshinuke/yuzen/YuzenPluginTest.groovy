@@ -63,7 +63,7 @@ class YuzenPluginTest {
 		FileUtils.delete(f, FileUtils.RECURSIVE | FileUtils.SKIP_MISSING)
 		f.mkdirs()
 
-		def src = new File("_templates/blog/")
+		def src = new File("src/resources/_templates/blog/")
 		assert src.exists()
 		project.copy {
 			from src.toURI().path

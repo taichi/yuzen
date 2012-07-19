@@ -62,7 +62,7 @@ sourceSets {
 	main {
 		java.srcDir 'src/java'
 		groovy.srcDir 'src/groovy'
-		resources.srcDir 'src/java'
+		resources.srcDirs 'src/java', 'src/resources'
 	}
 	scripts.groovy.srcDir 'scripts'
 	test {
@@ -78,12 +78,6 @@ targetCompatibility = 1.7
 def encoding = { it.encoding = 'UTF-8' }
 tasks.withType(AbstractCompile) each { encoding it.options }
 tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
-
-jar {
-	into('_templates') {
-		from '_templates'
-	}
-}
 
 eclipse {
 	project { name = 'yuzen' }
@@ -106,7 +100,7 @@ eclipse {
 					'GROOVY_SUPPORT',
 					'GROOVY_DSL_SUPPORT'
 				]
-				n.children().removeAll { gp.contains(it.@path) }
+				n.children().removeAll { gp.contains(it.@path) || it.@path == 'src/resources' }
 				// 単純にsortするとgradle周りのアレソレが高い優先順位に移動しがち
 				// n.children().sort { it.@path.split('/').last() }
 
