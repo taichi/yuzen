@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ProjectReportsPlugin
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.file.PathEventListener
@@ -55,7 +56,7 @@ class YuzenPluginTest {
 			f = this.project.file("_contents/entry/hoehoe${it}.md")
 			f.parentFile.mkdirs()
 			f.text = "# aaaaa$it \n* testdata\n* testtest$it"
-			f.lastModified = (today - (3 + it)).time
+			f.lastModified = today.minus(3 + it).time
 		}
 
 
@@ -69,6 +70,11 @@ class YuzenPluginTest {
 			from src.toURI().path
 			into project.file('_templates/')
 		}
+	}
+
+	@After
+	void tearDown() {
+		FileUtils.delete(this.project.getProjectDir(), FileUtils.RECURSIVE)
 	}
 
 	@Test

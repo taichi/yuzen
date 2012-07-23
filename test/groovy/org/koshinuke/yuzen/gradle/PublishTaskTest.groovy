@@ -3,6 +3,7 @@ package org.koshinuke.yuzen.gradle;
 import static org.junit.Assert.*;
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.util.FileUtils
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
@@ -28,6 +29,7 @@ class PublishTaskTest {
 
 	@After
 	void tearDown() {
+		FileUtils.delete(this.project.getProjectDir(), FileUtils.RECURSIVE)
 	}
 
 	@Test

@@ -6,6 +6,7 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.koshinuke.yuzen.github.GitHubPluginExtension
+import org.koshinuke.yuzen.gradle.BlogArchiveTask;
 import org.koshinuke.yuzen.gradle.BlogPagingTask
 import org.koshinuke.yuzen.gradle.BlogPluginExtension
 import org.koshinuke.yuzen.gradle.ContentsTask
@@ -120,6 +121,11 @@ class YuzenPlugin implements Plugin<Project> {
 			return new File(ypc.contentsDir, name)
 		}
 		page.description = "make new page. example -> gradlew page -Ppagename=pages/profile.md"
+
+		def archives = project.tasks.add 'archives', BlogArchiveTask
+		archives.description = 'make blog archives'
+		archives.conventionMapping.entryDirName = { ypc.entryDirName }
+		blog.dependsOn archives
 	}
 
 	def getInput(Project project, key, defaultValue) {

@@ -2,8 +2,10 @@ package org.koshinuke.yuzen.gradle;
 
 import static org.junit.Assert.*;
 
+import org.eclipse.jgit.util.FileUtils
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.After
 import org.junit.Before;
 import org.junit.Test
 import org.koshinuke.yuzen.TestData
@@ -22,6 +24,11 @@ class NewEntryTaskTest {
 		TestData.overwrite(this.project.ext)
 
 		project.apply plugin: 'yuzen'
+	}
+
+	@After
+	void tearDown() {
+		FileUtils.delete(this.project.getProjectDir(), FileUtils.RECURSIVE)
 	}
 
 	@Test

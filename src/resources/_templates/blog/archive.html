@@ -27,41 +27,39 @@
 	</header>
 	<div class="main container container-fluid">
 		<div class="row-fluid">
-			<div class="contents　span10">
+			<div class="contents span12">
 				<div class="archives">
-					<div class="monthly">
-						<h2>July 2012</h2>
+					<div class="monthly" th:each="m : ${months}">
+						<h2 th:text="${m}">2012-07</h2>
 						<ul>
-							<li><span class="date">2012-07-07</span> <a class="title"
-								href="">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
-							<li><span class="date">2012-07-04</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
-							<li><span class="date">2012-07-01</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
+							<li th:each="c : ${contents[m]}"><span
+								th:text="${#dates.format(c.timestamp,'yyyy/MM/dd HH:mm:ss')}"
+								class="date hidden-phone">2012/07/07 12:03:31</span> <a class="title" href=""
+								th:href="${relative + c.url}" th:text="${c.title}">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
 						</ul>
 					</div>
-					<div class="monthly">
-						<h2>June 2012</h2>
+					<div class="monthly" th:remove="all">
+						<h2>2012-06</h2>
 						<ul>
-							<li><span class="date">2012-06-04</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
-							<li><span class="date">2012-06-01</span> <a class="title"
-								href="">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/06/04 11:53:11</span> <a
+								class="title" href="">えんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/06/01 09:28:01</span> <a
+								class="title" href="">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
 						</ul>
 					</div>
-					<div class="monthly">
-						<h2>May 2012</h2>
+					<div class="monthly" th:remove="all">
+						<h2>2012-05</h2>
 						<ul>
-							<li><span class="date">2012-05-20</span> <a class="title"
-								href="">大変な事が起きたり起きなかったりする様な話</a></li>
-							<li><span class="date">2012-05-11</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
-							<li><span class="date">2012-05-07</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
-							<li><span class="date">2012-05-04</span> <a class="title"
-								href="">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
-							<li><span class="date">2012-05-01</span> <a class="title"
-								href="">えんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/05/20 23:28:01</span> <a
+								class="title" href="">大変な事が起きたり起きなかったりする様な話</a></li>
+							<li><span class="date hidden-phone">2012/05/11 16:28:01</span> <a
+								class="title" href="">えんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/05/07 12:28:01</span> <a
+								class="title" href="">えんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/05/04 09:28:01</span> <a
+								class="title" href="">えんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトルえんとりのタイトル</a></li>
+							<li><span class="date hidden-phone">2012/05/01 09:28:01</span> <a
+								class="title" href="">えんとりのタイトル</a></li>
 						</ul>
 					</div>
 				</div>
