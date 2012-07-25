@@ -96,6 +96,8 @@ class YuzenPluginTest {
 
 	@Test
 	void executeBlogTest() {
+		project.blog.title = 'bbbb tttt'
+		project.blog.subtitle = 'sss bbbb tttt'
 		project.tasks.blog.execute()
 
 		def dest = project.file("$project.buildDir/yuzen/entry/moge/piro/index.html")

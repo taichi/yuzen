@@ -8,7 +8,7 @@ import org.gradle.api.Project;
 /**
  * @author taichi
  */
-class GitHubPluginExtension {
+class GitHubModel {
 
 	final Project project
 
@@ -22,7 +22,7 @@ class GitHubPluginExtension {
 
 	def repos
 
-	GitHubPluginExtension(Project project) {
+	GitHubModel(Project project) {
 		this.project = project
 		this.username = prop('github.username')
 		this.password = prop('github.password')

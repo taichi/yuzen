@@ -12,17 +12,17 @@ import org.koshinuke.yuzen.TestData
 /**
  * @author taichi
  */
-class GitHubPluginExtensionTest {
+class GitHubModelTest {
 
 	Project project
 
-	GitHubPluginExtension target
+	GitHubModel target
 
 	@Before
 	void setUp() {
 		this.project = ProjectBuilder.builder().build()
 		TestData.overwrite(this.project.ext)
-		this.target = project.extensions.create('github', GitHubPluginExtension, project)
+		this.target = project.extensions.create('github', GitHubModel, project)
 	}
 
 	@Test

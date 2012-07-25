@@ -5,10 +5,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
-import org.koshinuke.yuzen.github.GitHubPluginExtension
+import org.koshinuke.yuzen.github.GitHubModel
 import org.koshinuke.yuzen.gradle.BlogArchiveTask;
 import org.koshinuke.yuzen.gradle.BlogPagingTask
-import org.koshinuke.yuzen.gradle.BlogPluginExtension
+import org.koshinuke.yuzen.gradle.BlogModel
 import org.koshinuke.yuzen.gradle.ContentsTask
 import org.koshinuke.yuzen.gradle.DefaultContentsTask
 import org.koshinuke.yuzen.gradle.InitTemplateTask
@@ -31,8 +31,8 @@ class YuzenPlugin implements Plugin<Project> {
 		project.plugins.apply(BasePlugin)
 
 		YuzenPluginConvention ypc = project.convention.create('yuzen', YuzenPluginConvention, project)
-		project.extensions.create('github', GitHubPluginExtension, project)
-		project.extensions.create('blog', BlogPluginExtension, project)
+		project.extensions.create('github', GitHubModel, project)
+		project.extensions.create('blog', BlogModel, project)
 
 		addRule(project, 'start', 'start Jetty of a task.') { base, name, task ->
 			def newone = project.tasks.add name, StartServerTask

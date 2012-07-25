@@ -12,7 +12,7 @@ import org.gradle.api.file.FileVisitor;
 /**
  * @author taichi
  */
-class BlogPluginExtension {
+class BlogModel {
 
 	final Project project
 
@@ -33,7 +33,7 @@ class BlogPluginExtension {
 		r.lastModified <=> l.lastModified
 	}
 
-	BlogPluginExtension(Project project) {
+	BlogModel(Project project) {
 		this.project = project;
 	}
 
