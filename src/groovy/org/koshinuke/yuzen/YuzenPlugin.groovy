@@ -1,23 +1,25 @@
 package org.koshinuke.yuzen
 
+import org.eclipse.jgit.util.StringUtils;
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.koshinuke.yuzen.github.GitHubModel
-import org.koshinuke.yuzen.gradle.BlogArchiveTask;
+import org.koshinuke.yuzen.gradle.BlogArchiveTask
 import org.koshinuke.yuzen.gradle.BlogPagingTask
 import org.koshinuke.yuzen.gradle.BlogModel
 import org.koshinuke.yuzen.gradle.ContentsTask
 import org.koshinuke.yuzen.gradle.DefaultContentsTask
+import org.koshinuke.yuzen.gradle.FeedTask
 import org.koshinuke.yuzen.gradle.InitTemplateTask
 import org.koshinuke.yuzen.gradle.LessCompile
-import org.koshinuke.yuzen.gradle.NewEntryTask;
+import org.koshinuke.yuzen.gradle.NewEntryTask
 import org.koshinuke.yuzen.gradle.PublishTask
 import org.koshinuke.yuzen.gradle.SlideTask
 import org.koshinuke.yuzen.gradle.StartServerTask
-import org.koshinuke.yuzen.util.FileUtil;
+import org.koshinuke.yuzen.util.FileUtil
 
 
 
@@ -45,12 +47,14 @@ class YuzenPlugin implements Plugin<Project> {
 		addSlideTasks(project, ypc)
 
 		project.tasks.withType(ContentsTask) {
-			it.conventionMapping.contents = {
-				project.fileTree ypc.contentsDir, {}
+			it.conventionMapping.with {
+				contents = {
+					project.fileTree ypc.contentsDir, {}
+				}
+				templatePrefix = { ypc.templatePrefix }
+				templateSuffix = { ypc.templateSuffix }
+				destinationDir = { ypc.destinationDir }
 			}
-			it.conventionMapping.templatePrefix = { ypc.templatePrefix }
-			it.conventionMapping.templateSuffix = { ypc.templateSuffix }
-			it.conventionMapping.destinationDir = { ypc.destinationDir }
 		}
 
 		def publish = project.tasks.add 'publish', PublishTask
@@ -112,13 +116,15 @@ class YuzenPlugin implements Plugin<Project> {
 		post.description = "make new post. example -> gradlew post -Ptitle=HelloWorld"
 
 		def page = project.tasks.add 'page', NewEntryTask
-		page.conventionMapping.title = {
-			def n = page.getNewEntry().name
-			return FileUtil.removeExtension(n)
-		}
-		page.conventionMapping.newEntry = {
-			def name = getInput(project, "pagename", "newPage.md")
-			return new File(ypc.contentsDir, name)
+		page.conventionMapping.with {
+			title = {
+				def n = page.getNewEntry().name
+				return FileUtil.removeExtension(n)
+			}
+			newEntry = {
+				def name = getInput(project, "pagename", "newPage.md")
+				return new File(ypc.contentsDir, name)
+			}
 		}
 		page.description = "make new page. example -> gradlew page -Ppagename=pages/profile.md"
 
@@ -126,6 +132,27 @@ class YuzenPlugin implements Plugin<Project> {
 		archives.description = 'make blog archives'
 		archives.conventionMapping.entryDirName = { ypc.entryDirName }
 		blog.dependsOn archives
+
+		def feed = project.tasks.add 'blogFeed', FeedTask
+		feed.description "make blog syndication feed"
+		feed.model = project.blog.feed
+		feed.conventionMapping.with {
+			feedType = { feed.model.feedType }
+			syndicationURI = { feed.model.syndicationURI }
+			title = {
+				def s = feed.model.title
+				if(StringUtils.isEmptyOrNull(s)) {
+					return project.blog.title
+				}
+				return s
+			}
+			author = { feed.model.author }
+			contents = {
+				project.fileTree ypc.contentsDir, {}
+			}
+			destinationFile = { new File(ypc.destinationDir, "${feed.model.feedType}.xml") }
+		}
+		blog.dependsOn feed
 	}
 
 	def getInput(Project project, key, defaultValue) {

@@ -8,6 +8,7 @@ package org.koshinuke.yuzen.gradle
 
 import org.gradle.api.Project;
 import org.gradle.api.file.FileVisitor;
+import org.gradle.util.ConfigureUtil
 
 /**
  * @author taichi
@@ -33,8 +34,11 @@ class BlogModel {
 		r.lastModified <=> l.lastModified
 	}
 
+	def FeedModel feed
+
 	BlogModel(Project project) {
-		this.project = project;
+		this.project = project
+		this.feed = new FeedModel()
 	}
 
 	def getRecentPosts() {
@@ -55,5 +59,9 @@ class BlogModel {
 			this.recentPosts = recents.collect { new Content(it) }
 		}
 		return this.recentPosts
+	}
+
+	def feed(Closure configureClosure) {
+		ConfigureUtil.configure(configureClosure, getFeed())
 	}
 }

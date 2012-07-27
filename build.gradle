@@ -42,6 +42,7 @@ dependencies {
 
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 	compile 'commons-net:commons-net:3.+'
+	compile 'rome:rome:1.0'
 	
 	compile gradleApi()
 	

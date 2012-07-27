@@ -26,6 +26,7 @@ buildscript {
 			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 		}
 		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
+		classpath 'rome:rome:1.0'
 	}
 }
 
@@ -38,6 +39,11 @@ yuzen.publish {
 blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
+	
+	feed {
+		syndicationURI = 'http://localhost:8080/blog'
+		author = 'taichi'
+	}
 }
 
 def dest = file("${project.buildDir}/html")

@@ -12,10 +12,11 @@ import org.pegdown.PegDownProcessor;
  * @author taichi
  */
 class Content {
-	def url
-	def title
-	def timestamp
-	def summary
+	def String url
+	def String title
+	def Date timestamp
+	def String summary
+	def File rawfile
 
 	Content(FileTreeElement file) {
 		this.timestamp = new Date(file.lastModified)
@@ -23,6 +24,8 @@ class Content {
 		this.url = file.relativePath.segments.collect {
 			URLEncoder.encode(it, 'UTF-8')
 		}.join('/').replaceAll(/\.md$/, "")
+
+		this.rawfile = file.file
 
 		PegDownProcessor md = new PegDownProcessor(Extensions.ALL)
 		def txt = md.markdownToHtml(file.file.text)
