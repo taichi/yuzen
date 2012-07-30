@@ -63,7 +63,7 @@ sourceSets {
 	main {
 		java.srcDir 'src/java'
 		groovy.srcDir 'src/groovy'
-		resources.srcDir 'src/java'
+		resources.srcDirs 'src/java', 'src/js'
 	}
 	scripts.groovy.srcDir 'scripts'
 	test {

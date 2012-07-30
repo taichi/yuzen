@@ -22,24 +22,20 @@ class InitTemplateTask extends ConventionTask {
 		this.group = BasePlugin.BUILD_GROUP
 	}
 
-	def fromTree = {
-		// for testing.
-		def pluginURL = YuzenPlugin.protectionDomain.codeSource.location.toExternalForm()
-		project.zipTree(pluginURL)
-	}
+	// for testing.
+	def fromTree = { YuzenPlugin.getPluginArchive(project) }
 
 	@TaskAction
 	def initTemplate() {
-		def tmp = "$temporaryDir/yuzen"
 		def base = "_templates/$templateName"
 		def ft = fromTree()
 		project.copy {
 			from ft.matching { include "$base/**" }
-			into tmp
+			into temporaryDir
 		}
 		def dest = this.getDestinationDir()
 		project.copy {
-			from "$tmp/$base"
+			from "$temporaryDir/$base"
 			into dest
 		}
 	}

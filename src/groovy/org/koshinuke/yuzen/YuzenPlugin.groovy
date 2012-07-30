@@ -43,6 +43,7 @@ class YuzenPlugin implements Plugin<Project> {
 			newone.templatePrefix = task.templatePrefix
 		}
 
+		addCopyBootstrapTask(project, ypc)
 		addBlogTasks(project, ypc)
 		addSlideTasks(project, ypc)
 
@@ -77,6 +78,28 @@ class YuzenPlugin implements Plugin<Project> {
 		}
 	}
 
+	def addCopyBootstrapTask(Project project, YuzenPluginConvention ypc) {
+		Copy copyBootstrap = project.tasks.add 'copyBootstrap', Copy
+		copyBootstrap.description = 'copy Bootstrap from archive'
+		def tree = getPluginArchive(project)
+		copyBootstrap.into ypc.templatePrefix
+		copyBootstrap.from tree.matching({ include "less/**" })
+
+		copyBootstrap.doLast {
+			def tmp = copyBootstrap.getTemporaryDir()
+			['less', 'js', 'img'].each { name ->
+				project.copy {
+					from tree.matching({ include "bootstrap/$name/**" })
+					into tmp
+				}
+				project.copy {
+					from "$tmp/bootstrap/$name"
+					into "$ypc.templatePrefix/$name"
+				}
+			}
+		}
+	}
+
 	def addInitTask(Project project, YuzenPluginConvention ypc, name) {
 		def newone = project.tasks.add "init$name", InitTemplateTask
 		newone.templateName = name
@@ -87,6 +110,8 @@ class YuzenPlugin implements Plugin<Project> {
 
 	def addBlogTasks(Project project, YuzenPluginConvention ypc) {
 		Task init = addInitTask(project, ypc, 'blog')
+		init.dependsOn 'copyBootstrap'
+
 		NewEntryTask profile = project.tasks.add 'makeProfile', NewEntryTask
 		profile.title = 'Profile'
 		profile.newEntry = new File(ypc.contentsDir, 'profile.md')
@@ -192,5 +217,10 @@ class YuzenPlugin implements Plugin<Project> {
 		newone.into "$ypc.destinationDir/$resource"
 		newone.description = "copy $resource from template"
 		task.dependsOn newone
+	}
+
+	def static getPluginArchive(Project project) {
+		def pluginURL = YuzenPlugin.protectionDomain.codeSource.location.toExternalForm()
+		project.zipTree(pluginURL)
 	}
 }
