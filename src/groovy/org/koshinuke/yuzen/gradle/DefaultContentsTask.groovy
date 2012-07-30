@@ -75,7 +75,12 @@ class DefaultContentsTask extends ConventionTask implements WatchableTask {
 
 	def calcHtmlOutput(file) {
 		def path = FileUtil.removeExtension(file.path)
-		new File(this.getDestinationDir(), "$path/index.html")
+		def child = "$path"
+		if(path.endsWith('index') == false) {
+			child += '/index'
+		}
+		child += '.html'
+		new File(this.getDestinationDir(), child)
 	}
 
 	def calcFileOutput(file) {

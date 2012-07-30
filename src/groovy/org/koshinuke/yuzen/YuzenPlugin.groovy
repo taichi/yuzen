@@ -46,6 +46,7 @@ class YuzenPlugin implements Plugin<Project> {
 		addCopyBootstrapTask(project, ypc)
 		addBlogTasks(project, ypc)
 		addSlideTasks(project, ypc)
+		addSiteTasks(project, ypc)
 
 		project.tasks.withType(ContentsTask) {
 			it.conventionMapping.with {
@@ -209,6 +210,16 @@ class YuzenPlugin implements Plugin<Project> {
 		addCopyTask(project, slide, ypc, 'js')
 		addCopyTask(project, slide, ypc, 'css')
 		addCopyTask(project, slide, ypc, 'assets')
+	}
+
+	def addSiteTasks(Project project, YuzenPluginConvention ypc) {
+		Task init = addInitTask(project, ypc, 'site')
+		init.dependsOn 'copyBootstrap'
+
+		def site = project.tasks.add 'site', DefaultContentsTask
+		site.description = "make project site"
+		addLessTask(project, site, ypc)
+		addCopyTask(project, site, ypc, 'js')
 	}
 
 	def addCopyTask(Project project, Task task, YuzenPluginConvention ypc, String resource) {

@@ -209,6 +209,36 @@ class YuzenPluginTest {
 		assert f.exists()
 	}
 
+	@Test
+	void index() {
+		def indexTemplate = project.file("_templates/index.html")
+		indexTemplate.text = '''<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/head::${blog.head}">
+<meta charset="utf-8" />
+<title>Blog Title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet/less" type="text/css" href="less/main.less" />
+<script type="application/javascript" src="less/less-1.3.0.min.js"></script>
+</head>
+<body>
+	<article yz:markdown="${content.path}">てすと</article>
+</body></html>
+'''
+		def indexMD = project.file("_contents/index.md")
+		indexMD.text = '''
+# head
+hogehogefuga
+
+* 1
+* 2
+* 3
+'''
+		project.tasks.blog.execute()
+		def html = new File(project.yuzen.getDestinationDir(), 'index.html')
+		assert html.exists()
+	}
+
 	/**
 	 * Rule で追加されるTaskに対する依存性があると、gradle tasksでイテレート中に、project.tasksを変更する事になるので、
 	 * ConcurrentModificationException が送出される。<br/>

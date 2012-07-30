@@ -21,10 +21,11 @@ class NewEntryTask extends ConventionTask {
 	def generate() {
 		def f = getNewEntry()
 		if(f.exists()) {
-			logger.warn Markers.HELP, "$newEntry.path is already exists.."
+			logger.warn Markers.HELP, "$f.path is already exists.."
 		} else {
 			f.parentFile.mkdirs()
 			f.text = "* $title \n"
+			logger.info Markers.HELP, "$f.path is generated."
 		}
 	}
 }
