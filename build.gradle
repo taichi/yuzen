@@ -43,9 +43,9 @@ dependencies {
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 	compile 'commons-net:commons-net:3.+'
 	compile 'rome:rome:1.0'
-	
+
 	compile gradleApi()
-	
+
 	testCompile 'junit:junit:4.+'
 	testCompile ('org.apache.ftpserver:ftpserver:1.0.6') {
 		exclude group: 'org.springframework'
@@ -63,7 +63,7 @@ sourceSets {
 	main {
 		java.srcDir 'src/java'
 		groovy.srcDir 'src/groovy'
-		resources.srcDirs 'src/java', 'src/resources'
+		resources.srcDir 'src/java'
 	}
 	scripts.groovy.srcDir 'scripts'
 	test {
@@ -79,6 +79,19 @@ targetCompatibility = 1.7
 def encoding = { it.encoding = 'UTF-8' }
 tasks.withType(AbstractCompile) each { encoding it.options }
 tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
+
+jar {
+	into('_templates') { from 'src/resources/_templates' }
+	into("bootstrap/img") { from "src/resources/bootstrap/img" }
+	into("bootstrap/js") {
+		from "src/resources/bootstrap/js"
+		exclude '**/tests/**'
+	}
+	into("bootstrap/less") {
+		from "src/resources/bootstrap/less"
+		exclude '**/tests/**'
+	}
+}
 
 eclipse {
 	project { name = 'yuzen' }
