@@ -33,7 +33,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
         * systemProp.https.proxyHost
         * systemProp.https.proxyPort
 
-## How to Get Start a Blog.
+## How to Get Start a Blog
 * Initialize template
     `gradlew initBlog`  
 * Edit build.gradle for blogging.
@@ -62,6 +62,15 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * Publish to GitHub Pages
     `gradlew publish`  
 
+
+## How to build your Yuzen
+* clone repository
+    `git clone https://github.com/taichi/yuzen.git`  
+* make your eclipse environment
+    `gradlew eclipse`  
+* import project to eclipse
+* build archive
+    `gradlew clean jar`  
 
 ## License
 Apache License, Version 2.0

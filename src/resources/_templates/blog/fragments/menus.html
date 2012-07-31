@@ -5,10 +5,8 @@
 </head>
 <body>
 	<div th:fragment="menus">
-		<div class="menu profile">
-			<img
-				src="https://twimg0-a.akamaihd.net/profile_images/769940966/226710936a3042d473708005333d57118c925cac_normal.png" />
-			<span> Trick Programmer </span>
+		<div th:if="${blog.hasProfile()}" th:utext="${blog.makeProfile()}" class="menu profile">
+			<span>short profile text</span>
 		</div>
 		<div class="menu recents">
 			<h3>Recent Posts</h3>

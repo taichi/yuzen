@@ -62,7 +62,7 @@ class WorkerlessPathSentinelTest {
 	void duplicateEvent() {
 		File f = new File(rootDir, "hoge.txt")
 		f.text = "moge" + new Date()
-		Thread.sleep(10)
+		Thread.sleep(20)
 
 		this.target.events.clear()
 

@@ -6,9 +6,12 @@ package org.koshinuke.yuzen.gradle
 
 
 
+import org.eclipse.jgit.util.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.util.ConfigureUtil
+import org.pegdown.Extensions
+import org.pegdown.PegDownProcessor
 
 /**
  * @author taichi
@@ -20,6 +23,8 @@ class BlogModel {
 	String title
 
 	String subtitle
+
+	String profile
 
 	String head = 'css'
 
@@ -39,6 +44,18 @@ class BlogModel {
 	BlogModel(Project project) {
 		this.project = project
 		this.feed = new FeedModel()
+	}
+
+	def hasProfile() {
+		StringUtils.isEmptyOrNull(this.profile) == false
+	}
+
+	def makeProfile() {
+		if(hasProfile()) {
+			PegDownProcessor md = new PegDownProcessor(Extensions.ALL)
+			return md.markdownToHtml(this.profile)
+		}
+		return ""
 	}
 
 	def getRecentPosts() {

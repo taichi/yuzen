@@ -39,7 +39,8 @@ yuzen.publish {
 blog {
 	title "ぶろぐ たいとる"
 	subtitle "さぶさぶさぶたい"
-	
+	//head 'less'
+	profile "![taichi](https://twimg0-a.akamaihd.net/profile_images/769940966/226710936a3042d473708005333d57118c925cac_normal.png) Trick Programmer"
 	feed {
 		syndicationURI = 'http://localhost:8080/blog'
 		author = 'taichi'

@@ -17,6 +17,7 @@ import org.koshinuke.yuzen.gradle.InitTemplateTask
 import org.koshinuke.yuzen.gradle.LessCompile
 import org.koshinuke.yuzen.gradle.NewEntryTask
 import org.koshinuke.yuzen.gradle.PublishTask
+import org.koshinuke.yuzen.gradle.SiteModel
 import org.koshinuke.yuzen.gradle.SlideTask
 import org.koshinuke.yuzen.gradle.StartServerTask
 import org.koshinuke.yuzen.util.FileUtil
@@ -35,6 +36,7 @@ class YuzenPlugin implements Plugin<Project> {
 		YuzenPluginConvention ypc = project.convention.create('yuzen', YuzenPluginConvention, project)
 		project.extensions.create('github', GitHubModel, project)
 		project.extensions.create('blog', BlogModel, project)
+		project.extensions.create('site', SiteModel, project)
 
 		addRule(project, 'start', 'start Jetty of a task.') { base, name, task ->
 			def newone = project.tasks.add name, StartServerTask
