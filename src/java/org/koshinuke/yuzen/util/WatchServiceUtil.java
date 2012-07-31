@@ -3,6 +3,7 @@ package org.koshinuke.yuzen.util;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -95,7 +96,7 @@ public class WatchServiceUtil {
 		LOG.debug("watch {}", dir);
 		try {
 			return dir.register(ws, new WatchEvent.Kind<?>[] { ENTRY_CREATE,
-					ENTRY_DELETE, ENTRY_MODIFY }, modifiers);
+					ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW }, modifiers);
 		} catch (IOException e) {
 			throw new IORuntimeException(e);
 		}
