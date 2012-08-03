@@ -97,6 +97,7 @@ public class PathSentinel {
 	}
 
 	protected void startWatcher() {
+		// TODO Futureを適切に処理すると、shutdown時の例外が出なくなるかもしれぬ。
 		this.watcherExecutor.submit(new Callable<_>() {
 			@Override
 			public _ call() throws Exception {
