@@ -1,0 +1,10 @@
+import org.gradle.api.plugins.quality.FindBugs;
+
+apply plugin: 'findbugs'
+
+tasks.withType(FindBugs) {
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}

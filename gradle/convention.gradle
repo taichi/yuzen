@@ -1,0 +1,58 @@
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+sourceSets {
+	main {
+		java.srcDir 'src/java'
+		groovy.srcDir 'src/groovy'
+		resources.srcDirs 'src/java', 'src/js'
+	}
+	scripts.groovy.srcDir 'scripts'
+	test {
+		java.srcDir 'test/java'
+		groovy.srcDir 'test/groovy'
+		resources.srcDir 'test/java'
+	}
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+def encoding = { it.encoding = 'UTF-8' }
+tasks.withType(SourceTask) each {
+	def p = 'options'
+	if(it.hasProperty(p)) {
+		encoding it[p]
+	}
+}
+tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
+
+jar {
+	into('_templates') { from 'src/resources/_templates' }
+	into("bootstrap/img") { from "src/resources/bootstrap/img" }
+	into("bootstrap/js") {
+		from "src/resources/bootstrap/js"
+		exclude '**/tests/**'
+	}
+	into("bootstrap/less") {
+		from "src/resources/bootstrap/less"
+		exclude '**/tests/**'
+	}
+}
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives jar
+	archives sourcesJar
+	archives javadocJar
+}

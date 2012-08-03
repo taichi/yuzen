@@ -22,7 +22,7 @@ public interface PublisherHandler {
 	 * </p>
 	 * 
 	 * @param args
-	 * @return
+	 * @return configured Publisher instance
 	 */
 	<T extends Publisher> T ftps(Map<String, ?> args);
 
@@ -43,8 +43,8 @@ public interface PublisherHandler {
 	 * 
 	 * </p>
 	 * 
-	 * @param args
-	 * @return
+	 * @param configureClosure
+	 * @return configured Publisher instance
 	 */
 	<T extends Publisher> T ftps(Closure<T> configureClosure);
 
@@ -61,7 +61,7 @@ public interface PublisherHandler {
 	 * </p>
 	 * 
 	 * @param args
-	 * @return
+	 * @return configured Publisher instance
 	 */
 	<T extends Publisher> T ghpages(Map<String, ?> args);
 
@@ -82,8 +82,8 @@ public interface PublisherHandler {
 	 * 
 	 * </p>
 	 * 
-	 * @param args
-	 * @return
+	 * @param configureClosure
+	 * @return configured Publisher instance
 	 */
 	<T extends Publisher> T ghpages(Closure<T> configureClosure);
 }

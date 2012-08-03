@@ -1,20 +1,22 @@
-import org.gradle.plugins.ide.eclipse.model.AbstractLibrary;
-import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory;
-
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'war'
-apply plugin: 'eclipse'
 
 group = 'org.koshinuke'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 description = 'static contents granerator'
+
+apply from: file('gradle/convention.gradle')
+apply from: file('gradle/check.gradle')
 
 configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
 
 repositories {
 	mavenCentral()
 	mavenRepo(url: 'http://download.eclipse.org/jgit/maven')
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
 }
 
 dependencies {
@@ -31,13 +33,13 @@ dependencies {
 
 	compile 'org.lesscss:lesscss:1.3.+'
 
-	providedCompile 'org.mortbay.jetty:servlet-api:3.0.20100224'
+	compile 'org.mortbay.jetty:servlet-api:3.0.20100224'
 	[
 		'jetty-server',
 		'jetty-servlet',
 		'jetty-websocket'
 	].each {
-		providedCompile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
+		compile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 	}
 
 	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
@@ -57,71 +59,43 @@ dependencies {
 	// http://www.gebish.org/manual/current/build-integrations.html#gradle
 }
 
-buildscript { repositories { mavenCentral() } }
+apply from: file('gradle/ide.gradle')
 
-sourceSets {
-	main {
-		java.srcDir 'src/java'
-		groovy.srcDir 'src/groovy'
-		resources.srcDirs 'src/java', 'src/js'
-	}
-	scripts.groovy.srcDir 'scripts'
-	test {
-		java.srcDir 'test/java'
-		groovy.srcDir 'test/groovy'
-		resources.srcDir 'test/java'
-	}
+task createWrapper(type: Wrapper) {
+	gradleVersion = '1.0'
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
-def encoding = { it.encoding = 'UTF-8' }
-tasks.withType(AbstractCompile) each { encoding it.options }
-tasks.withType(GroovyCompile) each { encoding it.groovyOptions }
-
-jar {
-	into('_templates') { from 'src/resources/_templates' }
-	into("bootstrap/img") { from "src/resources/bootstrap/img" }
-	into("bootstrap/js") {
-		from "src/resources/bootstrap/js"
-		exclude '**/tests/**'
+buildscript {
+	repositories {
+		flatDir { dir project.file('build/libs') }
+		mavenCentral()
 	}
-	into("bootstrap/less") {
-		from "src/resources/bootstrap/less"
-		exclude '**/tests/**'
-	}
-}
-
-eclipse {
-	project { name = 'yuzen' }
-	classpath {
-		containers = [
-			'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7'
-		]
-		defaultOutputDir = file('bin')
-		file {
-			whenMerged {
-				def src = new File(gradle.gradleHomeDir.absolutePath, 'src')
-				def ref = new FileReferenceFactory().fromFile(src)
-				it.entries.findAll {
-					it in AbstractLibrary && it.library.file.name.startsWith('gradle-')
-				} each { it.sourcePath = ref }
-			}
-			withXml {
-				def n = it.asNode()
-				def gp = [
-					'GROOVY_SUPPORT',
-					'GROOVY_DSL_SUPPORT'
-				]
-				n.children().removeAll { gp.contains(it.@path) || it.@path == 'src/resources' }
-				// 単純にsortするとgradle周りのアレソレが高い優先順位に移動しがち
-				// n.children().sort { it.@path.split('/').last() }
-
-				gp.each {
-					n.appendNode 'classpathentry', [kind: 'con', path: it]
-				}
-			}
+	dependencies {
+		classpath 'org.thymeleaf:thymeleaf:2.0.+'
+		// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
+		// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
+		classpath 'xerces:xercesImpl:2.10.0'
+		classpath 'org.lesscss:lesscss:1.3.+'
+		classpath 'com.google.guava:guava:12.+'
+		classpath 'org.pegdown:pegdown:1.1.+'
+		if(project.hasProperty("df")) {
+			classpath 'org.koshinuke:yuzen:0.0.1'
 		}
+		classpath 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
+		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
+		[
+			'jetty-server',
+			'jetty-servlet',
+			'jetty-websocket'
+		].each {
+			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
+		}
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
+		classpath 'rome:rome:1.0'
 	}
+}
+	
+// -Pdf=true
+if(project.hasProperty("df")) {
+	apply plugin: 'yuzen'
 }
