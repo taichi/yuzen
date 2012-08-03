@@ -1,4 +1,3 @@
-# Yuzen
 
 Yuzen is a static contents generator similar to [jekyll](https://github.com/mojombo/jekyll).
 
@@ -20,7 +19,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     * [Groovy-Eclipse 2.6.1](http://groovy.codehaus.org/Eclipse+Plugin)
 
 ## Installation
-* Download release archive from [here](.... // TODO)
+* Download release archive from here // TODO
 * Extract the archive
     `jar xvf yuzen-0.0.1.zip`  
 * Modify gradle.properties

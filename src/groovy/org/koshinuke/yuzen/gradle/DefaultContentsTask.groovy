@@ -112,7 +112,7 @@ class DefaultContentsTask extends ConventionTask implements WatchableTask {
 		def html = calcHtmlOutput(file)
 		def htmlPath = html.parentFile.toPath()
 		def relPath = htmlPath.relativize(getDestinationDir().toPath())
-		c.setVariable('relative', FileUtil.slashify(relPath) + "/")
+		c.setVariable('relative', 1 < relPath.nameCount ? FileUtil.slashify(relPath) + "/" : '')
 
 		html.parentFile.mkdirs()
 		html.withWriter("UTF-8") {

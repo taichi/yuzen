@@ -12,6 +12,7 @@ import org.koshinuke.yuzen.gradle.BlogPagingTask
 import org.koshinuke.yuzen.gradle.BlogModel
 import org.koshinuke.yuzen.gradle.ContentsTask
 import org.koshinuke.yuzen.gradle.DefaultContentsTask
+import org.koshinuke.yuzen.gradle.FeedModel
 import org.koshinuke.yuzen.gradle.FeedTask
 import org.koshinuke.yuzen.gradle.InitTemplateTask
 import org.koshinuke.yuzen.gradle.LessCompile
@@ -161,26 +162,31 @@ class YuzenPlugin implements Plugin<Project> {
 		archives.conventionMapping.entryDirName = { ypc.entryDirName }
 		blog.dependsOn archives
 
-		def feed = project.tasks.add 'blogFeed', FeedTask
+		def feed = makeFeed(project, ypc, 'blogFeed', project.blog.feed, project.blog.title)
 		feed.description "make blog syndication feed"
-		feed.model = project.blog.feed
+		blog.dependsOn feed
+	}
+
+	def makeFeed(Project project, YuzenPluginConvention ypc, name, FeedModel fm, defaultTitle) {
+		def feed = project.tasks.add name, FeedTask
+		feed.model = fm
 		feed.conventionMapping.with {
-			feedType = { feed.model.feedType }
-			syndicationURI = { feed.model.syndicationURI }
+			feedType = { fm.feedType }
+			syndicationURI = { fm.syndicationURI }
 			title = {
-				def s = feed.model.title
+				def s = fm.title
 				if(StringUtils.isEmptyOrNull(s)) {
-					return project.blog.title
+					return defaultTitle
 				}
 				return s
 			}
-			author = { feed.model.author }
+			author = { fm.author }
 			contents = {
 				project.fileTree ypc.contentsDir, {}
 			}
-			destinationFile = { new File(ypc.destinationDir, "${feed.model.feedType}.xml") }
+			destinationFile = { new File(ypc.destinationDir, "${fm.feedType}.xml") }
 		}
-		blog.dependsOn feed
+		return feed
 	}
 
 	def getInput(Project project, key, defaultValue) {
@@ -222,6 +228,10 @@ class YuzenPlugin implements Plugin<Project> {
 		site.description = "make project site"
 		addLessTask(project, site, ypc)
 		addCopyTask(project, site, ypc, 'js')
+
+		def feed = makeFeed(project, ypc, 'siteFeed', project.site.feed, project.name)
+		feed.description "make site syndication feed"
+		site.dependsOn feed
 	}
 
 	def addCopyTask(Project project, Task task, YuzenPluginConvention ypc, String resource) {

@@ -98,4 +98,10 @@ buildscript {
 // -Pdf=true
 if(project.hasProperty("df")) {
 	apply plugin: 'yuzen'
+	site {
+		feed {
+			syndicationURI = 'http://taichi.github.com/yuzen'
+			author = 'taichi'
+		}
+	}
 }
