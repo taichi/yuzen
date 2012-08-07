@@ -23,7 +23,7 @@ class Content {
 
 		this.url = file.relativePath.segments.collect {
 			URLEncoder.encode(it, 'UTF-8')
-		}.join('/').replaceAll(/\.md$/, "")
+		}.join('/').replaceAll(/([iI][nN][dD][eE][xX])?\.md$/, "")
 
 		this.rawfile = file.file
 

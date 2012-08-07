@@ -2,7 +2,7 @@ package org.koshinuke.yuzen.github
 
 import org.eclipse.egit.github.core.client.GitHubClient
 import org.eclipse.egit.github.core.service.RepositoryService
-import org.gradle.api.Project;
+import org.gradle.api.Project
 
 
 /**
@@ -11,6 +11,8 @@ import org.gradle.api.Project;
 class GitHubModel {
 
 	final Project project
+
+	def String projectURI
 
 	String username
 

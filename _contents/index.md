@@ -1,3 +1,4 @@
+# Yuzen
 
 Yuzen is a static contents generator similar to [jekyll](https://github.com/mojombo/jekyll).
 
@@ -36,14 +37,14 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * Initialize template
     `gradlew initBlog`  
 * Edit build.gradle for blogging.
-    `blog {
-         title 'blog title'
-         subtitle 'sub title or blog description'
-         // this block uses for atom or rss feed.
-         feed {
-             syndicationURI = 'http://localhost:8080/blog'
-             author = 'john doe'
-         }
+    `blog {  
+         title 'blog title'  
+         subtitle 'sub title or blog description'  
+         // this block uses for atom or rss feed.  
+         feed {  
+             syndicationURI = 'http://localhost:8080/blog'  
+             author = 'john doe'  
+         }  
      }
     `  
 * Write your profile to _contents/profile.md
