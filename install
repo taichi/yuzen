@@ -1,7 +1,7 @@
 //
 // this gradle build script fragment can be referenced from your build as
 //
-//   apply from:"https://raw.github.com/taichi/yuzen/master/install"
+//   apply from:"http://yuzen.koshinuke.org/install"
 //
 // Or you can copy the below directly into your build.gradle.
 //
@@ -10,13 +10,13 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.thymeleaf:thymeleaf:2.0.+'
+		classpath 'org.thymeleaf:thymeleaf:2.0.11'
 		classpath 'xerces:xercesImpl:2.10.0'
-		classpath 'org.lesscss:lesscss:1.3.+'
-		classpath 'com.google.guava:guava:12.+'
-		classpath 'org.pegdown:pegdown:1.1.+'
+		classpath 'org.lesscss:lesscss:1.3.0'
+		classpath 'com.google.guava:guava:12.0.1'
+		classpath 'org.pegdown:pegdown:1.1.0'
 		classpath 'org.koshinuke:yuzen:0.0.1'
-		classpath 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
+		classpath 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.3.6'
 		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
 		[
 			'jetty-server',
@@ -25,7 +25,7 @@ buildscript {
 		].each {
 			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 		}
-		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.0.0.201206130900-r'
 		classpath 'rome:rome:1.0'
 	}
 }

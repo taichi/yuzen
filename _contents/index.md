@@ -20,9 +20,13 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     * [Groovy-Eclipse 2.6.1](http://groovy.codehaus.org/Eclipse+Plugin)
 
 ## Installation
-* Download release archive from here // TODO
-* Extract the archive
-    `jar xvf yuzen-0.0.1.zip`  
+* if you don't have gradle,
+    * Download release archive from [here](https://github.com/downloads/taichi/yuzen/yuzen-0.0.1.zip)
+    * Extract the archive
+        `jar xvf yuzen-0.0.1.zip`  
+* if you already use gradle,
+    * apply plugin from this site.
+        `apply from: 'http://yuzen.koshinuke.org/install'`
 * Modify gradle.properties
     * if you use github features, edit these keys
         * github.username

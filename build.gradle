@@ -65,6 +65,16 @@ task createWrapper(type: Wrapper) {
 	gradleVersion = '1.0'
 }
 
+task makeStartUpArchive << {
+	// gradleWrapper, 
+	// build.gradle, 
+	// gradle.properties contains example datas.
+}
+
+// UploadArchives to GitHub
+// UploadArchives to SonaType
+// cf. https://github.com/hierynomus/license-gradle-plugin/blob/master/build.gradle
+
 buildscript {
 	repositories {
 		flatDir { dir project.file('build/libs') }
