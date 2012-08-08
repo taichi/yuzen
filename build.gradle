@@ -74,6 +74,7 @@ task makeStartUpArchive << {
 // UploadArchives to GitHub
 // UploadArchives to SonaType
 // cf. https://github.com/hierynomus/license-gradle-plugin/blob/master/build.gradle
+// https://github.com/Netflix/SimianArmy/blob/master/build.gradle
 
 buildscript {
 	repositories {
