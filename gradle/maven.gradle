@@ -7,16 +7,50 @@ signing {
 	sign configurations.archives
 }
 
-uploadArchives {
+ext.packaging = 'jar'
 
+uploadArchives {
+	dependsOn signArchives
 	doFirst {
+		// https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+		// https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+		// http://jedicoder.blogspot.jp/2011/11/automated-gradle-project-deployment-to.html
+		// http://www.gpg4win.org/download.html
+		// http://wald.intevation.org/tracker/index.php?func=detail&aid=1229&group_id=11&atid=126
+		// 
+		// org.gradle.api.artifacts.maven.MavenDeployer
 		repositories.mavenDeployer {
+			beforeDeployment { signing.signPom(it) }
+			
+			uniqueVersion = false
+
+			def repoProps = {
+				authentication(userName: sonatypeUsername, password: sonatypePassword)
+				// proxy() ?
+			}
+
+			// for testing.
+			repository(url: file("${rootProject.rootDir}/build/repo").toURL().toString())
+
+			//repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2', repoProps)
+			//snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/', repoProps)
 			pom.project {
+				url 'http://yuzen.koshinuke.org'
+				description 'static contents granerator'
+
 				parent {
 					groupId 'org.sonatype.oss'
 					artifactId 'oss-parent'
 					version '7'
 				}
+
+				def scmURL = 'git@github.com:taichi/yuzen.git'
+				scm {
+					url scmURL
+					connection "scm:git:$scmURL"
+					developerConnection "scm:git:$scmURL"
+				}
+
 				licenses {
 					license {
 						name 'The Apache Software License, Version 2.0'
@@ -24,6 +58,7 @@ uploadArchives {
 						distribution 'repo'
 					}
 				}
+
 				developers {
 					developer {
 						id 'taichi'
@@ -32,6 +67,7 @@ uploadArchives {
 					}
 				}
 			}
+			pom.setPackaging('jar')
 		}
 	}
 }

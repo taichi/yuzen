@@ -1,9 +1,9 @@
 
 group = 'org.koshinuke'
 version = '0.0.1'
-description = 'static contents granerator'
 
 apply from: file('gradle/convention.gradle')
+apply from: file('gradle/maven.gradle')
 apply from: file('gradle/check.gradle')
 
 configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
