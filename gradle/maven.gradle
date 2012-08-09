@@ -2,67 +2,66 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-signing {
-	required { gradle.taskGraph.hasTask("uploadArchives") && version.endsWith("SNAPSHOT") == false}
-	sign configurations.archives
+uploadArchives {
+	// suppress ivy.xml
+	uploadDescriptor false
+	repositories.mavenDeployer {
+		uniqueVersion = false
+		def c = { authentication(userName: sonatypeUsername, password: sonatypePassword) }
+		repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2', c)
+		snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/', c)
+	}
+	
+	doFirst {
+		// http://www.gpg4win.org/download.html
+		// cf. for asian windows user
+		// http://wald.intevation.org/tracker/index.php?func=detail&aid=1229&group_id=11&atid=126
+		// https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+		signing.sign(configurations.archives)*.generate()
+	}
 }
 
-uploadArchives {
-	dependsOn signArchives
-	doFirst {
-		// https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
-		// https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
-		// http://jedicoder.blogspot.jp/2011/11/automated-gradle-project-deployment-to.html
-		// http://www.gpg4win.org/download.html
-		// http://wald.intevation.org/tracker/index.php?func=detail&aid=1229&group_id=11&atid=126
-		// 
-		// org.gradle.api.artifacts.maven.MavenDeployer
-		repositories.mavenDeployer {
-			beforeDeployment { signing.signPom(it) }
-			
-			uniqueVersion = false
-			
-			// for testing.
-			repository(url: file("${rootProject.rootDir}/build/repo").toURL().toString())
-			snapshotRepository(url: file("${rootProject.rootDir}/build/snapshot").toURL().toString())
+[
+	install.repositories.mavenInstaller, 
+	uploadArchives.repositories.mavenDeployer
+].each {
+	it.beforeDeployment { signing.signPom(it) }
+	// https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+	// https://github.com/GradleFx/GradleFx/blob/develop/build.gradle
+	it.pom.project {
+		url 'http://yuzen.koshinuke.org'
+		description 'static contents granerator'
+		inceptionYear '2012'
 
-			// use set environment variable M2_HOME
-			def repoProps = {
-				authentication(userName: sonatypeUsername, password: sonatypePassword)
+		// jar is the default value of packaging. so pom.xml doesn't contain <packaging>,
+		// but sonatype staging verifier doesn't report error.
+		packaging 'jar'
+
+		parent {
+			groupId 'org.sonatype.oss'
+			artifactId 'oss-parent'
+			version '7'
+		}
+
+		scm {
+			url 'https://github.com/taichi/yuzen'
+			connection "scm:git:git://github.com/taichi/yuzen.git"
+			developerConnection "scm:git:git@github.com:taichi/yuzen.git"
+		}
+
+		licenses {
+			license {
+				name 'The Apache Software License, Version 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution 'repo'
 			}
-			//repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2', repoProps)
-			//snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/', repoProps)
-			pom.project {
-				url 'http://yuzen.koshinuke.org'
-				description 'static contents granerator'
+		}
 
-				parent {
-					groupId 'org.sonatype.oss'
-					artifactId 'oss-parent'
-					version '7'
-				}
-
-				scm {
-					url 'https://github.com/taichi/yuzen'
-					connection "scm:git:git://github.com/taichi/yuzen.git"
-					developerConnection "scm:git:git@github.com:taichi/yuzen.git"
-				}
-
-				licenses {
-					license {
-						name 'The Apache Software License, Version 2.0'
-						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-						distribution 'repo'
-					}
-				}
-
-				developers {
-					developer {
-						id 'taichi'
-						name 'SATO taichi'
-						email 'ryushi@gmail.com'
-					}
-				}
+		developers {
+			developer {
+				id 'taichi'
+				name 'SATO taichi'
+				email 'ryushi@gmail.com'
 			}
 		}
 	}

@@ -1,10 +1,11 @@
 
 group = 'org.koshinuke'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 apply from: file('gradle/convention.gradle')
 apply from: file('gradle/maven.gradle')
 apply from: file('gradle/check.gradle')
+apply from: file('gradle/release.gradle')
 
 configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
 
@@ -54,47 +55,14 @@ dependencies {
 
 apply from: file('gradle/ide.gradle')
 
-task createWrapper(type: Wrapper) {
+task createWrapper(type: org.gradle.api.tasks.wrapper.Wrapper) {
 	gradleVersion = '1.1'
 }
 
-task makeStartUpArchive << {
-	// gradleWrapper, 
-	// build.gradle, 
-	// gradle.properties contains example datas.
-}
-
-// UploadArchives to GitHub
-// UploadArchives to SonaType
-// cf. https://github.com/hierynomus/license-gradle-plugin/blob/master/build.gradle
-// https://github.com/Netflix/SimianArmy/blob/master/build.gradle
-
 buildscript {
 	repositories {
-		mavenRepo(url: 'file:/build/repo')
 		mavenCentral()
 	}
 	dependencies {
-		if(project.hasProperty("df")) {
-			classpath 'org.koshinuke:yuzen:0.0.1'
-		}
-	}
-}
-	
-// -Pdf=true
-if(project.hasProperty("df")) {
-	apply plugin: 'yuzen'
-	site {
-		//head = 'less'
-		feed {
-			syndicationURI = 'http://yuzen.koshinuke.org'
-			author = 'taichi'
-		}
-	}
-	github {
-		projectURI = 'https://github.com/taichi/yuzen'
-	}
-	yuzen.publish {
-		ghpages	repoURI : "${project.github.projectURI}.git"
 	}
 }

@@ -1,0 +1,40 @@
+//import org.eclipse.jgit.api.Git
+//import org.eclipse.jgit.lib.TextProgressMonitor
+//import org.koshinuke.jgit.PassphraseProvider
+
+
+task makeStartUpArchive << {
+// gradleWrapper,
+// build.gradle,
+// gradle.properties contains example datas.
+}
+
+//task tag << {
+//	def g = Git.open file('.git')
+//	def tag = null
+//	try {
+//		def n = "$version-$war.classifier"
+//		tag = g.tag() setName n setMessage "release $n" call()
+//		// PassphrraseProvider read passphrase from gradle.properties ??
+//		g.push().setPushTags().setCredentialsProvider new PassphraseProvider() setProgressMonitor new TextProgressMonitor() call()
+//	} catch(e) {
+//		g.tagDelete().setTags(tag?.tagName).call()
+//		throw e
+//	} finally {
+//		g.repository.close()
+//	}
+//}
+
+// sonatype uploadArchives , verify , release / REST API ?
+// http://www.sonatype.com/people/2012/07/nexus-pro-automating-staging-workflow-with-gradle-using-the-nexus-rest-apis/
+// https://github.com/sonatype/nexus/blob/master/nexus-maven-plugins/nexus-maven-plugin/src/main/java/org/sonatype/nexus/plugin/staging/AbstractStagingMojo.java
+
+task release(dependsOn: uploadArchives) << {
+	// uploadArchives
+	// call sonatype close
+	// if(noerror) {
+	//   tagging
+	//   call sonatype release
+	// } else { error}
+	//
+}

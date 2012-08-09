@@ -1,0 +1,25 @@
+apply plugin: 'yuzen'
+
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.koshinuke:yuzen:0.0.1'
+	}
+}
+
+site {
+	//head = 'less'
+	feed {
+		syndicationURI = 'http://yuzen.koshinuke.org'
+		author = 'taichi'
+	}
+}
+github {
+	projectURI = 'https://github.com/taichi/yuzen'
+}
+yuzen.publish {
+	ghpages	repoURI : "${project.github.projectURI}.git"
+}

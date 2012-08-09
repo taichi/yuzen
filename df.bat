@@ -1,1 +1,1 @@
-call gradlew %1 -Pdf=true
+call gradlew %1 -b docs.gradle
