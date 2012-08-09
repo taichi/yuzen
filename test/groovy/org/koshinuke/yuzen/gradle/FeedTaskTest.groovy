@@ -1,12 +1,12 @@
 package org.koshinuke.yuzen.gradle;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.eclipse.jgit.util.FileUtils
-import org.gradle.api.Project;
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After;
-import org.junit.Before;
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.koshinuke.yuzen.TestData
 
@@ -60,5 +60,21 @@ class FeedTaskTest {
 		assert feed.title == xml.title.text()
 		assert feed.author == xml.author.name.text()
 		assert xml.entry.size() == 5
+	}
+
+	@Test
+	void entityResolve() {
+		def f = this.project.file("_contents/entry/aaa.md")
+		f.parentFile.mkdirs()
+		f.text = "if you don't have gradle,"
+		FeedTask feed = project.tasks.blogFeed
+		feed.with {
+			feedType = 'atom_1.0'
+			syndicationURI = 'http://example.com'
+			title = 'TTTT'
+			author = 'tester'
+		}
+		feed.execute()
+		assert feed.getDestinationFile().exists()
 	}
 }

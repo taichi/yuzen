@@ -1,10 +1,11 @@
 package org.koshinuke.yuzen.gradle
 
-
-import org.gradle.api.file.FileTreeElement;
-import org.koshinuke.yuzen.util.FileUtil;
+import org.gradle.api.file.FileTreeElement
+import org.koshinuke.yuzen.util.FileUtil
 import org.pegdown.Extensions
-import org.pegdown.PegDownProcessor;
+import org.pegdown.PegDownProcessor
+
+
 
 
 
@@ -29,7 +30,9 @@ class Content {
 
 		PegDownProcessor md = new PegDownProcessor(Extensions.ALL)
 		def txt = md.markdownToHtml(file.file.text)
-		def html = new XmlParser().parseText("<div>$txt</div>")
+		// see. org.pegdown.ToHtmlSerializer.visit(SimpleNode)
+		def parser = new XmlParser()
+		def html = parser.parseText("<div>$txt</div>")
 
 		def title = html.depthFirst().find {
 			it.name() ==~ /h\d/
