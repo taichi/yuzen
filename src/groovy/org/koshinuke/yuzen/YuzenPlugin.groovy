@@ -157,17 +157,17 @@ class YuzenPlugin implements Plugin<Project> {
 		}
 		page.description = "make new page. example -> gradlew page -Ppagename=pages/profile.md"
 
-		def archives = project.tasks.add 'archives', BlogArchiveTask
+		def archives = project.tasks.add 'blogArchives', BlogArchiveTask
 		archives.description = 'make blog archives'
 		archives.conventionMapping.entryDirName = { ypc.entryDirName }
 		blog.dependsOn archives
 
-		def feed = makeFeed(project, ypc, 'blogFeed', project.blog.feed, project.blog.title)
+		def feed = makeFeed(project, ypc, 'blogFeed', project.blog.feed, {project.blog.title})
 		feed.description "make blog syndication feed"
 		blog.dependsOn feed
 	}
 
-	def makeFeed(Project project, YuzenPluginConvention ypc, name, FeedModel fm, defaultTitle) {
+	def makeFeed(Project project, YuzenPluginConvention ypc, name, FeedModel fm, Closure defaultTitle) {
 		def feed = project.tasks.add name, FeedTask
 		feed.model = fm
 		feed.conventionMapping.with {
@@ -176,7 +176,7 @@ class YuzenPlugin implements Plugin<Project> {
 			title = {
 				def s = fm.title
 				if(StringUtils.isEmptyOrNull(s)) {
-					return defaultTitle
+					return defaultTitle()
 				}
 				return s
 			}
@@ -229,7 +229,7 @@ class YuzenPlugin implements Plugin<Project> {
 		addLessTask(project, site, ypc)
 		addCopyTask(project, site, ypc, 'js')
 
-		def feed = makeFeed(project, ypc, 'siteFeed', project.site.feed, project.name)
+		def feed = makeFeed(project, ypc, 'siteFeed', project.site.feed, {project.name})
 		feed.description "make site syndication feed"
 		site.dependsOn feed
 	}

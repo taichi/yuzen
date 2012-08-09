@@ -48,7 +48,7 @@ class BlogArchiveTaskTest {
 
 	@Test
 	void test() {
-		def archives = this.project.tasks.archives
+		def archives = this.project.tasks.blogArchives
 		archives.execute()
 
 		def f = new File(archives.getDestinationDir(), 'archives/index.html')

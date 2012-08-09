@@ -1,6 +1,6 @@
 
 group = 'org.koshinuke'
-version = '0.0.1'
+version = '0.0.1-SNAPSHOT'
 
 apply from: file('gradle/convention.gradle')
 apply from: file('gradle/maven.gradle')
@@ -10,13 +10,6 @@ configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
 
 repositories {
 	mavenCentral()
-	mavenRepo(url: 'http://download.eclipse.org/jgit/maven')
-}
-
-buildscript {
-	repositories {
-		mavenCentral()
-	}
 }
 
 dependencies {
@@ -62,7 +55,7 @@ dependencies {
 apply from: file('gradle/ide.gradle')
 
 task createWrapper(type: Wrapper) {
-	gradleVersion = '1.0'
+	gradleVersion = '1.1'
 }
 
 task makeStartUpArchive << {
@@ -78,31 +71,13 @@ task makeStartUpArchive << {
 
 buildscript {
 	repositories {
-		flatDir { dir project.file('build/libs') }
+		mavenRepo(url: 'file:/build/repo')
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.thymeleaf:thymeleaf:2.0.+'
-		// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
-		// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
-		classpath 'xerces:xercesImpl:2.10.0'
-		classpath 'org.lesscss:lesscss:1.3.+'
-		classpath 'com.google.guava:guava:12.+'
-		classpath 'org.pegdown:pegdown:1.1.+'
 		if(project.hasProperty("df")) {
 			classpath 'org.koshinuke:yuzen:0.0.1'
 		}
-		classpath 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
-		classpath 'org.mortbay.jetty:servlet-api:3.0.20100224'
-		[
-			'jetty-server',
-			'jetty-servlet',
-			'jetty-websocket'
-		].each {
-			classpath ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
-		}
-		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
-		classpath 'rome:rome:1.0'
 	}
 }
 	

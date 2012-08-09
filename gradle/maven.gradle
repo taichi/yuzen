@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 signing {
-	required { gradle.taskGraph.hasTask("uploadArchives") }
+	required { gradle.taskGraph.hasTask("uploadArchives") && version.endsWith("SNAPSHOT") == false}
 	sign configurations.archives
 }
 
@@ -21,15 +21,15 @@ uploadArchives {
 			beforeDeployment { signing.signPom(it) }
 			
 			uniqueVersion = false
-
-			def repoProps = {
-				authentication(userName: sonatypeUsername, password: sonatypePassword)
-				// proxy() ?
-			}
-
+			
 			// for testing.
 			repository(url: file("${rootProject.rootDir}/build/repo").toURL().toString())
+			snapshotRepository(url: file("${rootProject.rootDir}/build/snapshot").toURL().toString())
 
+			// use set environment variable M2_HOME
+			def repoProps = {
+				authentication(userName: sonatypeUsername, password: sonatypePassword)
+			}
 			//repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2', repoProps)
 			//snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/', repoProps)
 			pom.project {
@@ -42,11 +42,10 @@ uploadArchives {
 					version '7'
 				}
 
-				def scmURL = 'git@github.com:taichi/yuzen.git'
 				scm {
-					url scmURL
-					connection "scm:git:$scmURL"
-					developerConnection "scm:git:$scmURL"
+					url 'https://github.com/taichi/yuzen'
+					connection "scm:git:git://github.com/taichi/yuzen.git"
+					developerConnection "scm:git:git@github.com:taichi/yuzen.git"
 				}
 
 				licenses {

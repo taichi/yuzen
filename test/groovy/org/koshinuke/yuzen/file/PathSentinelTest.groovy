@@ -59,7 +59,7 @@ class PathSentinelTest {
 	@Test
 	void createAndDelete() {
 		def act = []
-		CountDownLatch latch = new CountDownLatch(2)
+		CountDownLatch latch = new CountDownLatch(3)
 		this.target.register({
 			act.add it
 			latch.countDown()
