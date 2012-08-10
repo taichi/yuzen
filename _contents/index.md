@@ -74,8 +74,8 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * make your eclipse environment
     `gradlew eclipse`  
 * import project to eclipse
-* build archive
-    `gradlew clean jar`  
+* install to your maven local repository
+    `gradlew clean install`  
 
 ## License
 Apache License, Version 2.0
