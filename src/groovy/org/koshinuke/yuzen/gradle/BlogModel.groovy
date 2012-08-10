@@ -9,26 +9,19 @@ package org.koshinuke.yuzen.gradle
 import org.eclipse.jgit.util.StringUtils
 import org.gradle.api.Project
 import org.gradle.api.file.FileVisitor
-import org.gradle.util.ConfigureUtil
 import org.pegdown.Extensions
 import org.pegdown.PegDownProcessor
 
 /**
  * @author taichi
  */
-class BlogModel {
-
-	final Project project
+class BlogModel extends SiteModel {
 
 	String title
 
 	String subtitle
 
 	String profile
-
-	String head = 'css'
-
-	boolean autoload = false
 
 	def recentPostsSize = 5
 	def recentPosts = null
@@ -39,11 +32,8 @@ class BlogModel {
 		r.lastModified <=> l.lastModified
 	}
 
-	FeedModel feed
-
 	BlogModel(Project project) {
-		this.project = project
-		this.feed = new FeedModel()
+		super(project)
 	}
 
 	def hasProfile() {
@@ -76,20 +66,5 @@ class BlogModel {
 			this.recentPosts = recents.collect { new Content(it) }
 		}
 		return this.recentPosts
-	}
-
-	// https://issues.apache.org/jira/browse/OGNL-164
-	// OGNLRuntime#findClosestMatchingMethod
-	// l.2117 でnullチェックをしていない為起こる例外に対する回避措置。
-	public String getFeedType() {
-		return this.feed.feedType
-	}
-
-	public void setFeedType(String type) {
-		this.feed.feedType = type
-	}
-
-	def feed(Closure configureClosure) {
-		ConfigureUtil.configure(configureClosure, getFeed())
 	}
 }
