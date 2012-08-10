@@ -66,7 +66,7 @@ class FeedTaskTest {
 	void entityResolve() {
 		def f = this.project.file("_contents/entry/aaa.md")
 		f.parentFile.mkdirs()
-		f.text = "if you don't have gradle,"
+		f.text = "if you don't have gradle,&thinsp;"
 		FeedTask feed = project.tasks.blogFeed
 		feed.with {
 			feedType = 'atom_1.0'
