@@ -1,5 +1,5 @@
-import org.gradle.plugins.ide.eclipse.model.AbstractLibrary;
-import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory;
+import org.gradle.plugins.ide.eclipse.model.AbstractLibrary
+import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory
 
 apply plugin: 'eclipse'
 
@@ -26,8 +26,17 @@ eclipse {
 				]
 				n.children().removeAll { gp.contains(it.@path) || it.@path == 'src/resources' }
 				// 単純にsortするとgradle周りのアレソレが高い優先順位に移動しがち
-				// n.children().sort { it.@path.split('/').last() }
-
+//				def level = [:]
+//				['output','src','con','lib'].eachWithIndex {v, i -> level[v] = i}
+//				n.children().sort { left, right ->
+//					def ll = level[left.@kind]
+//					def lr = level[right.@kind]
+//					if(ll != lr) {
+//						return ll.compareTo(lr)
+//					}
+//					def last = { it.@path.split('/').last() }
+//					return last(left).compareTo(last(right))
+//				}
 				gp.each {
 					n.appendNode 'classpathentry', [kind: 'con', path: it]
 				}
