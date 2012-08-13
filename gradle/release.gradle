@@ -3,6 +3,15 @@
 //import org.koshinuke.jgit.PassphraseProvider
 
 
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+	}
+}
+
 task makeStartUpArchive << {
 // gradleWrapper,
 // build.gradle,
@@ -29,6 +38,16 @@ task makeStartUpArchive << {
 // http://www.sonatype.com/people/2012/07/nexus-pro-automating-staging-workflow-with-gradle-using-the-nexus-rest-apis/
 // https://github.com/sonatype/nexus/blob/master/nexus-maven-plugins/nexus-maven-plugin/src/main/java/org/sonatype/nexus/plugin/staging/AbstractStagingMojo.java
 
+task stage_list(type: StagingListTask) {
+	username = sonatypeUsername
+	password = sonatypePassword
+}
+
+task stage_close(type: StagingCloseTask) {
+	username = sonatypeUsername
+	password = sonatypePassword
+}
+
 task release(dependsOn: uploadArchives) << {
 	// uploadArchives
 	// call sonatype close
@@ -38,3 +57,97 @@ task release(dependsOn: uploadArchives) << {
 	// } else { error}
 	//
 }
+
+import groovyx.net.http.*
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
+
+class SonaTypeTask extends DefaultTask {
+	def repo = 'https://oss.sonatype.org/'
+	
+	@Input
+	def username
+	
+	@Input
+	def password
+	
+	def http() {
+		def h = new HTTPBuilder(getRepo())
+		h.auth.basic username, password
+		h.handler.failure = {
+			logger.error "${it.status} : ${it.statusLine.reasonPhrase}"
+			// レスポンスがエラーの時、Gradleもエラー終了する様に何かフラグを弄る。
+		}
+		return h
+	}
+}
+
+class StagingListTask extends SonaTypeTask {
+	
+	@TaskAction
+	def list() {
+		http().request(GET, JSON) {
+			uri.path = 'service/local/staging/profile_repositories'
+			response.success = { r, j ->
+				j.data.each {
+					it.each {
+						logger.lifecycle "\t$it.key $it.value"
+					}
+					logger.lifecycle ""
+				}
+			}
+		}
+	}
+}
+
+class StagingDropTask extends SonaTypeTask {
+	@TaskAction
+	def drop() {
+		
+	}
+}
+
+class StagingAutoCloseTask extends SonaTypeTask {
+	// TODO listして最新のrepositoryIdをcloseする。
+}
+
+class StagingCloseTask extends SonaTypeTask {
+	
+	@TaskAction
+	def close() {
+		http().request(POST, JSON) {
+			uri.path = 'service/local/staging/bulk/close'
+			body = [
+				data : [
+					stagedRepositoryIds : ["'orgkoshinuke-655'"],
+					description : ''
+				]
+			]
+				
+			response.'201' = { r, j ->
+				logger.lifecycle 'uploaded artifact is closed'
+				j?.data*.each {
+					logger.lifecycle "\t$it.key $it.value"
+				}
+			}
+			response.failure = { r, j ->
+				logger.error "${r.status} : ${r.statusLine.reasonPhrase}"
+				if(j?.errors) {
+					j.errors.each {
+						logger.error "$it.id $it.msg"
+					}
+				}
+				if(j?.failures) {
+					logger.error "$j.repositoryName"
+					j?.failures.each {
+						logger.error "\t$it.ruleName"
+						it.messages.each {
+							logger.error "\t\t$it"
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

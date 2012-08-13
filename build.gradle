@@ -46,6 +46,8 @@ dependencies {
 
 	compile gradleApi()
 
+	testCompile 'org.sonatype.nexus.restlight:nexus-restlight-stage-client:2.1.1'
+
 	testCompile 'junit:junit:4.+'
 	testCompile ('org.apache.ftpserver:ftpserver:1.0.6') {
 		exclude group: 'org.springframework'
