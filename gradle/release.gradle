@@ -1,153 +1,240 @@
-//import org.eclipse.jgit.api.Git
-//import org.eclipse.jgit.lib.TextProgressMonitor
-//import org.koshinuke.jgit.PassphraseProvider
-
 
 buildscript {
-	repositories {
-		mavenCentral()
-	}
+	repositories { mavenCentral() }
 	dependencies {
-		classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
+		[
+			'jersey-core',
+			'jersey-client'
+		].each { classpath "com.sun.jersey:$it:1.+" }
 	}
 }
 
 task makeStartUpArchive << {
-// gradleWrapper,
-// build.gradle,
-// gradle.properties contains example datas.
+	// gradleWrapper,
+	// build.gradle,
+	// gradle.properties contains example datas.
 }
 
-//task tag << {
-//	def g = Git.open file('.git')
-//	def tag = null
-//	try {
-//		def n = "$version-$war.classifier"
-//		tag = g.tag() setName n setMessage "release $n" call()
-//		// PassphrraseProvider read passphrase from gradle.properties ??
-//		g.push().setPushTags().setCredentialsProvider new PassphraseProvider() setProgressMonitor new TextProgressMonitor() call()
-//	} catch(e) {
-//		g.tagDelete().setTags(tag?.tagName).call()
-//		throw e
-//	} finally {
-//		g.repository.close()
-//	}
-//}
+task stage_list(type: StagingListTask)
+task stage_close(type: StagingCloseTask) { repositoryId = getInput('repoId') }
+task stage_drop(type: StagingDropTask) { repositoryId = getInput('repoId') }
+
+task release(dependsOn: uploadArchives, type: AutoReleaseTask)
+
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+import javax.ws.rs.core.MediaType
+
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.errors.UnsupportedCredentialItem
+import org.eclipse.jgit.lib.TextProgressMonitor
+import org.eclipse.jgit.transport.CredentialItem
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.URIish;
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.TaskAction
+import org.koshinuke.jgit.PassphraseProvider
+
+import com.sun.jersey.api.client.Client
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig
+import com.sun.jersey.api.client.config.DefaultClientConfig
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter
+
 
 // sonatype uploadArchives , verify , release / REST API ?
 // http://www.sonatype.com/people/2012/07/nexus-pro-automating-staging-workflow-with-gradle-using-the-nexus-rest-apis/
 // https://github.com/sonatype/nexus/blob/master/nexus-maven-plugins/nexus-maven-plugin/src/main/java/org/sonatype/nexus/plugin/staging/AbstractStagingMojo.java
-
-task stage_list(type: StagingListTask) {
-	username = sonatypeUsername
-	password = sonatypePassword
-}
-
-task stage_close(type: StagingCloseTask) {
-	username = sonatypeUsername
-	password = sonatypePassword
-}
-
-task release(dependsOn: uploadArchives) << {
-	// uploadArchives
-	// call sonatype close
-	// if(noerror) {
-	//   tagging
-	//   call sonatype release
-	// } else { error}
-	//
-}
-
-import groovyx.net.http.*
-import static groovyx.net.http.ContentType.*
-import static groovyx.net.http.Method.*
-
-class SonaTypeTask extends DefaultTask {
+// https://github.com/sonatype/nexus/blob/master/nexus/nexus-clients/nexus-restlight-clients/nexus-restlight-stage-client/src/main/java/org/sonatype/nexus/restlight/stage/StageClient.java
+abstract class SonaTypeTask extends DefaultTask {
 	def repo = 'https://oss.sonatype.org/'
-	
+
 	@Input
-	def username
-	
+	def profileName = project.group
+
 	@Input
-	def password
-	
-	def http() {
-		def h = new HTTPBuilder(getRepo())
-		h.auth.basic username, password
-		h.handler.failure = {
-			logger.error "${it.status} : ${it.statusLine.reasonPhrase}"
-			// レスポンスがエラーの時、Gradleもエラー終了する様に何かフラグを弄る。
+	def username = project.sonatypeUsername
+
+	@Input
+	def password = project.sonatypePassword
+
+	def getInput(name) {
+		if(project.hasProperty(name)) {
+			return project[name]
 		}
-		return h
+		return null
+	}
+
+	def resource(path) {
+		ClientConfig cc = new DefaultClientConfig()
+		Client c = Client.create(cc)
+		c.followRedirects = true
+		c.addFilter(new HTTPBasicAuthFilter(username, password))
+		return c.resource(repo).path(path).accept(MediaType.APPLICATION_JSON_TYPE)
+	}
+
+	def toJson(r) {
+		r.withReader {
+			return new JsonSlurper().parse(it)
+		}
+	}
+
+	def get(path) {
+		toJson(resource(path).get(Reader))
+	}
+
+	def post(path, data) {
+		def json = new JsonBuilder()
+		json.data data
+		resource(path)
+				.type(MediaType.APPLICATION_JSON_TYPE)
+				.post(ClientResponse, json.toString())
+	}
+
+	def getProfiles() {
+		get('service/local/staging/profiles')?.data.findAll { it.name == profileName }
+	}
+
+	def list() {
+		get('service/local/staging/profile_repositories')?.data.findAll { it.profileName == profileName }
+	}
+
+	def close(ids) {
+		post('service/local/staging/bulk/close', [stagedRepositoryIds: ids, description : ''])
+	}
+	
+	def reportClose(resp) {
+		if(resp.status < 300) {
+			logger.lifecycle 'uploaded artifact is closed'
+		} else if(500 <= resp.status) {
+			logger.error resp.getEntity(String)
+			throw new RuntimeException(resp.toString())
+		} else {
+			def j = toJson(resp.getEntity(Reader))
+			if(j?.errors) {
+				j.errors.each { logger.error "$it.id $it.msg" }
+			}
+			if(j?.failures) {
+				logger.error "$j.repositoryName"
+				j.failures.each {
+					logger.error "\t$it.ruleName"
+					it.messages.each { logger.error "\t\t$it" }
+				}
+			}
+			throw new RuntimeException()
+		}
+	}
+	
+	def release(ids) {
+		post("service/local/staging/bulk/promote", [stagedRepositoryIds: ids, description : ''])
+	}
+
+	def drop(ids) {
+		post("service/local/staging/bulk/drop", [stagedRepositoryIds: ids, description : ''])
 	}
 }
 
 class StagingListTask extends SonaTypeTask {
-	
 	@TaskAction
-	def list() {
-		http().request(GET, JSON) {
-			uri.path = 'service/local/staging/profile_repositories'
-			response.success = { r, j ->
-				j.data.each {
-					it.each {
-						logger.lifecycle "\t$it.key $it.value"
-					}
-					logger.lifecycle ""
-				}
-			}
+	def stage_list() {
+		list().each {
+			it.each { logger.lifecycle String.format('%-22s %s',it.key, it.value) }
+			logger.lifecycle ""
 		}
+	}
+}
+
+class StagingCloseTask extends SonaTypeTask {
+	@Input
+	def repositoryId
+
+	@TaskAction
+	def stage_close() {
+		reportClose close([repositoryId])
 	}
 }
 
 class StagingDropTask extends SonaTypeTask {
-	@TaskAction
-	def drop() {
-		
-	}
-}
+	@Input
+	def repositoryId
 
-class StagingAutoCloseTask extends SonaTypeTask {
-	// TODO listして最新のrepositoryIdをcloseする。
-}
-
-class StagingCloseTask extends SonaTypeTask {
-	
 	@TaskAction
-	def close() {
-		http().request(POST, JSON) {
-			uri.path = 'service/local/staging/bulk/close'
-			body = [
-				data : [
-					stagedRepositoryIds : ["'orgkoshinuke-655'"],
-					description : ''
-				]
-			]
-				
-			response.'201' = { r, j ->
-				logger.lifecycle 'uploaded artifact is closed'
-				j?.data*.each {
-					logger.lifecycle "\t$it.key $it.value"
-				}
-			}
-			response.failure = { r, j ->
-				logger.error "${r.status} : ${r.statusLine.reasonPhrase}"
-				if(j?.errors) {
-					j.errors.each {
-						logger.error "$it.id $it.msg"
-					}
-				}
-				if(j?.failures) {
-					logger.error "$j.repositoryName"
-					j?.failures.each {
-						logger.error "\t$it.ruleName"
-						it.messages.each {
-							logger.error "\t\t$it"
-						}
-					}
-				}
-			}
+	def stage_drop() {
+		def resp = drop([repositoryId])
+		if(resp.status < 300) {
+			logger.lifecycle 'drop succeed'
+		} else {
+			throw new RuntimeException(resp.toString())
 		}
 	}
 }
 
+class AutoReleaseTask extends SonaTypeTask {
+	
+	@TaskAction
+	def autoRelease() {
+		def repos = list().findAll { it.type == 'open' }
+		if(repos.size() < 1) {
+			throw new RuntimeException("no uploaded contents")
+		}
+		def r = selectRepo(repos)
+		reportClose(close([r.repositoryId]))
+		tagging()
+		def resp = release([r.repositoryId])
+		if(resp.status < 300) {
+			logger.lifecycle 'release succeed'
+		} else {
+			throw new RuntimeException(resp.toString())
+		}
+	}
+	
+	def selectRepo(repos) {
+		if(repos.size() == 1) {
+			return repos[0]
+		} else {
+			return repos.sort { l, r -> r.createdTimestamp <=> l.createdTimestamp }[0]
+		}
+	}
+	
+	def tagging() {
+		def g = Git.open file('.git')
+		def tag = null
+		try {
+			def n = project.version
+			tag = g.tag() setName n setMessage "release $n" call()
+			// PassphrraseProvider read passphrase from gradle.properties ??
+			g.push().setPushTags().setCredentialsProvider new PassphraseProvider() setProgressMonitor new TextProgressMonitor() call()
+		} catch(e) {
+			g.tagDelete().setTags(tag?.tagName).call()
+			throw e
+		} finally {
+			g.repository.close()
+		}
+	}
+}
+
+class PassphraseProvider extends CredentialsProvider {
+	def passphrase = ""
+	PassphraseProvider(pass) {
+		this.passphrase = pass
+	}
+	def boolean isInteractive() {
+		false
+	}
+	def boolean supports(CredentialItem... items) {
+		true
+	}
+	def boolean get(URIish uri, CredentialItem... items) {
+		items.each {
+			if(it instanceof CredentialItem.StringType) {
+				it.value = passphrase
+				return true
+			} else {
+				throw new UnsupportedCredentialItem(uri, it.promptText);
+			}
+		}
+	}
+}
