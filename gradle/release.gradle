@@ -270,7 +270,7 @@ class AutoReleaseTask extends SonaTypeTask {
 			def n = project.version
 			tag = g.tag() setName n setMessage "release $n" call()
 			// PassphrraseProvider read passphrase from gradle.properties ??
-			g.push().setPushTags().setCredentialsProvider new PassphraseProvider() setProgressMonitor new TextProgressMonitor() call()
+			g.push().setPushTags().setCredentialsProvider new PassphraseProvider(project['ssh.passphrase']) setProgressMonitor new TextProgressMonitor() call()
 		} catch(e) {
 			g.tagDelete().setTags(tag?.tagName).call()
 			throw e
