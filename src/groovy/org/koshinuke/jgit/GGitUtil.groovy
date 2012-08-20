@@ -19,7 +19,7 @@ class GGitUtil {
 	def static handle(@Nonnull Repository repo, Closure closure) {
 		Objects.requireNonNull(repo)
 		try {
-			closure()
+			closure(repo)
 		} finally {
 			repo.close()
 		}

@@ -76,8 +76,7 @@ class GitHubPagesPublisher implements Publisher {
 			StoredConfig config = git.getRepository().getConfig()
 			config.setString(ConfigConstants.CONFIG_BRANCH_SECTION, PAGES, ConfigConstants.CONFIG_KEY_MERGE, Constants.R_HEADS + PAGES)
 			config.save()
-			git.checkout().setName(PAGES).setCreateBranch(true).call()
-			git.pull().call()
+			git.checkout().setName(PAGES).call()
 		}
 	}
 

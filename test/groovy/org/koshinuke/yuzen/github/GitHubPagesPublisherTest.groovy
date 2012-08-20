@@ -37,9 +37,8 @@ class GitHubPagesPublisherTest {
 	void publish() {
 		support.makeFiles(support.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
 		this.target.publish(support.rootDir)
-		Git git = Git.open(new File(support.repoDir, ".git"))
-
-		GGitUtil.handle(git) {
+		GGitUtil.handle(Git.open(new File(support.repoDir, ".git"))) {
+			Git git = Git.wrap(it)
 			git.checkout().setName(GitHubPagesPublisher.PAGES).call()
 
 			File dir = new File(support.repoDir, "aaa/bbb")
@@ -50,29 +49,29 @@ class GitHubPagesPublisherTest {
 
 	@Test
 	void overwrite() {
-		Git git = Git.open(new File(support.repoDir, ".git"))
-		GGitUtil.handle(git) {
-			git.checkout().setCreateBranch(true).setName(GitHubPagesPublisher.PAGES).call()
-			support.makeFiles(support.repoDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
-			git.add().addFilepattern(".").call()
-			git.commit().setMessage("aaa").call()
-			git.checkout().setName("master").call()
+		support.makeFiles(support.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+		this.target.publish(support.rootDir)
 
-			support.makeFiles(support.rootDir, [
-				"aaa/bbb/ccc",
-				"aaa/bbb/ddd",
-				"aaa/zzz"
-			])
-			this.target.publish(support.rootDir)
-
+		support.makeFiles(support.rootDir, [
+			"aaa/bbb/ccc",
+			"aaa/bbb/ddd",
+			"aaa/zzz"
+		])
+		this.target.publish(support.rootDir)
+		GGitUtil.handle(Git.open(new File(support.repoDir, ".git"))) {
+			Git git = Git.wrap(it)
 			git.checkout().setName(GitHubPagesPublisher.PAGES).call()
 
-			File dir = new File(support.repoDir, "aaa/bbb")
+			File dir = new File(support.repoDir, "aaa")
 			assert 2 == dir.list().length
 			Iterable<RevCommit> logs = git.log().call()
 			int count = 0;
-			logs.each { count++ }
-			assert 3 == count
+			logs.each {
+				println it.fullMessage
+				count++ }
+			assert 2 == count
+
+			assert 2 == support.repoDir.list().length
 		}
 	}
 }
