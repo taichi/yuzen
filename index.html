@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title>yuzen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="application/atom+xml" title="yuzen" href="atom_1.0.xml" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+</head>
+<body>
+	<div class="main"><h1>Yuzen</h1><p>Yuzen is a static contents generator similar to <a href="https://github.com/mojombo/jekyll">jekyll</a>.</p>
+<ul>
+  <li>Yuzen is a <a href="http://gradle.org/">Gradle</a> Plugin</li>
+  <li>Yuzen uses clean template by <a href="http://www.thymeleaf.org/">Thymeleaf</a></li>
+  <li>Yuzen translates <a href="http://daringfireball.net/projects/markdown/">Markdown</a> to HTML5
+  <ul>
+    <li>Yuzen parses Markdown by <a href="https://github.com/sirthias/pegdown/">Pegdown</a></li>
+  </ul></li>
+  <li>Yuzen contains some useful templates
+  <ul>
+    <li>blog</li>
+    <li>slide</li>
+    <li>site (this one)</li>
+  </ul></li>
+  <li>Yuzen publishes contents to FTPS server and GitHub Pages</li>
+</ul><h2>Requirements</h2>
+<ul>
+  <li>java7 or more tested by 1.7.0_02</li>
+  <li>gradle 1.0</li>
+  <li>eclipse 3.7.2 (for development)
+  <ul>
+    <li><a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy-Eclipse 2.6.1</a></li>
+  </ul></li>
+</ul><h2>Installation</h2>
+<ul>
+  <li>Install Java SE 7 <a href="http://www.oracle.com/technetwork/java/javase/downloads/">JDK</a></li>
+  <li>if you don&rsquo;t have gradle,
+  <ul>
+    <li>Download latest release archive from <a href="https://github.com/taichi/yuzen/downloads">here</a></li>
+    <li>Extract the archive<br /><code>jar xvf yuzen-startup.zip</code></li>
+  </ul></li>
+  <li>if you already use gradle,
+  <ul>
+    <li>apply plugin from this site.<br /><code>apply from: &#39;http://yuzen.koshinuke.org/install&#39;</code></li>
+  </ul></li>
+  <li>Modify gradle.properties
+  <ul>
+    <li>if you use github features, edit these keys
+    <ul>
+      <li>github.username</li>
+      <li>github.password</li>
+    </ul></li>
+    <li>if your network is in firewall, edit these keys
+    <ul>
+      <li>systemProp.http.proxyHost</li>
+      <li>systemProp.http.proxyPort</li>
+      <li>systemProp.https.proxyHost</li>
+      <li>systemProp.https.proxyPort</li>
+    </ul></li>
+  </ul></li>
+</ul><h2>How to Get Start a Blog</h2>
+<ul>
+  <li>Initialize template<br /><code>gradlew initBlog</code></li>
+  <li>Edit build.gradle for blogging.<br /><code>blog {  
+     title &#39;blog title&#39;  
+     subtitle &#39;sub title or blog description&#39;  
+     // this block uses for atom or rss feed.  
+     feed {  
+         syndicationURI = &#39;http://localhost:8080/blog&#39;  
+         author = &#39;john doe&#39;  
+     }  
+ }
+</code></li>
+  <li>Write your profile to _contents/profile.md</li>
+  <li>add first entry<br /><code>gradlew post -Ptitle=HelloWorld</code></li>
+  <li>Write your first entry to generated file.</li>
+  <li>Generate static contents<br /><code>gradlew startBlog</code></li>
+  <li>Access to <a href="http://localhost:8080">localhost:8080</a></li>
+  <li>Check your generated contents</li>
+  <li>Edit build.gradle for publish to GitHub Pages.<br /><code>yuzen.publish {
+    ghpages repoURI : &quot;https://github.com/[your github account]/[your repository name].git&quot;
+}</code></li>
+  <li>Publish to GitHub Pages<br /><code>gradlew publish</code></li>
+</ul><h2>How to build your Yuzen</h2>
+<ul>
+  <li>clone repository<br /><code>git clone https://github.com/taichi/yuzen.git</code></li>
+  <li>make your eclipse environment<br /><code>gradlew eclipse</code></li>
+  <li>import project to eclipse</li>
+  <li>install to your maven local repository<br /><code>gradlew clean install</code></li>
+</ul><h2>License</h2><p>Apache License, Version 2.0</p></div>
+	<a href="https://github.com/taichi/yuzen"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+	<footer>
+		<div class="footer">
+			<p>
+				Thanks for <a href="http://twitter.github.com/bootstrap">Bootstrap,
+					from Twitter</a>
+			</p>
+			<p>
+				Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache
+					License v2.0</a>.
+			</p>
+			<p>
+				Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+			</p>
+			<p>
+				Powered by <a href="http://yuzen.koshinuke.org">Yuzen</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

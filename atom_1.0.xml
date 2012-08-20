@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>yuzen</title>
+  <link href="http://yuzen.koshinuke.org" />
+  <link rel="self" href="http://yuzen.koshinuke.org/atom_1.0.xml" />
+  <author>
+    <name>taichi</name>
+  </author>
+  <entry>
+    <title>install</title>
+    <link href="http://yuzen.koshinuke.org/install" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.2&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: &amp;lsquo;yuzen&amp;rsquo;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>CNAME</title>
+    <link href="http://yuzen.koshinuke.org/CNAME" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;p&gt;yuzen.koshinuke.org&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Yuzen</title>
+    <link href="http://yuzen.koshinuke.org/" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;h1&gt;Yuzen&lt;/h1&gt;&lt;p&gt;Yuzen is a static contents generator similar to &lt;a href="https://github.com/mojombo/jekyll"&gt;jekyll&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Yuzen is a &lt;a href="http://gradle.org/"&gt;Gradle&lt;/a&gt; Plugin&lt;/li&gt;
+  &lt;li&gt;Yuzen uses clean template by &lt;a href="http://www.thymeleaf.org/"&gt;Thymeleaf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Yuzen translates &lt;a href="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/a&gt; to HTML5
+  &lt;ul&gt;
+    &lt;li&gt;Yuzen parses Markdown by &lt;a href="https://github.com/sirthias/pegdown/"&gt;Pegdown&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Yuzen contains some useful templates
+  &lt;ul&gt;
+    &lt;li&gt;blog&lt;/li&gt;
+    &lt;li&gt;slide&lt;/li&gt;
+    &lt;li&gt;site (this one)&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Yuzen publishes contents to FTPS server and GitHub Pages&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;Requirements&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;java7 or more tested by 1.7.0_02&lt;/li&gt;
+  &lt;li&gt;gradle 1.0&lt;/li&gt;
+  &lt;li&gt;eclipse 3.7.2 (for development)
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="http://groovy.codehaus.org/Eclipse+Plugin"&gt;Groovy-Eclipse 2.6.1&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Install Java SE 7 &lt;a href="http://www.oracle.com/technetwork/java/javase/downloads/"&gt;JDK&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;if you don&amp;rsquo;t have gradle,
+  &lt;ul&gt;
+    &lt;li&gt;Download latest release archive from &lt;a href="https://github.com/taichi/yuzen/downloads"&gt;here&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Extract the archive&lt;br/&gt;&lt;code&gt;jar xvf yuzen-startup.zip&lt;/code&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;if you already use gradle,
+  &lt;ul&gt;
+    &lt;li&gt;apply plugin from this site.&lt;br/&gt;&lt;code&gt;apply from: &amp;#39;http://yuzen.koshinuke.org/install&amp;#39;&lt;/code&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Modify gradle.properties
+  &lt;ul&gt;
+    &lt;li&gt;if you use github features, edit these keys
+    &lt;ul&gt;
+      &lt;li&gt;github.username&lt;/li&gt;
+      &lt;li&gt;github.password&lt;/li&gt;
+    &lt;/ul&gt;&lt;/li&gt;
+    &lt;li&gt;if your network is in firewall, edit these keys
+    &lt;ul&gt;
+      &lt;li&gt;systemProp.http.proxyHost&lt;/li&gt;
+      &lt;li&gt;systemProp.http.proxyPort&lt;/li&gt;
+      &lt;li&gt;systemProp.https.proxyHost&lt;/li&gt;
+      &lt;li&gt;systemProp.https.proxyPort&lt;/li&gt;
+    &lt;/ul&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;How to Get Start a Blog&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initialize template&lt;br/&gt;&lt;code&gt;gradlew initBlog&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Edit build.gradle for blogging.&lt;br/&gt;&lt;code&gt;blog {  &#xD;
+     title &amp;#39;blog title&amp;#39;  &#xD;
+     subtitle &amp;#39;sub title or blog description&amp;#39;  &#xD;
+     // this block uses for atom or rss feed.  &#xD;
+     feed {  &#xD;
+         syndicationURI = &amp;#39;http://localhost:8080/blog&amp;#39;  &#xD;
+         author = &amp;#39;john doe&amp;#39;  &#xD;
+     }  &#xD;
+ }&#xD;
+&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Write your profile to _contents/profile.md&lt;/li&gt;
+  &lt;li&gt;add first entry&lt;br/&gt;&lt;code&gt;gradlew post -Ptitle=HelloWorld&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Write your first entry to generated file.&lt;/li&gt;
+  &lt;li&gt;Generate static contents&lt;br/&gt;&lt;code&gt;gradlew startBlog&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Access to &lt;a href="http://localhost:8080"&gt;localhost:8080&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Check your generated contents&lt;/li&gt;
+  &lt;li&gt;Edit build.gradle for publish to GitHub Pages.&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
+    ghpages repoURI : &amp;quot;https://github.com/[your github account]/[your repository name].git&amp;quot;&#xD;
+}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Publish to GitHub Pages&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;How to build your Yuzen&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;clone repository&lt;br/&gt;&lt;code&gt;git clone https://github.com/taichi/yuzen.git&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;make your eclipse environment&lt;br/&gt;&lt;code&gt;gradlew eclipse&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;import project to eclipse&lt;/li&gt;
+  &lt;li&gt;install to your maven local repository&lt;br/&gt;&lt;code&gt;gradlew clean install&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;License&lt;/h2&gt;&lt;p&gt;Apache License, Version 2.0&lt;/p&gt;</content>
+  </entry>
+</feed>
+

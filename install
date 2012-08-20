@@ -1,0 +1,16 @@
+//
+// this gradle build script fragment can be referenced from your build as
+//
+//   apply from:"http://yuzen.koshinuke.org/install"
+//
+// Or you can copy the below directly into your build.gradle.
+//
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.koshinuke:yuzen:0.0.2'
+	}
+}
+apply plugin: 'yuzen'
