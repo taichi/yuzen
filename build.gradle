@@ -1,6 +1,6 @@
 
 group = 'org.koshinuke'
-version = '0.0.1'
+version = '0.0.2'
 
 apply from: file('gradle/convention.gradle')
 apply from: file('gradle/maven.gradle')
