@@ -6,21 +6,19 @@ package org.koshinuke.yuzen.github
 import groovy.io.FileType
 import groovy.io.FileVisitResult
 
-import java.io.File
-import java.nio.file.Path;
+import java.nio.file.Path
 
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
+import org.eclipse.jgit.api.CloneCommand
+import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ListBranchCommand.ListMode
-import org.eclipse.jgit.lib.ConfigConstants;
-import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ConfigConstants
+import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.Ref
-import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.lib.StoredConfig
 import org.eclipse.jgit.transport.URIish
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.koshinuke.jgit.CreateOrphanBranchCommand
-import org.koshinuke.jgit.GGitUtil;
+import org.koshinuke.jgit.GGitUtil
 import org.koshinuke.jgit.PassphraseProvider
 import org.koshinuke.yuzen.publish.Publisher
 
@@ -76,7 +74,7 @@ class GitHubPagesPublisher implements Publisher {
 			StoredConfig config = git.getRepository().getConfig()
 			config.setString(ConfigConstants.CONFIG_BRANCH_SECTION, PAGES, ConfigConstants.CONFIG_KEY_MERGE, Constants.R_HEADS + PAGES)
 			config.save()
-			git.checkout().setName(PAGES).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).setCreateBranch(true).call()
+			git.checkout().setName(PAGES).setCreateBranch(true).call()
 			git.pull().call()
 		}
 	}
