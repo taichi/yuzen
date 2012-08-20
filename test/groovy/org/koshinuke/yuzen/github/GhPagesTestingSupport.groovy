@@ -1,6 +1,5 @@
 package org.koshinuke.yuzen.github
 
-import java.io.File;
 import java.nio.file.Files
 
 import org.eclipse.jgit.api.Git
@@ -34,7 +33,7 @@ class GhPagesTestingSupport {
 
 		Git g = Git.init().setDirectory(this.repoDir).call()
 		GGitUtil.handle(g) {
-			makeFiles(repoDir, ["aaa", "bbb", "ccc"])
+			makeFiles(repoDir, ["aaa", "bbb", "ccc","ddd/eee"])
 
 			g.add().addFilepattern(".").call()
 			g.commit().setMessage("commit message").call()

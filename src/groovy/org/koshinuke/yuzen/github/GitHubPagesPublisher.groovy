@@ -11,12 +11,14 @@ import java.nio.file.Path
 import org.eclipse.jgit.api.CloneCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ListBranchCommand.ListMode
+import org.eclipse.jgit.dircache.DirCacheBuilder
 import org.eclipse.jgit.lib.ConfigConstants
 import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.StoredConfig
 import org.eclipse.jgit.transport.URIish
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
+import org.eclipse.jgit.util.FileUtils
 import org.koshinuke.jgit.CreateOrphanBranchCommand
 import org.koshinuke.jgit.GGitUtil
 import org.koshinuke.jgit.PassphraseProvider
@@ -68,14 +70,24 @@ class GitHubPagesPublisher implements Publisher {
 		Ref ref = git.branchList().setListMode(ListMode.REMOTE).call().find { it.getName().endsWith(PAGES) }
 		if(ref == null) {
 			def cmd = new CreateOrphanBranchCommand(git.getRepository())
-			cmd.setName(PAGES)
-			cmd.call()
+			cmd.setName(PAGES).call()
+			deleteFiles(git)
 		} else {
 			StoredConfig config = git.getRepository().getConfig()
 			config.setString(ConfigConstants.CONFIG_BRANCH_SECTION, PAGES, ConfigConstants.CONFIG_KEY_MERGE, Constants.R_HEADS + PAGES)
 			config.save()
 			git.checkout().setName(PAGES).setCreateBranch(true).call()
 			git.pull().call()
+		}
+	}
+
+	def deleteFiles(Git git) {
+		GGitUtil.lockDirCache(git.getRepository()) {
+			DirCacheBuilder builder = it.builder()
+			this.workingDir.eachFileMatch({ it != '.git' },{
+				FileUtils.delete(it, FileUtils.RECURSIVE)
+			})
+			builder.commit()
 		}
 	}
 

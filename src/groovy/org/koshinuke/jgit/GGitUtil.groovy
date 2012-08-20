@@ -1,24 +1,40 @@
 package org.koshinuke.jgit
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nonnull
 
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.dircache.DirCache
+import org.eclipse.jgit.lib.Repository
 
 /**
  * @author taichi
  */
 class GGitUtil {
 
-	public static void handle(@Nonnull Git git, Closure closure) {
+	def static handle(@Nonnull Git git, Closure closure) {
+		Objects.requireNonNull(git)
 		handle(git.getRepository(), closure)
 	}
 
-	public static void handle(@Nonnull Repository repo, Closure closure) {
+	def static handle(@Nonnull Repository repo, Closure closure) {
+		Objects.requireNonNull(repo)
 		try {
 			closure()
 		} finally {
 			repo.close()
+		}
+	}
+
+	def static lockDirCache(@Nonnull Repository repo, Closure closure) {
+		Objects.requireNonNull(repo)
+		DirCache dc = null
+		try {
+			dc = repo.lockDirCache()
+			closure(dc)
+		} finally {
+			if(dc != null) {
+				dc.unlock()
+			}
 		}
 	}
 }

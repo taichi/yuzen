@@ -1,14 +1,13 @@
 package org.koshinuke.yuzen.github;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.revwalk.RevCommit
-import org.junit.After;
+import org.junit.After
 import org.junit.Before
-import org.junit.Test;
-import org.koshinuke.jgit.GGitUtil;
+import org.junit.Test
+import org.koshinuke.jgit.GGitUtil
 
 /**
  * @author taichi
@@ -45,6 +44,7 @@ class GitHubPagesPublisherTest {
 
 			File dir = new File(support.repoDir, "aaa/bbb")
 			assert 2 == dir.list().length
+			assert 2 == support.repoDir.list().length
 		}
 	}
 
