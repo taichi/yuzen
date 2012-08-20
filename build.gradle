@@ -1,11 +1,12 @@
 
 group = 'org.koshinuke'
-version = '0.0.0'
+version = '0.0.1'
 
 apply from: file('gradle/convention.gradle')
 apply from: file('gradle/maven.gradle')
 apply from: file('gradle/check.gradle')
 apply from: file('gradle/release.gradle')
+apply from: file('gradle/startup.gradle')
 
 configurations.all { resolutionStrategy.cacheChangingModulesFor 14, 'days' }
 
@@ -16,11 +17,6 @@ dependencies {
 
 	compile 'org.thymeleaf:thymeleaf:2.0.+'
 	compile 'net.sourceforge.nekohtml:nekohtml:1.9.+'
-
-	[
-		'jersey-core',
-		'jersey-client'
-	].each { compile "com.sun.jersey:$it:1.+" }
 
 	// maven-ant-tasks-x.x.x.jarがnekohtmlを内包しており、
 	// それがorg.apache.xerces.parsers.DOMParserを継承している為、回避措置。
@@ -43,8 +39,8 @@ dependencies {
 		compile ("org.eclipse.jetty:$it:8.+") { exclude group: 'org.eclipse.jetty.orbit' }
 	}
 
-	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 	compile 'commons-net:commons-net:3.+'
+	compile 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 	compile 'rome:rome:1.0'
 
 	compile gradleApi()
@@ -64,9 +60,3 @@ dependencies {
 apply from: file('gradle/ide.gradle')
 
 task createWrapper(type: org.gradle.api.tasks.wrapper.Wrapper) { gradleVersion = '1.1' }
-
-buildscript {
-	repositories { mavenCentral() }
-	dependencies {
-	}
-}
