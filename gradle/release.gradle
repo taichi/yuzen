@@ -3,6 +3,7 @@ buildscript {
 	repositories { mavenCentral() }
 	dependencies {
 		classpath 'org.eclipse.jgit:org.eclipse.jgit:2.+'
+		classpath 'org.eclipse.mylyn.github:org.eclipse.egit.github.core:1.+'
 		[
 			'jersey-core',
 			'jersey-client'
@@ -10,10 +11,68 @@ buildscript {
 	}
 }
 
-task makeStartUpArchive << {
-	// gradleWrapper,
-	// build.gradle,
-	// gradle.properties contains example datas.
+def startUpRoot = project.file("$buildDir/yuzenstartups")
+task makeStartUpFiles(type: org.gradle.api.tasks.wrapper.Wrapper) {
+	scriptFile = "$startUpRoot/gradlew"
+	jarFile = "$startUpRoot/gradle/wrapper/gradle-wrapper.jar"
+	doLast {
+		File build = new File(startUpRoot, 'build.gradle')
+		build.text = '''apply from:"http://yuzen.koshinuke.org/install"
+
+site {
+	//head = 'less'
+	feed {
+		syndicationURI = 'http://example.org'
+		author = 'john doe'
+	}
+}
+github {
+	projectURI = 'https://github.com/[your github account]/[your repository name]'
+}
+yuzen.publish {
+	ghpages	repoURI : "${project.github.projectURI}.git"
+}
+'''
+		File gprops = new File(startUpRoot, 'gradle.properties')
+		gprops.text = '''
+github.username=john
+github.password=doe
+
+#systemProp.http.proxyHost=example.com
+#systemProp.http.proxyPort=8080
+#systemProp.https.proxyHost=example.com
+#systemProp.https.proxyPort=8080
+'''
+		File ignore = new File(startUpRoot, '.gitignore')
+		ignore.text = '''/.*
+!/.git*
+/build
+/gradle.*
+'''
+	}
+}
+
+task makeStartUpArchive(dependsOn: makeStartUpFiles, type: Zip) {
+	archiveName = 'yuzen-startup.zip'
+	from(startUpRoot)
+	destinationDir = getTemporaryDir()
+	doFirst {
+		PatternSet.setGlobalExcludes([])
+	}
+	doLast {
+		PatternSet.resetGlobalExcludes()
+	}
+}
+
+task uploadStartUpArchive(dependsOn: makeStartUpArchive) << {
+	def client = new GitHubClient()
+	client.setCredentials(project['github.username'], project['github.password'])
+	def repoid = RepositoryId.create('taichi', 'yuzen')
+	def dls = new DownloadService(client)
+	def d = new Download()
+	d.name = makeStartUpArchive.archiveName
+	def ps = makeStartUpArchive.rootSpec.patternSet
+	dls.createDownload(repoid, d, makeStartUpArchive.archivePath)
 }
 
 task stage_list(type: StagingListTask)
@@ -27,6 +86,10 @@ import groovy.json.JsonSlurper
 
 import javax.ws.rs.core.MediaType
 
+import org.eclipse.egit.github.core.Download
+import org.eclipse.egit.github.core.RepositoryId
+import org.eclipse.egit.github.core.client.GitHubClient
+import org.eclipse.egit.github.core.service.DownloadService
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.errors.UnsupportedCredentialItem
 import org.eclipse.jgit.lib.TextProgressMonitor
@@ -36,7 +99,8 @@ import org.eclipse.jgit.transport.URIish;
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.koshinuke.jgit.PassphraseProvider
+import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.tasks.util.PatternSet
 
 import com.sun.jersey.api.client.Client
 import com.sun.jersey.api.client.ClientResponse;
