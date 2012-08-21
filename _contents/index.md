@@ -45,6 +45,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     `blog {  
          title 'blog title'  
          subtitle 'sub title or blog description'  
+         profile 'profile 'minimum profile for sidemenu'  
          // this block uses for atom or rss feed.  
          feed {  
              syndicationURI = 'http://localhost:8080/blog'  
@@ -53,6 +54,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
      }
     `  
 * Write your profile to _contents/profile.md
+    * contents files encoding require UTF-8
 * add first entry
     `gradlew post -Ptitle=HelloWorld`  
 * Write your first entry to generated file.
