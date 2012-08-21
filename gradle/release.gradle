@@ -198,9 +198,9 @@ class AutoReleaseTask extends SonaTypeTask {
 		try {
 			def n = project.version
 			tag = g.tag() setName n setMessage "release $n" call()
-			g.push().setPushTags().setCredentialsProvider new PassphraseProvider(project['ssh.passphrase']) setProgressMonitor new TextProgressMonitor() call()
+			g.push().setPushTags().setCredentialsProvider new CP(project) setProgressMonitor new TextProgressMonitor() call()
 		} catch(e) {
-			g.tagDelete().setTags(tag?.tagName).call()
+			g.tagDelete().setTags(tag?.name).call()
 			throw e
 		} finally {
 			g.repository.close()
@@ -208,10 +208,14 @@ class AutoReleaseTask extends SonaTypeTask {
 	}
 }
 
-class PassphraseProvider extends CredentialsProvider {
+class CP extends CredentialsProvider {
+	def username ""
+	def password = ""
 	def passphrase = ""
 	PassphraseProvider(pass) {
-		this.passphrase = pass
+		this.username = project['github.username']
+		this.password = project['github.password']
+		this.passphrase = project['ssh.passphrase']
 	}
 	def boolean isInteractive() {
 		false
@@ -223,6 +227,12 @@ class PassphraseProvider extends CredentialsProvider {
 		items.each {
 			if(it instanceof CredentialItem.StringType) {
 				it.value = passphrase
+				return true
+			} else if (it instanceof CredentialItem.Username) {
+				it.value = username
+				return true
+			} else if (it instanceof CredentialItem.Password) {
+				it.value = password
 				return true
 			} else {
 				throw new UnsupportedCredentialItem(uri, it.promptText);
