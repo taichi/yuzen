@@ -4,6 +4,7 @@ import static org.junit.Assert.*
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.util.FileUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -51,7 +52,21 @@ class GitHubPagesPublisherTest {
 	void overwrite() {
 		support.makeFiles(support.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
 		this.target.publish(support.rootDir)
+		publishFiles()
+	}
 
+	@Test
+	void noExists() {
+		support.makeFiles(support.rootDir, ["aaa/bbb/ccc", "aaa/bbb/ddd"])
+		this.target.publish(support.rootDir)
+
+		FileUtils.delete(support.workingDir, FileUtils.RECURSIVE)
+		assert support.workingDir.mkdirs()
+
+		publishFiles()
+	}
+
+	def publishFiles() {
 		support.makeFiles(support.rootDir, [
 			"aaa/bbb/ccc",
 			"aaa/bbb/ddd",
@@ -68,7 +83,8 @@ class GitHubPagesPublisherTest {
 			int count = 0;
 			logs.each {
 				println it.fullMessage
-				count++ }
+				count++
+			}
 			assert 2 == count
 
 			assert 2 == support.repoDir.list().length

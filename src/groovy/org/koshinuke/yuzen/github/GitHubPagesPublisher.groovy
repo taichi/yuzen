@@ -12,10 +12,8 @@ import org.eclipse.jgit.api.CloneCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ListBranchCommand.ListMode
 import org.eclipse.jgit.dircache.DirCacheBuilder
-import org.eclipse.jgit.lib.ConfigConstants
-import org.eclipse.jgit.lib.Constants
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref
-import org.eclipse.jgit.lib.StoredConfig
 import org.eclipse.jgit.transport.URIish
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.eclipse.jgit.util.FileUtils
@@ -63,20 +61,23 @@ class GitHubPagesPublisher implements Publisher {
 		CloneCommand cmd = Git.cloneRepository()
 		cmd.setURI(this.repoURI)
 		cmd.setDirectory(workingDir)
+		cmd.setNoCheckout(true)
 		cmd.call()
 	}
 
 	def checkout(Git git) {
-		Ref ref = git.branchList().setListMode(ListMode.REMOTE).call().find { it.getName().endsWith(PAGES) }
-		if(ref == null) {
+		List<Ref> refs = git.branchList().setListMode(ListMode.ALL).call().findAll { it.name.endsWith(PAGES) }
+		if(refs.isEmpty()) {
 			def cmd = new CreateOrphanBranchCommand(git.getRepository())
 			cmd.setName(PAGES).call()
 			deleteFiles(git)
 		} else {
-			StoredConfig config = git.getRepository().getConfig()
-			config.setString(ConfigConstants.CONFIG_BRANCH_SECTION, PAGES, ConfigConstants.CONFIG_KEY_MERGE, Constants.R_HEADS + PAGES)
-			config.save()
-			git.checkout().setName(PAGES).call()
+			Ref ref = refs.find { it.name.startsWith(Constants.R_HEADS) }
+			def cmd = git.checkout().setName(PAGES)
+			if(ref == null) {
+				cmd.setCreateBranch(true).setStartPoint(refs[0].name)
+			}
+			cmd.call()
 		}
 	}
 
