@@ -8,10 +8,11 @@
 buildscript {
 	repositories {
 		mavenLocal()
+		mavenRepo url:'https://oss.sonatype.org/content/repositories/releases'
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.koshinuke:yuzen:0.0.3'
+		classpath 'org.koshinuke:yuzen:0.0.4'
 	}
 }
 apply plugin: org.koshinuke.yuzen.YuzenPlugin

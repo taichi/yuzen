@@ -5,8 +5,8 @@
 <meta charset="utf-8" />
 <title>yuzen</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="alternate" type="application/atom+xml" title="yuzen" href="atom_1.0.xml" />
-<link rel="stylesheet" type="text/css" href="css/main.css" />
+<link rel="alternate" type="application/atom+xml" title="yuzen" href="../atom_1.0.xml" />
+<link rel="stylesheet" type="text/css" href="../css/main.css" />
 </head>
 <body>
 	<div class="main"><h1>Yuzen</h1><p>Yuzen is a static contents generator similar to <a href="https://github.com/mojombo/jekyll">jekyll</a>.</p>
@@ -65,6 +65,7 @@
   <li>Edit build.gradle for blogging.<br /><code>blog {  
      title &#39;blog title&#39;  
      subtitle &#39;sub title or blog description&#39;  
+     profile &#39;profile &#39;minimum profile for sidemenu&#39;  
      // this block uses for atom or rss feed.  
      feed {  
          syndicationURI = &#39;http://localhost:8080/blog&#39;  
@@ -72,7 +73,10 @@
      }  
  }
 </code></li>
-  <li>Write your profile to _contents/profile.md</li>
+  <li>Write your profile to _contents/profile.md
+  <ul>
+    <li>contents files encoding require UTF-8</li>
+  </ul></li>
   <li>add first entry<br /><code>gradlew post -Ptitle=HelloWorld</code></li>
   <li>Write your first entry to generated file.</li>
   <li>Generate static contents<br /><code>gradlew startBlog</code></li>

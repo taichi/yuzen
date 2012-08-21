@@ -12,15 +12,7 @@
     <author>
       <name />
     </author>
-    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenLocal()&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.3&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>CNAME</title>
-    <link href="http://yuzen.koshinuke.org/CNAME" />
-    <author>
-      <name />
-    </author>
-    <content type="html">&lt;p&gt;yuzen.koshinuke.org&lt;/p&gt;</content>
+    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenLocal()&lt;br/&gt; mavenRepo url:&amp;lsquo;&lt;a href="https://oss.sonatype.org/content/repositories/releases"&gt;https://oss.sonatype.org/content/repositories/releases&lt;/a&gt;&amp;rsquo;&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.4&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Yuzen</title>
@@ -84,6 +76,7 @@
   &lt;li&gt;Edit build.gradle for blogging.&lt;br/&gt;&lt;code&gt;blog {  &#xD;
      title &amp;#39;blog title&amp;#39;  &#xD;
      subtitle &amp;#39;sub title or blog description&amp;#39;  &#xD;
+     profile &amp;#39;profile &amp;#39;minimum profile for sidemenu&amp;#39;  &#xD;
      // this block uses for atom or rss feed.  &#xD;
      feed {  &#xD;
          syndicationURI = &amp;#39;http://localhost:8080/blog&amp;#39;  &#xD;
@@ -91,7 +84,10 @@
      }  &#xD;
  }&#xD;
 &lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Write your profile to _contents/profile.md&lt;/li&gt;
+  &lt;li&gt;Write your profile to _contents/profile.md
+  &lt;ul&gt;
+    &lt;li&gt;contents files encoding require UTF-8&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
   &lt;li&gt;add first entry&lt;br/&gt;&lt;code&gt;gradlew post -Ptitle=HelloWorld&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Write your first entry to generated file.&lt;/li&gt;
   &lt;li&gt;Generate static contents&lt;br/&gt;&lt;code&gt;gradlew startBlog&lt;/code&gt;&lt;/li&gt;
@@ -108,6 +104,14 @@
   &lt;li&gt;import project to eclipse&lt;/li&gt;
   &lt;li&gt;install to your maven local repository&lt;br/&gt;&lt;code&gt;gradlew clean install&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;License&lt;/h2&gt;&lt;p&gt;Apache License, Version 2.0&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>CNAME</title>
+    <link href="http://yuzen.koshinuke.org/CNAME" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;p&gt;yuzen.koshinuke.org&lt;/p&gt;</content>
   </entry>
 </feed>
 
