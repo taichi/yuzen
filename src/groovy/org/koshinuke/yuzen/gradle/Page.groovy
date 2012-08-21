@@ -24,6 +24,9 @@ class Page {
 	}
 
 	def makePaginationMeta() {
+		if(this.pageSize < 2) {
+			return [name: 'minimum', pages: {0}]
+		}
 		// page size < 10
 		// [1] 2 3 4 5 6 7 8 9 NEXT
 		// PREV 1 [2] 3 4 5 6 7 8 9 NEXT

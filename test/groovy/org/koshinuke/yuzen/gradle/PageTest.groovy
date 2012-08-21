@@ -51,30 +51,38 @@ class PageTest {
 
 	@Test
 	void template_small() {
-		assertTemplate(make(3, 9), "PageTest_small")
+		assertTemplate(make(3, 9), "small")
+	}
+
+	@Test
+	void template_minimum() {
+		assertTemplate(make(0, 1), "minimum")
 	}
 
 	@Test
 	void template_right() {
-		assertTemplate(make(3, 10), "PageTest_right")
+		assertTemplate(make(3, 10), "right")
 	}
 
 	@Test
 	void template_left() {
-		assertTemplate(make(8, 10), "PageTest_left")
+		assertTemplate(make(8, 10), "left")
 	}
 
 	@Test
 	void template_twice() {
-		assertTemplate(make(5, 10), "PageTest_twice")
+		assertTemplate(make(5, 10), "twice")
 	}
 
 	def testDataDir = new File("test/groovy/org/koshinuke/yuzen/gradle")
 
 	def assertTemplate(page, en) {
 		def s = processTemplate("PageTest", page)
-		def expected = new XmlParser().parse(new File(testDataDir, "${en}.html"))
+		def expected = new XmlParser().parse(new File(testDataDir, "PageTest_${en}.html"))
 		def actual = new XmlParser().parseText(s)
+		def stringWriter = new StringWriter()
+		new XmlNodePrinter(new PrintWriter(stringWriter)).print(actual)
+		println stringWriter
 		assert expected.toString() == actual.toString()
 	}
 

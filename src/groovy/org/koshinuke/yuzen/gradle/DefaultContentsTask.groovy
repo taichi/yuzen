@@ -1,27 +1,26 @@
 package org.koshinuke.yuzen.gradle
 
 
-import java.io.File;
-
-import org.gradle.api.file.ConfigurableFileTree;
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.ConventionTask
-import org.gradle.api.logging.*;
+import org.gradle.api.logging.*
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.koshinuke.yuzen.thymeleaf.MarkdownTemplateResolver
-import org.koshinuke.yuzen.thymeleaf.YuzenDialect;
+import org.koshinuke.yuzen.thymeleaf.YuzenDialect
 import org.koshinuke.yuzen.util.FileUtil
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
-import org.thymeleaf.resourceresolver.FileResourceResolver;
-import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
-import org.thymeleaf.templateresolver.TemplateResolver;
-import com.google.common.io.*;
+import org.thymeleaf.resourceresolver.FileResourceResolver
+import org.thymeleaf.templatemode.StandardTemplateModeHandlers
+import org.thymeleaf.templateresolver.TemplateResolver
+
+import com.google.common.io.*
 
 /**
  * @author taichi
@@ -112,7 +111,7 @@ class DefaultContentsTask extends ConventionTask implements WatchableTask {
 		def html = calcHtmlOutput(file)
 		def htmlPath = html.parentFile.toPath()
 		def relPath = htmlPath.relativize(getDestinationDir().toPath())
-		c.setVariable('relative', 1 < relPath.nameCount ? FileUtil.slashify(relPath) + "/" : '')
+		c.setVariable('relative', 1 < relPath.nameCount ? FileUtil.slashify(relPath) + "/" : '../')
 
 		html.parentFile.mkdirs()
 		html.withWriter("UTF-8") {

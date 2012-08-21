@@ -1,7 +1,9 @@
 package org.koshinuke.yuzen.github
 
 import org.eclipse.egit.github.core.client.GitHubClient
+import org.eclipse.egit.github.core.client.RequestException
 import org.eclipse.egit.github.core.service.RepositoryService
+import org.eclipse.jgit.util.StringUtils
 import org.gradle.api.Project
 
 
@@ -45,17 +47,27 @@ class GitHubModel {
 
 	def getFirstPage(Closure closure) {
 		if(this.repos == null) {
-			def sv = makeRepositoryService()
-			def itr = closure(sv)
-			if(itr.hasNext()) {
-				this.repos = itr.next()
+			try {
+				def sv = makeRepositoryService()
+				def list = closure(sv).collect().flatten().sort {
+					l , r -> r.updatedAt <=> l.updatedAt
+				}
+				def s = list.size()
+				def end = (recentReposSize < s ?  recentReposSize : s) - 1
+				this.repos = list[0..end]
+			} catch(RequestException e) {
+				this.project.logger.error e.getMessage(), e
+				this.repos = []
 			}
 		}
 		return this.repos
 	}
 
 	def getRepos() {
-		getFirstPage {
+		if(StringUtils.isEmptyOrNull(username) || StringUtils.isEmptyOrNull(password)) {
+			return []
+		}
+		return getFirstPage {
 			it.pageRepositories(this.reposFilter, this.recentReposSize)
 		}
 	}
