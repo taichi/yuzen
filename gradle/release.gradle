@@ -194,13 +194,12 @@ class AutoReleaseTask extends SonaTypeTask {
 	
 	def tagging() {
 		def g = Git.open project.file('.git')
-		def tag = null
+		def n = project.version
 		try {
-			def n = project.version
-			tag = g.tag() setName n setMessage "release $n" call()
+			g.tag() setName n setMessage "release $n" call()
 			g.push().setPushTags().setCredentialsProvider new CP(project) setProgressMonitor new TextProgressMonitor() call()
 		} catch(e) {
-			g.tagDelete().setTags(tag?.name).call()
+			g.tagDelete().setTags(n).call()
 			throw e
 		} finally {
 			g.repository.close()
@@ -209,10 +208,10 @@ class AutoReleaseTask extends SonaTypeTask {
 }
 
 class CP extends CredentialsProvider {
-	def username ""
-	def password = ""
-	def passphrase = ""
-	PassphraseProvider(pass) {
+	def username
+	def password
+	def passphrase
+	CP(project) {
 		this.username = project['github.username']
 		this.password = project['github.password']
 		this.passphrase = project['ssh.passphrase']
@@ -225,14 +224,14 @@ class CP extends CredentialsProvider {
 	}
 	def boolean get(URIish uri, CredentialItem... items) {
 		items.each {
-			if(it instanceof CredentialItem.StringType) {
-				it.value = passphrase
-				return true
-			} else if (it instanceof CredentialItem.Username) {
+			if (it instanceof CredentialItem.Username) {
 				it.value = username
 				return true
 			} else if (it instanceof CredentialItem.Password) {
 				it.value = password
+				return true
+			} else if(it instanceof CredentialItem.StringType) {
+				it.value = passphrase
 				return true
 			} else {
 				throw new UnsupportedCredentialItem(uri, it.promptText);

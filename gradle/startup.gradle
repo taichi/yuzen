@@ -21,8 +21,10 @@ task makeStartUpFiles(type: org.gradle.api.tasks.wrapper.Wrapper) {
 		File build = new File(startUpRoot, 'build.gradle')
 		build.text = '''apply from:"http://yuzen.koshinuke.org/install"
 
-site {
-	//head = 'less'
+blog {
+	title 'blog title'
+	subtitle 'sub title or blog description'
+	profile 'minimum profile for sidemenu'
 	feed {
 		syndicationURI = 'http://example.org'
 		author = 'john doe'
