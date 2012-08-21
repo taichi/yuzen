@@ -13,4 +13,4 @@ buildscript {
 		classpath 'org.koshinuke:yuzen:0.0.2'
 	}
 }
-apply plugin: 'yuzen'
+apply plugin: org.koshinuke.yuzen.YuzenPlugin
