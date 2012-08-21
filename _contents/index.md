@@ -22,7 +22,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 ## Installation
 * Install Java SE 7 [JDK](http://www.oracle.com/technetwork/java/javase/downloads/)
 * if you don't have gradle,
-    * Download latest release archive from [here](https://github.com/taichi/yuzen/downloads)
+    * Download startup archive from [here](https://github.com/taichi/yuzen/downloads)
     * Extract the archive.
         `jar xvf yuzen-startup.zip`  
 * if you already use gradle,
