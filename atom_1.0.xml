@@ -12,7 +12,7 @@
     <author>
       <name />
     </author>
-    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.2&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: &amp;lsquo;yuzen&amp;rsquo;&lt;/p&gt;</content>
+    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.2&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>CNAME</title>
@@ -42,11 +42,11 @@
     &lt;li&gt;slide&lt;/li&gt;
     &lt;li&gt;site (this one)&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
-  &lt;li&gt;Yuzen publishes contents to FTPS server and GitHub Pages&lt;/li&gt;
+  &lt;li&gt;Yuzen publishes contents to GitHub Pages and FTPS server&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;Requirements&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;java7 or more tested by 1.7.0_02&lt;/li&gt;
-  &lt;li&gt;gradle 1.0&lt;/li&gt;
+  &lt;li&gt;gradle 1.1&lt;/li&gt;
   &lt;li&gt;eclipse 3.7.2 (for development)
   &lt;ul&gt;
     &lt;li&gt;&lt;a href="http://groovy.codehaus.org/Eclipse+Plugin"&gt;Groovy-Eclipse 2.6.1&lt;/a&gt;&lt;/li&gt;
@@ -57,7 +57,7 @@
   &lt;li&gt;if you don&amp;rsquo;t have gradle,
   &lt;ul&gt;
     &lt;li&gt;Download latest release archive from &lt;a href="https://github.com/taichi/yuzen/downloads"&gt;here&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;Extract the archive&lt;br/&gt;&lt;code&gt;jar xvf yuzen-startup.zip&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;Extract the archive.&lt;br/&gt;&lt;code&gt;jar xvf yuzen-startup.zip&lt;/code&gt;&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
   &lt;li&gt;if you already use gradle,
   &lt;ul&gt;
@@ -100,7 +100,7 @@
   &lt;li&gt;Edit build.gradle for publish to GitHub Pages.&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
     ghpages repoURI : &amp;quot;https://github.com/[your github account]/[your repository name].git&amp;quot;&#xD;
 }&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Publish to GitHub Pages&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Publish to GitHub Pages. yuzen create or update gh-pages branch&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;How to build your Yuzen&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;clone repository&lt;br/&gt;&lt;code&gt;git clone https://github.com/taichi/yuzen.git&lt;/code&gt;&lt;/li&gt;

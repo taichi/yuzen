@@ -23,11 +23,11 @@
     <li>slide</li>
     <li>site (this one)</li>
   </ul></li>
-  <li>Yuzen publishes contents to FTPS server and GitHub Pages</li>
+  <li>Yuzen publishes contents to GitHub Pages and FTPS server</li>
 </ul><h2>Requirements</h2>
 <ul>
   <li>java7 or more tested by 1.7.0_02</li>
-  <li>gradle 1.0</li>
+  <li>gradle 1.1</li>
   <li>eclipse 3.7.2 (for development)
   <ul>
     <li><a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy-Eclipse 2.6.1</a></li>
@@ -38,7 +38,7 @@
   <li>if you don&rsquo;t have gradle,
   <ul>
     <li>Download latest release archive from <a href="https://github.com/taichi/yuzen/downloads">here</a></li>
-    <li>Extract the archive<br /><code>jar xvf yuzen-startup.zip</code></li>
+    <li>Extract the archive.<br /><code>jar xvf yuzen-startup.zip</code></li>
   </ul></li>
   <li>if you already use gradle,
   <ul>
@@ -81,7 +81,7 @@
   <li>Edit build.gradle for publish to GitHub Pages.<br /><code>yuzen.publish {
     ghpages repoURI : &quot;https://github.com/[your github account]/[your repository name].git&quot;
 }</code></li>
-  <li>Publish to GitHub Pages<br /><code>gradlew publish</code></li>
+  <li>Publish to GitHub Pages. yuzen create or update gh-pages branch<br /><code>gradlew publish</code></li>
 </ul><h2>How to build your Yuzen</h2>
 <ul>
   <li>clone repository<br /><code>git clone https://github.com/taichi/yuzen.git</code></li>
