@@ -10,12 +10,12 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     * blog
     * slide
     * site (this one)
-* Yuzen publishes contents to FTPS server and GitHub Pages
+* Yuzen publishes contents to GitHub Pages and FTPS server
 
 
 ## Requirements
 * java7 or more tested by 1.7.0_02
-* gradle 1.0
+* gradle 1.1
 * eclipse 3.7.2 (for development)
     * [Groovy-Eclipse 2.6.1](http://groovy.codehaus.org/Eclipse+Plugin)
 
@@ -23,7 +23,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * Install Java SE 7 [JDK](http://www.oracle.com/technetwork/java/javase/downloads/)
 * if you don't have gradle,
     * Download latest release archive from [here](https://github.com/taichi/yuzen/downloads)
-    * Extract the archive
+    * Extract the archive.
         `jar xvf yuzen-startup.zip`  
 * if you already use gradle,
     * apply plugin from this site.
@@ -64,7 +64,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     `yuzen.publish {
         ghpages repoURI : "https://github.com/[your github account]/[your repository name].git"
     }`  
-* Publish to GitHub Pages
+* Publish to GitHub Pages. yuzen create or update gh-pages branch
     `gradlew publish`  
 
 
