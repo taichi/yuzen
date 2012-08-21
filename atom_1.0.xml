@@ -12,7 +12,7 @@
     <author>
       <name />
     </author>
-    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.2&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
+    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenLocal()&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.3&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>CNAME</title>
