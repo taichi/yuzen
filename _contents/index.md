@@ -3,7 +3,8 @@
 Yuzen is a static contents generator similar to [jekyll](https://github.com/mojombo/jekyll).
 
 * Yuzen is a [Gradle](http://gradle.org/) Plugin
-* Yuzen uses clean template by [Thymeleaf](http://www.thymeleaf.org/)
+* Yuzen uses [Thymeleaf](http://www.thymeleaf.org/) for clean template
+* Yuzen uses [Bootstrap](http://twitter.github.com/bootstrap/) for design
 * Yuzen translates [Markdown](http://daringfireball.net/projects/markdown/) to HTML5
     * Yuzen parses Markdown by [Pegdown](https://github.com/sirthias/pegdown/)
 * Yuzen contains some useful templates
@@ -28,6 +29,19 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * if you already use gradle,
     * apply plugin from this site.
         `apply from: 'http://yuzen.koshinuke.org/install'`
+    * or copy the below directly into your build.gradle.
+        `buildscript {
+            repositories {
+                mavenLocal()
+                mavenCentral()
+                mavenRepo url:'https://oss.sonatype.org/content/repositories/releases'
+            }
+            dependencies {
+                classpath 'org.koshinuke:yuzen:0.0.+'
+            }
+        }
+        apply plugin: org.koshinuke.yuzen.YuzenPlugin
+        `  
 * Modify gradle.properties
     * if you use github features, edit these keys
         * github.username
@@ -38,31 +52,34 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
         * systemProp.https.proxyHost
         * systemProp.https.proxyPort
 
-## How to Get Start a Blog
+## How to Get Start your Blog
 * Initialize template
     `gradlew initBlog`  
 * Edit build.gradle for blogging.
-    `blog {  
-         title 'blog title'  
-         subtitle 'sub title or blog description'  
-         profile 'profile 'minimum profile for sidemenu'  
-         // this block uses for atom or rss feed.  
-         feed {  
-             syndicationURI = 'http://localhost:8080/blog'  
-             author = 'john doe'  
-         }  
+    `blog {
+         title 'blog title'
+         subtitle 'sub title or blog description'
+         profile 'profile 'minimum profile for sidemenu'
+         // this block uses for atom or rss feed.
+         feed {
+             syndicationURI 'http://localhost:8080/blog'
+             author 'john doe'
+         }
      }
     `  
 * Write your profile to _contents/profile.md
-    * contents files encoding require UTF-8
+    * contents files encoding require **UTF-8**
 * add first entry
     `gradlew post -Ptitle=HelloWorld`  
-* Write your first entry to generated file.
+* Write your first entry to generated file
 * Generate static contents
     `gradlew startBlog`  
 * Access to [localhost:8080](http://localhost:8080)
 * Check your generated contents
-* Edit build.gradle for publish to GitHub Pages.
+    * if you want to redesign, you should modify **_templates** directory files
+        * _templates/page.html is index template. cf. [thymeleaf :: documentation](http://www.thymeleaf.org/documentation.html)
+        * _templates/less/main.less is the center of the [less](http://lesscss.org/) files.
+* Edit build.gradle for publish to GitHub Pages
     `yuzen.publish {
         ghpages repoURI : "https://github.com/[your github account]/[your repository name].git"
     }`  
