@@ -86,4 +86,48 @@ public interface PublisherHandler {
 	 * @return configured Publisher instance
 	 */
 	<T extends Publisher> T ghpages(Closure<T> configureClosure);
+
+	/**
+	 * <p>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * yuzen.publish {
+	 *     s3 bucketName: 'foo.bar', accessKeyId: 'accccsss', secretKey: 'ssseeeecrettttKey', storageClass: StorageClass.ReducedRedundancy
+	 * }
+	 * </pre>
+	 * 
+	 * </p>
+	 * * @param args
+	 * 
+	 * @return configured Publisher instance
+	 */
+	<T extends Publisher> T s3(Map<String, ?> args);
+
+	/**
+	 * <p>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * yuzen.publish {
+	 *     s3 {
+	 *         bucketName = 'foo.bar'
+	 *         accessKeyId = 'accccsss'
+	 *         secretKey = 'ssseeeecrettttKey'
+	 *         dirprefix = 'foo/bar/baz/'
+	 *         storageClass = StorageClass.ReducedRedundancy
+	 *         config {
+	 *             proxyHost = 'example.com'
+	 *             proxyPort = 8080
+	 *         }
+	 *     }
+	 * }
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * @param configureClosure
+	 * @return configured Publisher instance
+	 */
+	<T extends Publisher> T s3(Closure<T> configureClosure);
 }

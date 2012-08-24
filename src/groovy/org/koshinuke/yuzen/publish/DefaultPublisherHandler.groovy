@@ -1,5 +1,9 @@
 package org.koshinuke.yuzen.publish
 
+import groovy.lang.Closure;
+
+import java.util.Map;
+
 import org.eclipse.jgit.util.StringUtils;
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
@@ -59,6 +63,30 @@ class DefaultPublisherHandler implements PublisherHandler {
 		return ghpages
 	}
 
+	@Override
+	public <T extends Publisher> T s3(Map<String, ?> args) {
+		return configureS3(byMap(args))
+	}
+
+	@Override
+	public <T extends Publisher> T s3(Closure<T> configureClosure) {
+		return configureS3(by(configureClosure))
+	}
+
+	def configureS3(Closure c) {
+		def s3 = configure(new S3Publisher(), c)
+		def chost = s3.config.proxyHost
+		def cport = s3.config.proxyPort
+		def host = System.props['http.proxyHost']
+		def port = System.props['http.proxyPort']
+		if(StringUtils.isEmptyOrNull(chost) && host && port) {
+			s3.config {
+				proxyHost = host
+				proxyPort = port as int
+			}
+		}
+		return s3
+	}
 
 	def byMap(args) {
 		return {
