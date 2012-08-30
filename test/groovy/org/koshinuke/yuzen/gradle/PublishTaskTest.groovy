@@ -4,15 +4,15 @@ import static org.junit.Assert.*;
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.util.FileUtils
-import org.gradle.api.Project;
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
-import org.junit.Before;
+import org.junit.Before
 import org.junit.Test
-import org.koshinuke.jgit.GGitUtil;
+import org.koshinuke.jgit.GGitUtil
 import org.koshinuke.yuzen.TestData
 import org.koshinuke.yuzen.github.GhPagesTestingSupport
-import org.koshinuke.yuzen.publish.FTPSTestingSupport;
+import org.koshinuke.yuzen.publish.FTPSTestingSupport
 
 /**
  * @author taichi

@@ -39,7 +39,7 @@ class FTPSTestingSupport {
 		serverFactory.fileSystem = new PrefixFileSystemFactory(ftpDir)
 
 		server = serverFactory.createServer()
-		server.start();
+		server.start()
 	}
 
 	protected setUpSSL(FtpServerFactory serverFactory) {

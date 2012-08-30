@@ -1,18 +1,18 @@
 package org.koshinuke.yuzen.publish
 
-
-
 import groovy.io.FileType
 
 import java.nio.file.Path
 
-import org.apache.http.client.CredentialsProvider
 import org.gradle.util.ConfigureUtil
 import org.koshinuke.yuzen.util.FileUtil
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.AWSCredentialsProviderChain
 import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3Client
@@ -20,15 +20,22 @@ import com.amazonaws.services.s3.model.BucketWebsiteConfiguration
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.services.s3.model.StorageClass
 
+
+
+
+
+
+
 /**
  * @author taichi
  */
 class S3Publisher implements Publisher {
 
+	static final Logger LOG = LoggerFactory.getLogger(S3Publisher)
+
 	def bucketName = ""
 	def dirPrefix = ""
 
-	def List<CredentialsProvider> credentials = []
 	def ClientConfiguration config = new ClientConfiguration()
 	def accessKeyId, secretKey
 	def storageClass = StorageClass.Standard
@@ -47,46 +54,49 @@ class S3Publisher implements Publisher {
 		}
 	}
 
-	protected AmazonS3 newClient() {
+	def AmazonS3 newClient() {
 		if(accessKeyId && secretKey) {
-			credentials.add new BasicAWSCredentials(accessKeyId, secretKey)
+			return new AmazonS3Client(new BasicAWSCredentials(accessKeyId, secretKey), this.config)
 		}
-
-		def cred = null
-		if(this.credentials.isEmpty()) {
-			cred = new SystemPropertiesCredentialsProvider()
-		} else {
-			cred = new AWSCredentialsProviderChain(credentials as CredentialsProvider[])
-		}
-		return new AmazonS3Client(cred, this.config)
+		new AmazonS3Client(new AWSCredentialsProviderChain(
+				new EnvironmentVariableCredentialsProvider(),
+				new SystemPropertiesCredentialsProvider()), this.config)
 	}
 
 	def tryBucket(AmazonS3 s3) {
-		// make bucket if doesn't exist
+		// TODO make bucket if doesn't exist ?
+		// Region, Acl...
 		// setUp bucket for static web hosting
 		// setUp bucket acl for publish
 		// log endpoint URL
 		BucketWebsiteConfiguration web = s3.getBucketWebsiteConfiguration(bucketName)
 		if(web == null) {
-			// make new bucket
-		} else {
+			throw new IllegalStateException("$bucketName is not exist or not configured for static web hosting.")
 		}
 	}
 
 	def transferFiles(AmazonS3 s3, File rootDir) {
-		final Path root = rootDir.toPath().toAbsolutePath()
+		LOG.debug("transferFiles bucket : $bucketName, dir : $rootDir")
+		final Path root = rootDir.toPath()
 		def concatPath = { dir ->
 			def p = FileUtil.slashify(root.relativize(dir))
 			"${dirPrefix}${p}"
 		}
 
 		rootDir.traverse type: FileType.FILES, visit: {
+			LOG.debug("from $it")
 			def path = concatPath it.toPath()
+			LOG.debug("to $path with $storageClass")
 			s3.putObject(new PutObjectRequest(bucketName, path, it).withStorageClass(storageClass))
 		}
+		LOG.debug("end transfer")
 	}
 
 	def config(Closure configureClosure) {
 		ConfigureUtil.configure(configureClosure, config)
+	}
+
+	def config(Map properties) {
+		ConfigureUtil.configureByMap(properties, config)
 	}
 }
