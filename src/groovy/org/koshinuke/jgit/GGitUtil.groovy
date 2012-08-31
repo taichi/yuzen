@@ -3,38 +3,26 @@ package org.koshinuke.jgit
 import javax.annotation.Nonnull
 
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.dircache.DirCache
 import org.eclipse.jgit.lib.Repository
+import org.koshinuke.util.LifecycleFunctions
 
 /**
  * @author taichi
  */
 class GGitUtil {
 
-	def static handle(@Nonnull Git git, Closure closure) {
+	public static <R> R handle(@Nonnull Git git, @Nonnull Closure<R> closure) {
 		Objects.requireNonNull(git)
-		handle(git.getRepository(), closure)
+		return handle(git.getRepository(), closure)
 	}
 
-	def static handle(@Nonnull Repository repo, Closure closure) {
+	public static <R> R handle(@Nonnull Repository repo, @Nonnull Closure<R> closure) {
 		Objects.requireNonNull(repo)
-		try {
-			closure(repo)
-		} finally {
-			repo.close()
-		}
+		return LifecycleFunctions.handle({repo}, {it.close()}, closure)
 	}
 
-	def static lockDirCache(@Nonnull Repository repo, Closure closure) {
+	public static <R> R lockDirCache(@Nonnull Repository repo, @Nonnull Closure<R> closure) {
 		Objects.requireNonNull(repo)
-		DirCache dc = null
-		try {
-			dc = repo.lockDirCache()
-			closure(dc)
-		} finally {
-			if(dc != null) {
-				dc.unlock()
-			}
-		}
+		return LifecycleFunctions.handle({ repo.lockDirCache() }, { it.unlock() }, closure)
 	}
 }
