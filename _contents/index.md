@@ -11,11 +11,14 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     * blog
     * slide
     * site (this one)
-* Yuzen publishes contents to GitHub Pages and FTPS server
+* Yuzen publishes contents to ...
+    * [GitHub Pages](./publish/githubpages/)
+    * [Amazon S3](./publish/s3)
+    * FTPS server
 
 
 ## Requirements
-* java7 or more tested by 1.7.0_02
+* java7 or more tested by 1.7.0_07
 * gradle 1.1
 * eclipse 3.7.2 (for development)
     * [Groovy-Eclipse 2.6.1](http://groovy.codehaus.org/Eclipse+Plugin)
@@ -79,12 +82,9 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
     * if you want to redesign, you should modify **_templates** directory files
         * _templates/page.html is index template. cf. [thymeleaf :: documentation](http://www.thymeleaf.org/documentation.html)
         * _templates/less/main.less is the center of the [less](http://lesscss.org/) files.
-* Edit build.gradle for publish to GitHub Pages
-    `yuzen.publish {
-        ghpages repoURI : "https://github.com/[your github account]/[your repository name].git"
-    }`  
-* Publish to GitHub Pages. yuzen create or update gh-pages branch
-    `gradlew publish`  
+* Yuzen has some publishing features, you may use...
+    * [GitHub Pages](./publish/githubpages/)
+    * [Amazon S3](./publish/s3)
 
 
 ## How to build your Yuzen
