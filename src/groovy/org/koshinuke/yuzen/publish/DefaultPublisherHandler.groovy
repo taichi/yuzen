@@ -1,13 +1,10 @@
 package org.koshinuke.yuzen.publish
 
-import groovy.lang.Closure;
-
-import java.util.Map;
-
-import org.eclipse.jgit.util.StringUtils;
+import org.eclipse.jgit.util.StringUtils
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.koshinuke.yuzen.github.GitHubPagesPublisher
+import org.koshinuke.yuzen.gradle.ProjectUtil
 
 
 
@@ -36,7 +33,14 @@ class DefaultPublisherHandler implements PublisherHandler {
 	}
 
 	def configureFtps(Closure c) {
-		return configure(new FTPSPublisher(), c)
+		FTPSPublisher ftps = configure(new FTPSPublisher(), c)
+		def u = ProjectUtil.getProperty(project, 'ftps.username')
+		def p = ProjectUtil.getProperty(project, 'ftps.password')
+		if(StringUtils.isEmptyOrNull(ftps.username) && StringUtils.isEmptyOrNull(ftps.password) && u && p) {
+			ftps.username = u
+			ftps.password = p
+		}
+		return ftps
 	}
 
 	@Override

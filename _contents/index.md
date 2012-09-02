@@ -14,7 +14,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * Yuzen publishes contents to ...
     * [GitHub Pages](./publish/githubpages/)
     * [Amazon S3](./publish/s3)
-    * FTPS server
+    * [FTPS server](./publish/ftps)
 
 
 ## Requirements
@@ -85,6 +85,7 @@ Yuzen is a static contents generator similar to [jekyll](https://github.com/mojo
 * Yuzen has some publishing features, you may use...
     * [GitHub Pages](./publish/githubpages/)
     * [Amazon S3](./publish/s3)
+    * [FTPS server](./publish/ftps)
 
 
 ## How to build your Yuzen

@@ -5,6 +5,7 @@ import org.eclipse.egit.github.core.client.RequestException
 import org.eclipse.egit.github.core.service.RepositoryService
 import org.eclipse.jgit.util.StringUtils
 import org.gradle.api.Project
+import org.koshinuke.yuzen.gradle.ProjectUtil
 
 
 /**
@@ -28,15 +29,8 @@ class GitHubModel {
 
 	GitHubModel(Project project) {
 		this.project = project
-		this.username = prop('github.username')
-		this.password = prop('github.password')
-	}
-
-	def prop(key) {
-		if(project.hasProperty(key)) {
-			return project.property(key)
-		}
-		return null
+		this.username = ProjectUtil.getProperty(project, 'github.username')
+		this.password = ProjectUtil.getProperty(project, 'github.password')
 	}
 
 	def makeRepositoryService() {
