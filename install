@@ -12,7 +12,7 @@ buildscript {
 		mavenRepo url:'https://oss.sonatype.org/content/repositories/releases'
 	}
 	dependencies {
-		classpath 'org.koshinuke:yuzen:0.0.4'
+		classpath 'org.koshinuke:yuzen:0.1.0'
 	}
 }
 apply plugin: org.koshinuke.yuzen.YuzenPlugin

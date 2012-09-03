@@ -12,7 +12,8 @@
 	<div class="main"><h1>Yuzen</h1><p>Yuzen is a static contents generator similar to <a href="https://github.com/mojombo/jekyll">jekyll</a>.</p>
 <ul>
   <li>Yuzen is a <a href="http://gradle.org/">Gradle</a> Plugin</li>
-  <li>Yuzen uses clean template by <a href="http://www.thymeleaf.org/">Thymeleaf</a></li>
+  <li>Yuzen uses <a href="http://www.thymeleaf.org/">Thymeleaf</a> for clean template</li>
+  <li>Yuzen uses <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> for design</li>
   <li>Yuzen translates <a href="http://daringfireball.net/projects/markdown/">Markdown</a> to HTML5
   <ul>
     <li>Yuzen parses Markdown by <a href="https://github.com/sirthias/pegdown/">Pegdown</a></li>
@@ -23,10 +24,15 @@
     <li>slide</li>
     <li>site (this one)</li>
   </ul></li>
-  <li>Yuzen publishes contents to GitHub Pages and FTPS server</li>
+  <li>Yuzen publishes contents to &hellip;
+  <ul>
+    <li><a href="./publish/githubpages/">GitHub Pages</a></li>
+    <li><a href="./publish/s3">Amazon S3</a></li>
+    <li><a href="./publish/ftps">FTPS server</a></li>
+  </ul></li>
 </ul><h2>Requirements</h2>
 <ul>
-  <li>java7 or more tested by 1.7.0_02</li>
+  <li>java7 or more tested by 1.7.0_07</li>
   <li>gradle 1.1</li>
   <li>eclipse 3.7.2 (for development)
   <ul>
@@ -37,12 +43,24 @@
   <li>Install Java SE 7 <a href="http://www.oracle.com/technetwork/java/javase/downloads/">JDK</a></li>
   <li>if you don&rsquo;t have gradle,
   <ul>
-    <li>Download latest release archive from <a href="https://github.com/taichi/yuzen/downloads">here</a></li>
+    <li>Download startup archive from <a href="https://github.com/taichi/yuzen/downloads">here</a></li>
     <li>Extract the archive.<br /><code>jar xvf yuzen-startup.zip</code></li>
   </ul></li>
   <li>if you already use gradle,
   <ul>
     <li>apply plugin from this site.<br /><code>apply from: &#39;http://yuzen.koshinuke.org/install&#39;</code></li>
+    <li>or copy the below directly into your build.gradle.<br /><code>buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        mavenRepo url:&#39;https://oss.sonatype.org/content/repositories/releases&#39;
+    }
+    dependencies {
+        classpath &#39;org.koshinuke:yuzen:0.0.+&#39;
+    }
+}
+apply plugin: org.koshinuke.yuzen.YuzenPlugin
+</code></li>
   </ul></li>
   <li>Modify gradle.properties
   <ul>
@@ -59,33 +77,42 @@
       <li>systemProp.https.proxyPort</li>
     </ul></li>
   </ul></li>
-</ul><h2>How to Get Start a Blog</h2>
+</ul><h2>How to Get Start your Blog</h2>
 <ul>
   <li>Initialize template<br /><code>gradlew initBlog</code></li>
-  <li>Edit build.gradle for blogging.<br /><code>blog {  
-     title &#39;blog title&#39;  
-     subtitle &#39;sub title or blog description&#39;  
-     profile &#39;profile &#39;minimum profile for sidemenu&#39;  
-     // this block uses for atom or rss feed.  
-     feed {  
-         syndicationURI = &#39;http://localhost:8080/blog&#39;  
-         author = &#39;john doe&#39;  
-     }  
+  <li>Edit build.gradle for blogging.<br /><code>blog {
+     title &#39;blog title&#39;
+     subtitle &#39;sub title or blog description&#39;
+     profile &#39;profile &#39;minimum profile for sidemenu&#39;
+     // this block uses for atom or rss feed.
+     feed {
+         syndicationURI &#39;http://localhost:8080/blog&#39;
+         author &#39;john doe&#39;
+     }
  }
 </code></li>
   <li>Write your profile to _contents/profile.md
   <ul>
-    <li>contents files encoding require UTF-8</li>
+    <li>contents files encoding require <strong>UTF-8</strong></li>
   </ul></li>
   <li>add first entry<br /><code>gradlew post -Ptitle=HelloWorld</code></li>
-  <li>Write your first entry to generated file.</li>
+  <li>Write your first entry to generated file</li>
   <li>Generate static contents<br /><code>gradlew startBlog</code></li>
   <li>Access to <a href="http://localhost:8080">localhost:8080</a></li>
-  <li>Check your generated contents</li>
-  <li>Edit build.gradle for publish to GitHub Pages.<br /><code>yuzen.publish {
-    ghpages repoURI : &quot;https://github.com/[your github account]/[your repository name].git&quot;
-}</code></li>
-  <li>Publish to GitHub Pages. yuzen create or update gh-pages branch<br /><code>gradlew publish</code></li>
+  <li>Check your generated contents
+  <ul>
+    <li>if you want to redesign, you should modify <strong>_templates</strong> directory files
+    <ul>
+      <li>_templates/page.html is index template. cf. <a href="http://www.thymeleaf.org/documentation.html">thymeleaf :: documentation</a></li>
+      <li>_templates/less/main.less is the center of the <a href="http://lesscss.org/">less</a> files.</li>
+    </ul></li>
+  </ul></li>
+  <li>Yuzen has some publishing features, you may use&hellip;
+  <ul>
+    <li><a href="./publish/githubpages/">GitHub Pages</a></li>
+    <li><a href="./publish/s3">Amazon S3</a></li>
+    <li><a href="./publish/ftps">FTPS server</a></li>
+  </ul></li>
 </ul><h2>How to build your Yuzen</h2>
 <ul>
   <li>clone repository<br /><code>git clone https://github.com/taichi/yuzen.git</code></li>

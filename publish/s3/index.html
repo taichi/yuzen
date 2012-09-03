@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title>yuzen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="application/atom+xml" title="yuzen" href="../../atom_1.0.xml" />
+<link rel="stylesheet" type="text/css" href="../../css/main.css" />
+</head>
+<body>
+	<div class="main"><h1>How to Publish to AmazonS3</h1><p>Yuzen supports <a href="http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html">Amazon Static Website hosting</a></p>
+<ul>
+  <li>Make accessKeyId and secretKey for yuzen
+  <ul>
+    <li>Access to <a href="https://console.aws.amazon.com/iam/home">IAM Management Console</a></li>
+    <li>Click <strong>Create a New Group of Users</strong></li>
+    <li>Input <strong>Group Name</strong> and Click <strong>Continue</strong></li>
+    <li>Select <strong>Custom Policy</strong> and Click <strong>Select</strong></li>
+    <li>Input <strong>Policy Name</strong> and Copy the below directly into <strong>Policy Document</strong> and Click <strong>Continue</strong><br /><code>{  
+  &quot;Statement&quot;: [
+    {
+      &quot;Sid&quot;: &quot;strictAccess&quot;,
+      &quot;Action&quot;: [
+        &quot;s3:AbortMultipartUpload&quot;,
+        &quot;s3:CreateBucket&quot;,
+        &quot;s3:DeleteBucket&quot;,
+        &quot;s3:DeleteObject&quot;,
+        &quot;s3:GetBucketPolicy&quot;,
+        &quot;s3:GetBucketWebsite&quot;,
+        &quot;s3:ListAllMyBuckets&quot;,
+        &quot;s3:ListBucket&quot;,
+        &quot;s3:ListBucketMultipartUploads&quot;,
+        &quot;s3:PutBucketPolicy&quot;,
+        &quot;s3:PutBucketWebsite&quot;,
+        &quot;s3:PutObject&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: [
+        &quot;arn:aws:s3:::*&quot;
+      ]
+    }
+  ]
+}</code></li>
+    <li>Click <strong>Create New Users</strong> tab and Input user names and click <strong>Continue</strong></li>
+    <li>Review the informations and Click <strong>Finish</strong></li>
+    <li>Click <strong>Show User Security Credentials</strong> and Copy there</li>
+  </ul></li>
+  <li>Edit your gradle.properties like the below<br /><code>systemProp.aws.accessKeyId=[your accessKey Id]
+systemProp.aws.secretKey=[your secretKey]
+</code></li>
+  <li><p>Edit build.gradle for publish to S3<br /><code>yuzen.publish {
+    s3 bucketName: &#39;foo.bar&#39;, storageClass: &#39;REDUCED_REDUNDANCY&#39;
+}</code> </p></li>
+  <li><p>Publish to Amazon S3<br /><code>gradlew publish</code> </p>
+  <ul>
+    <li>if bucket doesn&rsquo;t exists yuzen make the bucket</li>
+    <li>if bucket doesn&rsquo;t setUp for static web hosting also setUp configurations</li>
+    <li>if bucket doesn&rsquo;t setUp for anonymous access also setUp like the below<br /><code>{
+    &quot;Version&quot;: &quot;2008-10-17&quot;,
+    &quot;Statement&quot;: [{
+        &quot;Sid&quot;: &quot;AllowAnonymousRead&quot;,
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {&quot;AWS&quot;: &quot;*&quot;},
+        &quot;Action&quot;: [&quot;s3:GetObject&quot;],
+        &quot;Resource&quot;: [&quot;arn:aws:s3:::$bucketName/*&quot;]
+    }]
+}</code></li>
+  </ul></li>
+</ul></div>
+	<a href="https://github.com/taichi/yuzen"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+	<footer>
+		<div class="footer">
+			<p>
+				Thanks for <a href="http://twitter.github.com/bootstrap">Bootstrap,
+					from Twitter</a>
+			</p>
+			<p>
+				Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache
+					License v2.0</a>.
+			</p>
+			<p>
+				Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+			</p>
+			<p>
+				Powered by <a href="http://yuzen.koshinuke.org">Yuzen</a>
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

@@ -12,7 +12,94 @@
     <author>
       <name />
     </author>
-    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenLocal()&lt;br/&gt; mavenRepo url:&amp;lsquo;&lt;a href="https://oss.sonatype.org/content/repositories/releases"&gt;https://oss.sonatype.org/content/repositories/releases&lt;/a&gt;&amp;rsquo;&lt;br/&gt; mavenCentral()&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.0.4&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
+    <content type="html">&lt;p&gt;//&lt;br/&gt;// this gradle build script fragment can be referenced from your build as&lt;br/&gt;//&lt;br/&gt;// apply from:&amp;ldquo;&lt;a href="http://yuzen.koshinuke.org/install"&gt;http://yuzen.koshinuke.org/install&lt;/a&gt;&amp;rdquo;&lt;br/&gt;//&lt;br/&gt;// Or you can copy the below directly into your build.gradle.&lt;br/&gt;//&lt;br/&gt;buildscript {&lt;br/&gt; repositories {&lt;br/&gt; mavenLocal()&lt;br/&gt; mavenCentral()&lt;br/&gt; mavenRepo url:&amp;lsquo;&lt;a href="https://oss.sonatype.org/content/repositories/releases"&gt;https://oss.sonatype.org/content/repositories/releases&lt;/a&gt;&amp;rsquo;&lt;br/&gt; }&lt;br/&gt; dependencies {&lt;br/&gt; classpath &amp;lsquo;org.koshinuke:yuzen:0.1.0&amp;rsquo;&lt;br/&gt; }&lt;br/&gt;}&lt;br/&gt;apply plugin: org.koshinuke.yuzen.YuzenPlugin&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>How to Publish to GitHub Pages</title>
+    <link href="http://yuzen.koshinuke.org/publish/githubpages" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;h1&gt;How to Publish to GitHub Pages&lt;/h1&gt;&lt;p&gt;Yuzen supports &lt;a href="http://pages.github.com/"&gt;GitHub Pages&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Make New Repository for publish &lt;a href="https://github.com/new"&gt;here&lt;/a&gt;
+  &lt;ul&gt;
+    &lt;li&gt;if you want to use existing repository, you don&amp;rsquo;t do this&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Edit your gradle.properties like the below&lt;br/&gt;&lt;code&gt;github.username=[your github username]&#xD;
+github.password=[your github password]&#xD;
+&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Edit build.gradle for publish to GitHub Pages&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
+    ghpages repoURI : &amp;quot;https://github.com/[your github account]/[your repository name].git&amp;quot;&#xD;
+}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Publish to GitHub Pages. yuzen create or update gh-pages branch&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+  </entry>
+  <entry>
+    <title>How to Publish to AmazonS3</title>
+    <link href="http://yuzen.koshinuke.org/publish/s3" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;h1&gt;How to Publish to AmazonS3&lt;/h1&gt;&lt;p&gt;Yuzen supports &lt;a href="http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html"&gt;Amazon Static Website hosting&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Make accessKeyId and secretKey for yuzen
+  &lt;ul&gt;
+    &lt;li&gt;Access to &lt;a href="https://console.aws.amazon.com/iam/home"&gt;IAM Management Console&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Click &lt;strong&gt;Create a New Group of Users&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;Input &lt;strong&gt;Group Name&lt;/strong&gt; and Click &lt;strong&gt;Continue&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;Select &lt;strong&gt;Custom Policy&lt;/strong&gt; and Click &lt;strong&gt;Select&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;Input &lt;strong&gt;Policy Name&lt;/strong&gt; and Copy the below directly into &lt;strong&gt;Policy Document&lt;/strong&gt; and Click &lt;strong&gt;Continue&lt;/strong&gt;&lt;br/&gt;&lt;code&gt;{  &#xD;
+  &amp;quot;Statement&amp;quot;: [&#xD;
+    {&#xD;
+      &amp;quot;Sid&amp;quot;: &amp;quot;strictAccess&amp;quot;,&#xD;
+      &amp;quot;Action&amp;quot;: [&#xD;
+        &amp;quot;s3:AbortMultipartUpload&amp;quot;,&#xD;
+        &amp;quot;s3:CreateBucket&amp;quot;,&#xD;
+        &amp;quot;s3:DeleteBucket&amp;quot;,&#xD;
+        &amp;quot;s3:DeleteObject&amp;quot;,&#xD;
+        &amp;quot;s3:GetBucketPolicy&amp;quot;,&#xD;
+        &amp;quot;s3:GetBucketWebsite&amp;quot;,&#xD;
+        &amp;quot;s3:ListAllMyBuckets&amp;quot;,&#xD;
+        &amp;quot;s3:ListBucket&amp;quot;,&#xD;
+        &amp;quot;s3:ListBucketMultipartUploads&amp;quot;,&#xD;
+        &amp;quot;s3:PutBucketPolicy&amp;quot;,&#xD;
+        &amp;quot;s3:PutBucketWebsite&amp;quot;,&#xD;
+        &amp;quot;s3:PutObject&amp;quot;&#xD;
+      ],&#xD;
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,&#xD;
+      &amp;quot;Resource&amp;quot;: [&#xD;
+        &amp;quot;arn:aws:s3:::*&amp;quot;&#xD;
+      ]&#xD;
+    }&#xD;
+  ]&#xD;
+}&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;Click &lt;strong&gt;Create New Users&lt;/strong&gt; tab and Input user names and click &lt;strong&gt;Continue&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;Review the informations and Click &lt;strong&gt;Finish&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;Click &lt;strong&gt;Show User Security Credentials&lt;/strong&gt; and Copy there&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Edit your gradle.properties like the below&lt;br/&gt;&lt;code&gt;systemProp.aws.accessKeyId=[your accessKey Id]&#xD;
+systemProp.aws.secretKey=[your secretKey]&#xD;
+&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;p&gt;Edit build.gradle for publish to S3&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
+    s3 bucketName: &amp;#39;foo.bar&amp;#39;, storageClass: &amp;#39;REDUCED_REDUNDANCY&amp;#39;&#xD;
+}&lt;/code&gt; &lt;/p&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;p&gt;Publish to Amazon S3&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt; &lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;if bucket doesn&amp;rsquo;t exists yuzen make the bucket&lt;/li&gt;
+    &lt;li&gt;if bucket doesn&amp;rsquo;t setUp for static web hosting also setUp configurations&lt;/li&gt;
+    &lt;li&gt;if bucket doesn&amp;rsquo;t setUp for anonymous access also setUp like the below&lt;br/&gt;&lt;code&gt;{&#xD;
+    &amp;quot;Version&amp;quot;: &amp;quot;2008-10-17&amp;quot;,&#xD;
+    &amp;quot;Statement&amp;quot;: [{&#xD;
+        &amp;quot;Sid&amp;quot;: &amp;quot;AllowAnonymousRead&amp;quot;,&#xD;
+        &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,&#xD;
+        &amp;quot;Principal&amp;quot;: {&amp;quot;AWS&amp;quot;: &amp;quot;*&amp;quot;},&#xD;
+        &amp;quot;Action&amp;quot;: [&amp;quot;s3:GetObject&amp;quot;],&#xD;
+        &amp;quot;Resource&amp;quot;: [&amp;quot;arn:aws:s3:::$bucketName/*&amp;quot;]&#xD;
+    }]&#xD;
+}&lt;/code&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
   </entry>
   <entry>
     <title>Yuzen</title>
@@ -23,7 +110,8 @@
     <content type="html">&lt;h1&gt;Yuzen&lt;/h1&gt;&lt;p&gt;Yuzen is a static contents generator similar to &lt;a href="https://github.com/mojombo/jekyll"&gt;jekyll&lt;/a&gt;.&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Yuzen is a &lt;a href="http://gradle.org/"&gt;Gradle&lt;/a&gt; Plugin&lt;/li&gt;
-  &lt;li&gt;Yuzen uses clean template by &lt;a href="http://www.thymeleaf.org/"&gt;Thymeleaf&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Yuzen uses &lt;a href="http://www.thymeleaf.org/"&gt;Thymeleaf&lt;/a&gt; for clean template&lt;/li&gt;
+  &lt;li&gt;Yuzen uses &lt;a href="http://twitter.github.com/bootstrap/"&gt;Bootstrap&lt;/a&gt; for design&lt;/li&gt;
   &lt;li&gt;Yuzen translates &lt;a href="http://daringfireball.net/projects/markdown/"&gt;Markdown&lt;/a&gt; to HTML5
   &lt;ul&gt;
     &lt;li&gt;Yuzen parses Markdown by &lt;a href="https://github.com/sirthias/pegdown/"&gt;Pegdown&lt;/a&gt;&lt;/li&gt;
@@ -34,10 +122,15 @@
     &lt;li&gt;slide&lt;/li&gt;
     &lt;li&gt;site (this one)&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
-  &lt;li&gt;Yuzen publishes contents to GitHub Pages and FTPS server&lt;/li&gt;
+  &lt;li&gt;Yuzen publishes contents to &amp;hellip;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="./publish/githubpages/"&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="./publish/s3"&gt;Amazon S3&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="./publish/ftps"&gt;FTPS server&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;Requirements&lt;/h2&gt;
 &lt;ul&gt;
-  &lt;li&gt;java7 or more tested by 1.7.0_02&lt;/li&gt;
+  &lt;li&gt;java7 or more tested by 1.7.0_07&lt;/li&gt;
   &lt;li&gt;gradle 1.1&lt;/li&gt;
   &lt;li&gt;eclipse 3.7.2 (for development)
   &lt;ul&gt;
@@ -48,12 +141,24 @@
   &lt;li&gt;Install Java SE 7 &lt;a href="http://www.oracle.com/technetwork/java/javase/downloads/"&gt;JDK&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;if you don&amp;rsquo;t have gradle,
   &lt;ul&gt;
-    &lt;li&gt;Download latest release archive from &lt;a href="https://github.com/taichi/yuzen/downloads"&gt;here&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Download startup archive from &lt;a href="https://github.com/taichi/yuzen/downloads"&gt;here&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;Extract the archive.&lt;br/&gt;&lt;code&gt;jar xvf yuzen-startup.zip&lt;/code&gt;&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
   &lt;li&gt;if you already use gradle,
   &lt;ul&gt;
     &lt;li&gt;apply plugin from this site.&lt;br/&gt;&lt;code&gt;apply from: &amp;#39;http://yuzen.koshinuke.org/install&amp;#39;&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;or copy the below directly into your build.gradle.&lt;br/&gt;&lt;code&gt;buildscript {&#xD;
+    repositories {&#xD;
+        mavenLocal()&#xD;
+        mavenCentral()&#xD;
+        mavenRepo url:&amp;#39;https://oss.sonatype.org/content/repositories/releases&amp;#39;&#xD;
+    }&#xD;
+    dependencies {&#xD;
+        classpath &amp;#39;org.koshinuke:yuzen:0.0.+&amp;#39;&#xD;
+    }&#xD;
+}&#xD;
+apply plugin: org.koshinuke.yuzen.YuzenPlugin&#xD;
+&lt;/code&gt;&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
   &lt;li&gt;Modify gradle.properties
   &lt;ul&gt;
@@ -70,33 +175,42 @@
       &lt;li&gt;systemProp.https.proxyPort&lt;/li&gt;
     &lt;/ul&gt;&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h2&gt;How to Get Start a Blog&lt;/h2&gt;
+&lt;/ul&gt;&lt;h2&gt;How to Get Start your Blog&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;Initialize template&lt;br/&gt;&lt;code&gt;gradlew initBlog&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Edit build.gradle for blogging.&lt;br/&gt;&lt;code&gt;blog {  &#xD;
-     title &amp;#39;blog title&amp;#39;  &#xD;
-     subtitle &amp;#39;sub title or blog description&amp;#39;  &#xD;
-     profile &amp;#39;profile &amp;#39;minimum profile for sidemenu&amp;#39;  &#xD;
-     // this block uses for atom or rss feed.  &#xD;
-     feed {  &#xD;
-         syndicationURI = &amp;#39;http://localhost:8080/blog&amp;#39;  &#xD;
-         author = &amp;#39;john doe&amp;#39;  &#xD;
-     }  &#xD;
+  &lt;li&gt;Edit build.gradle for blogging.&lt;br/&gt;&lt;code&gt;blog {&#xD;
+     title &amp;#39;blog title&amp;#39;&#xD;
+     subtitle &amp;#39;sub title or blog description&amp;#39;&#xD;
+     profile &amp;#39;profile &amp;#39;minimum profile for sidemenu&amp;#39;&#xD;
+     // this block uses for atom or rss feed.&#xD;
+     feed {&#xD;
+         syndicationURI &amp;#39;http://localhost:8080/blog&amp;#39;&#xD;
+         author &amp;#39;john doe&amp;#39;&#xD;
+     }&#xD;
  }&#xD;
 &lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Write your profile to _contents/profile.md
   &lt;ul&gt;
-    &lt;li&gt;contents files encoding require UTF-8&lt;/li&gt;
+    &lt;li&gt;contents files encoding require &lt;strong&gt;UTF-8&lt;/strong&gt;&lt;/li&gt;
   &lt;/ul&gt;&lt;/li&gt;
   &lt;li&gt;add first entry&lt;br/&gt;&lt;code&gt;gradlew post -Ptitle=HelloWorld&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Write your first entry to generated file.&lt;/li&gt;
+  &lt;li&gt;Write your first entry to generated file&lt;/li&gt;
   &lt;li&gt;Generate static contents&lt;br/&gt;&lt;code&gt;gradlew startBlog&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Access to &lt;a href="http://localhost:8080"&gt;localhost:8080&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Check your generated contents&lt;/li&gt;
-  &lt;li&gt;Edit build.gradle for publish to GitHub Pages.&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
-    ghpages repoURI : &amp;quot;https://github.com/[your github account]/[your repository name].git&amp;quot;&#xD;
-}&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Publish to GitHub Pages. yuzen create or update gh-pages branch&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Check your generated contents
+  &lt;ul&gt;
+    &lt;li&gt;if you want to redesign, you should modify &lt;strong&gt;_templates&lt;/strong&gt; directory files
+    &lt;ul&gt;
+      &lt;li&gt;_templates/page.html is index template. cf. &lt;a href="http://www.thymeleaf.org/documentation.html"&gt;thymeleaf :: documentation&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;_templates/less/main.less is the center of the &lt;a href="http://lesscss.org/"&gt;less&lt;/a&gt; files.&lt;/li&gt;
+    &lt;/ul&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
+  &lt;li&gt;Yuzen has some publishing features, you may use&amp;hellip;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="./publish/githubpages/"&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="./publish/s3"&gt;Amazon S3&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="./publish/ftps"&gt;FTPS server&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;How to build your Yuzen&lt;/h2&gt;
 &lt;ul&gt;
   &lt;li&gt;clone repository&lt;br/&gt;&lt;code&gt;git clone https://github.com/taichi/yuzen.git&lt;/code&gt;&lt;/li&gt;
@@ -104,6 +218,23 @@
   &lt;li&gt;import project to eclipse&lt;/li&gt;
   &lt;li&gt;install to your maven local repository&lt;br/&gt;&lt;code&gt;gradlew clean install&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;h2&gt;License&lt;/h2&gt;&lt;p&gt;Apache License, Version 2.0&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>How to Publish to FTPS Server</title>
+    <link href="http://yuzen.koshinuke.org/publish/ftps" />
+    <author>
+      <name />
+    </author>
+    <content type="html">&lt;h1&gt;How to Publish to FTPS Server&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;Edit your gradle.properties like the below&lt;br/&gt;&lt;code&gt;ftps.username=[your username]&#xD;
+ftps.password=[your password]&#xD;
+&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Edit build.gradle for publish to FTPS Server&lt;br/&gt;&lt;code&gt;yuzen.publish {&#xD;
+    ftps host : &amp;quot;example.jp&amp;quot;&#xD;
+}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Publish to FTPS Server.&lt;br/&gt;&lt;code&gt;gradlew publish&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
   </entry>
   <entry>
     <title>CNAME</title>
