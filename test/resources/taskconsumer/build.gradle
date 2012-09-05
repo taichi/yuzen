@@ -2,11 +2,11 @@ import org.gradle.api.tasks.Copy
 
 buildscript {
 	repositories {
-		mavenRepo(url: 'file:/../../../build/repo')
+		mavenLocal()
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.koshinuke:yuzen:0.0.1'
+		classpath 'org.koshinuke:yuzen:0.1.0'
 	}
 }
 

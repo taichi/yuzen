@@ -7,9 +7,9 @@
 	<header th:fragment="header">
 		<hgroup>
 			<h1 th:text="${blog.title}">Blog Title</h1>
-			<h2 th:text="${blog.subtitle}">sub title</h2>
+			<h2 th:text="${blog.subtitle}" class="hidden-phone">sub title</h2>
 		</hgroup>
-		<div class="navbar">
+		<div class="navbar navbar-inverse hidden-phone">
 			<div class="navbar-inner">
 				<div class="container">
 					<ul class="nav">

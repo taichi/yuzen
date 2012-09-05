@@ -3,6 +3,12 @@
 
 @bodyBackground: #333;
 
+@media (min-width: 768px) {
+	body > header {
+		padding: 0 20px 0 20px;
+	}
+}
+
 header {
 	hgroup {
 		#font > #family > .serif;
@@ -15,11 +21,12 @@ header {
 			font-style: oblique;
 		}
 	}
-	.navbar-inner {
+	.navbar-inverse .navbar-inner {
 		#gradient > .vertical-three-colors(@gray, @grayDark, 50%, @gray);
 	}
 }
-header hgroup, header .navbar, .footer {
+
+.footer {
 	padding: 1em 1em 0 1em;
 }
 
