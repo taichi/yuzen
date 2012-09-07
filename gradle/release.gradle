@@ -5,6 +5,7 @@ import javax.ws.rs.core.MediaType
 
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.errors.UnsupportedCredentialItem
+import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.lib.TextProgressMonitor
 import org.eclipse.jgit.transport.CredentialItem
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -34,6 +35,20 @@ buildscript {
 task stage_list(type: StagingListTask)
 task stage_close(type: StagingCloseTask) { repositoryId = getInput('repoId') }
 task stage_drop(type: StagingDropTask) { repositoryId = getInput('repoId') }
+
+jar.doFirst {
+	Git g = Git.open project.file('src/resources/bootstrap/.git')
+	Repository repo = g.getRepository()
+	try {
+		def oid = repo.resolve('HEAD')
+		def tag = repo.resolve("$bootstrap^{commit}")
+		if(oid != tag) {
+			throw new IllegalStateException("current bootstrap repository is invalid. expected: $bootstrap $tag.name / actual HEAD: $oid.name")
+		}
+	} finally {
+		repo.close()
+	}
+}
 
 task release(dependsOn: uploadArchives, type: AutoReleaseTask)
 
