@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Yuzen Markdown Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="js/editor/codemirror.css" />
+<link rel="stylesheet/less" type="text/css" href="less/editor.less" />
+<script type="application/javascript" src="less/less-1.3.0.min.js"></script>
+<script type="application/javascript" src="js/jquery.js"></script>
+<script type="application/javascript" src="js/bootstrap-button.js"></script>
+<script type="application/javascript" src="js/editor/screenfull.js"></script>
+<script type="application/javascript" src="js/editor/codemirror-compressed.js"></script>
+<script type="application/javascript" src="js/editor/Markdown.Converter.js"></script>
+<script type="application/javascript" src="js/editor/yuzen.editor.js"></script>
+</head>
+<body>
+	<div id="editor_header" class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="#">Yuzen</a>
+			<div class="toolbar btn-toolbar">
+				<div class="btn-group" data-toggle="button">
+					<button type="button" class="btn">Outline</button>
+				</div>
+				<div class="btn-group editor_state" data-toggle="buttons-radio">
+					<button type="button" class="btn" data-state="eo">Editor</button>
+					<button type="button" class="btn active ep" data-state="ep">Editor & Preview</button>
+					<button type="button" class="btn po" data-state="po">Preview</button>
+					<button type="button" class="btn eh" data-state="eh">Editor & Help</button>
+					<button type="button" class="btn ho" data-state="ho">Help</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="app container-fluid">
+		<div class="main row-fluid">
+			<div class="editor span6">
+				<textarea class="editorMain">
+Markdown: Basics
+================
+
+&lt;ul id="ProjectSubmenu"&gt;
+    &lt;li&gt;&lt;a href="/projects/markdown/" title="Markdown Project Page"&gt;Main&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class="selected" title="Markdown Basics"&gt;Basics&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/projects/markdown/syntax" title="Markdown Syntax Documentation"&gt;Syntax&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/projects/markdown/license" title="Pricing and License Information"&gt;License&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/projects/markdown/dingus" title="Online Markdown Web Form"&gt;Dingus&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+
+Getting the Gist of Markdown's Formatting Syntax
+------------------------------------------------
+
+This page offers a brief overview of what it's like to use Markdown.
+The [syntax page] [s] provides complete, detailed documentation for
+every feature, but Markdown should be very easy to pick up simply by
+looking at a few examples of it in action. The examples on this page
+are written in a before/after style, showing example syntax and the
+HTML output produced by Markdown.
+				</textarea>
+			</div>
+			<div class="preview span6"></div>
+			<div class="help span6 invisible">help</div>
+		</div>
+	</div>
+	<footer id="editor_footer">
+		<p>
+			Thanks for <a href="http://twitter.github.com/bootstrap">Bootstrap, from Twitter</a>
+		</p>
+		<p>
+			Thanks for <a href="http://codemirror.net/">Code Mirror</a>
+		</p>
+		<p>
+			Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>.
+		</p>
+	</footer>
+</body>
+</html>

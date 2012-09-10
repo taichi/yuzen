@@ -1,0 +1,29 @@
+@import "bootstrap.less";
+@import "responsive.less";
+@import "radius.less";
+@import "codemirror.less";
+
+.navbar-inner .btn-toolbar {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.preview, div.help {
+	border: 1px solid #ddd;
+	#radius > .around();
+	overflow: auto;
+	padding: 0.5em;
+}
+
+.fullscreen {
+	.CodeMirror, div.preview, div.help {
+		border: none;
+	}
+}
+
+footer {
+	margin-top: 2em;
+	font-size: smaller;
+	padding: 1em 1em 0 1em;
+	border-top: 1px solid @gray;
+}
