@@ -1,13 +1,36 @@
 !function($) {
 	"use strict"; // jshint ;_;
+	var headerQuery = $.map([ 1, 2, 3, 4, 5, 6
+	], function(n) {
+		return 'h' + n;
+	}).join(',');
+
 	var transrate = function(value) {
-		console.log('transrate ' + new Date);
-		// TODO: switch to server side processing.
-		var converter = new Markdown.Converter();
-		var html = converter.makeHtml(value);
-		$('div.preview').html(html);
+		$.when(function() {
+			console.log('transrate ' + new Date);
+			var dfd = $.Deferred();
+			setTimeout(function() {
+				// TODO: switch to server side processing.
+				var converter = new Markdown.Converter();
+				var html = converter.makeHtml(value);
+				dfd.resolve(html);
+			});
+			return dfd.promise();
+		}()).then(function(html) {
+			$('div.preview').html(html);
+		}).then(function(html) {
+			setTimeout(function() {
+				makeoutlines($('div.preview').find(headerQuery));
+			});
+		});
 	};
-	var d = $.Deferred().progress(transrate);
+	var makeoutlines = function(nodes) {
+		var outline_begin = '<div class="outline span2">';
+		nodes.each(function() {
+			console.log(this);
+		});
+		var outline_end = '</div>';
+	};
 	$(function() {
 		var cm = CodeMirror.fromTextArea($('textarea.editorMain')[0], {
 			mode : 'markdown',
@@ -15,15 +38,22 @@
 			matchBrackets : true,
 			tabMode : 'indent',
 			onChange : function() {
-				d.notify(cm.getValue());
+				transrate(cm.getValue());
 			},
 			onCursorActivity : function() {
 				cm.setLineClass(lineH);
-				lineH = cm.setLineClass(cm.getCursor()['line'], 'activeline');
+				lineH = cm.setLineClass(cm.getCursor().line, 'activeline');
 			}
 		});
 		transrate(cm.getValue());
 		var lineH = cm.getLineHandle(0);
+
+		$(document).on('click', 'button.outline', function() {
+			if ($(this).hasClass('active')) {
+
+			}
+		});
+
 		var StateHandler = function(selector, add) {
 			this.component = false;
 			this.resize = function(height) {
@@ -50,7 +80,7 @@
 				removeAdd(selector, 'span6', 'span12');
 			};
 			this.collapse = function() {
-				removeAdd(selector, 'span12', 'span6')
+				removeAdd(selector, 'span12', 'span6');
 			};
 		};
 		var editorHandler = new StateHandler('div.editor', function(self) {
@@ -60,39 +90,39 @@
 			$('div.main').append(self.component);
 		};
 		var previewHandler = new StateHandler('div.preview', append);
-		var helpHandler = new StateHandler('div.help', append);
+		var refsHandler = new StateHandler('div.help', append);
 		var stateHandlers = {
 			eo : function() {
 				editorHandler.add();
 				editorHandler.expand();
 				previewHandler.remove();
-				helpHandler.remove();
+				refsHandler.remove();
 			},
 			ep : function() {
 				editorHandler.add();
 				editorHandler.collapse();
 				previewHandler.add();
 				previewHandler.collapse();
-				helpHandler.remove();
+				refsHandler.remove();
 			},
 			po : function() {
 				editorHandler.remove();
 				previewHandler.add();
 				previewHandler.expand();
-				helpHandler.remove();
+				refsHandler.remove();
 			},
-			eh : function() {
+			er : function() {
 				editorHandler.add();
 				editorHandler.collapse();
 				previewHandler.remove();
-				helpHandler.add();
-				helpHandler.collapse();
+				refsHandler.add();
+				refsHandler.collapse();
 			},
-			ho : function() {
+			ro : function() {
 				editorHandler.remove();
 				previewHandler.remove();
-				helpHandler.add();
-				helpHandler.expand();
+				refsHandler.add();
+				refsHandler.expand();
 			}
 		};
 		stateHandlers.ep();
@@ -104,10 +134,11 @@
 			var left = $(window).height() - $('#editor_header').outerHeight()
 					- $('div.toolbar').outerHeight();
 			if (0 < left) {
-				$.each([ editorHandler, previewHandler, helpHandler ],
-						function() {
-							this.resize(left);
-						});
+				$.each([ editorHandler, previewHandler, refsHandler
+				], function() {
+					this.resize(left);
+				});
+				$('div.outline').height(left);
 				cm.setSize(null, left);
 			}
 		};
@@ -136,7 +167,10 @@
 						resize();
 					}
 				});
+		// TODO outline
 		// TODO scroll sync
 		// TODO search help incrementally
+		// TODO auto save to local storage
+		// TODO drag & drop file from desktop
 	});
 }(window.jQuery);
