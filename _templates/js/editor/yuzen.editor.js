@@ -102,7 +102,7 @@
 			this.remove = function() {
 				if (!this.component) {
 					this.component = $(selector).remove();
-					this.component.removeClass('invisible');
+					this.component.removeClass('invisible span5 span6 span10 span12');
 				}
 			};
 			this.expand = function() {
