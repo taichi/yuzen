@@ -1,9 +1,8 @@
 !function($) {
 	"use strict"; // jshint ;_;
-	var headerQuery = $.map([ 1, 2, 3, 4, 5, 6
-	], function(n) {
-		return 'h' + n;
-	}).join(',');
+	var replaceCss = function($this, r, a) {
+		$this.removeClass(r).addClass(a);
+	};
 
 	var transrate = function(value) {
 		$.when(function() {
@@ -18,19 +17,58 @@
 			return dfd.promise();
 		}()).then(function(html) {
 			$('div.preview').html(html);
-		}).then(function(html) {
-			setTimeout(function() {
-				makeoutlines($('div.preview').find(headerQuery));
+		}).then(
+				function(html) {
+					setTimeout(function() {
+						var ot = '<div class="outline span2">';
+						var heads = $('div.preview').find('h1,h2,h3,h4,h5,h6');
+						heads.each(function(index) {
+							$(this).append(
+									'<a href name=ol' + index + '>&nbsp;</a>');
+							ot += '<div class="' + this.localName
+									+ '" data-ol="' + index + '"><a href="#">'
+									+ this.innerText + '</a></div>';
+						});
+						outline.text = ot + '</div>';
+						var $outline = $('div.outline');
+						if ($outline[0]) {
+							$outline.replaceWith(outline.text);
+							$(window).trigger('resize');
+						}
+					});
+				});
+	};
+
+	var outline = {
+		text : false
+	};
+	$(document).on('click', 'div.outline div[data-ol]', function() {
+		$('a[name="ol' + $(this).data('ol') + '"]').focus().blur();
+	});
+
+	$(document).on('click', 'button.outline', function() {
+		var $outline = $('div.outline');
+		var $main = $('div.main');
+		if ($(this).hasClass('active') && outline.text) {
+			$main.find('div.span6').each(function() {
+				replaceCss($(this), 'span6', 'span5');
 			});
-		});
-	};
-	var makeoutlines = function(nodes) {
-		var outline_begin = '<div class="outline span2">';
-		nodes.each(function() {
-			console.log(this);
-		});
-		var outline_end = '</div>';
-	};
+			$main.find('div.span12').each(function() {
+				replaceCss($(this), 'span12', 'span10');
+			});
+			$main.prepend(outline.text);
+			$(window).trigger('resize');
+		} else if ($outline[0]) {
+			$main.find('div.span5').each(function() {
+				replaceCss($(this), 'span5', 'span6');
+			});
+			$main.find('div.span10').each(function() {
+				replaceCss($(this), 'span10', 'span12');
+			});
+			$outline.remove();
+		}
+	});
+
 	$(function() {
 		var cm = CodeMirror.fromTextArea($('textarea.editorMain')[0], {
 			mode : 'markdown',
@@ -47,12 +85,6 @@
 		});
 		transrate(cm.getValue());
 		var lineH = cm.getLineHandle(0);
-
-		$(document).on('click', 'button.outline', function() {
-			if ($(this).hasClass('active')) {
-
-			}
-		});
 
 		var StateHandler = function(selector, add) {
 			this.component = false;
@@ -73,18 +105,28 @@
 					this.component.removeClass('invisible');
 				}
 			};
-			var removeAdd = function(selector, r, a) {
-				$(selector).removeClass(r).addClass(a);
-			};
 			this.expand = function() {
-				removeAdd(selector, 'span6', 'span12');
+				if ($('div.outline')[0]) {
+					replaceCss($(selector), 'span5', 'span10');
+				} else {
+					replaceCss($(selector), 'span6', 'span12');
+				}
 			};
 			this.collapse = function() {
-				removeAdd(selector, 'span12', 'span6');
+				if ($('div.outline')[0]) {
+					replaceCss($(selector), 'span10', 'span5');
+				} else {
+					replaceCss($(selector), 'span12', 'span6');
+				}
 			};
 		};
 		var editorHandler = new StateHandler('div.editor', function(self) {
-			$('div.main').prepend(self.component);
+			var $o = $('div.outline');
+			if ($o[0]) {
+				$o.after(self.component);
+			} else {
+				$('div.main').prepend(self.component);
+			}
 		});
 		var append = function(self) {
 			$('div.main').append(self.component);
@@ -134,10 +176,10 @@
 			var left = $(window).height() - $('#editor_header').outerHeight()
 					- $('div.toolbar').outerHeight();
 			if (0 < left) {
-				$.each([ editorHandler, previewHandler, refsHandler
-				], function() {
-					this.resize(left);
-				});
+				$.each([ editorHandler, previewHandler, refsHandler ],
+						function() {
+							this.resize(left);
+						});
 				$('div.outline').height(left);
 				cm.setSize(null, left);
 			}
@@ -167,7 +209,6 @@
 						resize();
 					}
 				});
-		// TODO outline
 		// TODO scroll sync
 		// TODO search help incrementally
 		// TODO auto save to local storage

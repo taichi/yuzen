@@ -16,11 +16,19 @@ div.outline, div.preview, div.help {
 }
 
 div.outline {
-	height: 100%;
+	.h1, .h2, .h3, .h4, .h5, .h6 {
+		.text-overflow();
+	}
+	.h1 { font-size: 18px; line-height: 20px; }
+	.h2 { font-size: 15px; line-height: 20px; padding-left: 0.5em; }
+	.h3 { font-size: 12px; line-height: 20px; padding-left: 1em; }
+	.h4 { font-size: 9px; line-height: 10px;  padding-left: 1.5em;}
+	.h5 { font-size: 7px; line-height: 10px; padding-left: 2em;}
+	.h6 { font-size: 6px; line-height: 10px; padding-left: 2.5em;}
 }
 
 .fullscreen {
-	.CodeMirror, div.preview, div.help {
+	.CodeMirror, div.outline, div.preview, div.help {
 		border: none;
 	}
 }
