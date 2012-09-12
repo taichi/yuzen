@@ -1,7 +1,12 @@
 !function($) {
 	"use strict"; // jshint ;_;
-	
+
 	// Utilities
+	var eventNames = {
+		adjustHeight : 'adjustHeight',
+		stateChange: 'stateChange'
+	};
+
 	var replaceCss = function($this, r, a) {
 		$this.removeClass(r).addClass(a);
 	};
@@ -16,21 +21,41 @@
 		var heads = prev.find('h1,h2,h3,h4,h5,h6');
 		heads.each(function(index) {
 			$(this).append('<a href name=ol' + index + '>&nbsp;</a>');
-			ot += '<div class="' + this.localName + '" data-ol="' + index
+			ot += '<div class="' + this.localName + '" data-ol="ol' + index
 					+ '"><a href="#">' + this.innerText + '</a></div>';
 		});
 		outline.text = ot + '</div>';
-		var $outline = $('div.outline');
-		if ($outline[0]) {
-			$outline.replaceWith(outline.text);
-			$(window).trigger('resize');
-		}
 	};
 	var outline = {
-		text : false
+		text : false,
+		refs : false
 	};
 	$(document).on('click', 'div.outline div[data-ol]', function() {
-		$('a[name="ol' + $(this).data('ol') + '"]').focus().blur();
+		$('a[name="' + $(this).data('ol') + '"]').focus().blur();
+	});
+	$(document).on(eventNames.adjustHeight, function(e) {
+		$('div.outline').height(e.height);
+	});
+	$(document).on(eventNames.stateChange, function(e) {
+		var $ref = $('div.reference');
+		var $outline = $('div.outline');
+		if($outline[0]) {
+			if($ref.hasClass('span10')) {
+				if(!outline.refs) {
+					var ot = '<div class="outline span2">';
+					$ref.find('h1,h2,h3,h4,h5,h6').each(function(){
+						$(this).append('<a href name=ref' + index + '>&nbsp;</a>');
+						ot += '<div class="' + this.localName + '" data-ol="ref' + index
+						+ '"><a href="#">' + this.innerText + '</a></div>';
+					});
+					outline.refs = ot + '</div>';
+				}
+				$outline.replaceWith(outline.refs);
+			} else {
+				$outline.replaceWith(outline.text);
+			}
+		}
+		$(window).trigger('resize');
 	});
 
 	$(document).on('click', 'button.outline', function() {
@@ -44,7 +69,7 @@
 				replaceCss($(this), 'span12', 'span10');
 			});
 			$main.prepend(outline.text);
-			$(window).trigger('resize');
+			$(document).trigger(eventNames.stateChange);
 		} else if ($outline[0]) {
 			$main.find('div.span5').each(function() {
 				replaceCss($(this), 'span5', 'span6');
@@ -59,11 +84,12 @@
 	// Editor views switching
 	var StateHandler = function(selector, add) {
 		this.component = false;
-		this.resize = function(height) {
-			if (!this.component) {
-				$(selector).height(height);
+		var self = this;
+		$(document).on(eventNames.adjustHeight, function(e) {
+			if (!self.component) {
+				$(selector).height(e.height);
 			}
-		};
+		});
 		this.add = function() {
 			if (this.component) {
 				add(this);
@@ -104,7 +130,7 @@
 		$('div.main').append(self.component);
 	};
 	var previewHandler = new StateHandler('div.preview', append);
-	var refsHandler = new StateHandler('div.help', append);
+	var refsHandler = new StateHandler('div.reference', append);
 	var stateHandlers = {
 		eo : function() {
 			editorHandler.add();
@@ -144,7 +170,7 @@
 	});
 	$(document).on('click', 'div.editor_state button', function() {
 		stateHandlers[$(this).data('state')]();
-		$(window).trigger('resize');
+		$(document).trigger(eventNames.stateChange);
 	});
 
 	// FullScreen
@@ -169,6 +195,20 @@
 						footer = $('#editor_footer').remove();
 					}
 					$(window).trigger('resize');
+				}
+			});
+
+	// adjust component height
+	$(window).resize(
+			function() {
+				var left = $(window).height()
+						- $('#editor_header').outerHeight()
+						- $('div.toolbar').outerHeight();
+				if (0 < left) {
+					$(document).trigger({
+						type : eventNames.adjustHeight,
+						height : left
+					});
 				}
 			});
 
@@ -206,27 +246,17 @@
 				lineH = cm.setLineClass(cm.getCursor().line, 'activeline');
 			}
 		});
+		$(document).on(eventNames.adjustHeight, function(e) {
+			cm.setSize(null, e.height);
+		});
+
 		setTimeout(function() {
 			transrate(cm.getValue());
+			$(window).trigger('resize');
 		});
 		var lineH = cm.getLineHandle(0);
-
-		var resize = function() {
-			var left = $(window).height() - $('#editor_header').outerHeight()
-					- $('div.toolbar').outerHeight();
-			if (0 < left) {
-				$.each([ editorHandler, previewHandler, refsHandler ],
-						function() {
-							this.resize(left);
-						});
-				$('div.outline').height(left);
-				cm.setSize(null, left);
-			}
-		};
-		resize();
-		$(window).resize(resize);
 		// TODO auto save to local storage
 		// TODO drag & drop file from desktop
-		// TODO search help incrementally
+		// TODO search reference incrementally
 	});
 }(window.jQuery);
