@@ -16,3 +16,38 @@
 	#radius > .around();
 	background: #f0fcff !important;
 }
+
+.CodeMirror-dialog {
+  position: relative;
+}
+
+.CodeMirror-dialog > div {
+  #radius > .around();
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: white;
+  border-bottom: 1px solid #eee;
+  z-index: 15;
+  padding: .2em .8em;
+  overflow: hidden;
+  color: #333;
+}
+
+.CodeMirror-dialog input[type="text"] {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 10em;
+  color: inherit;
+  font-family: monospace;
+  line-height: 1.5em;
+  padding: 0;
+  margin: 0;
+  &:focus {
+  	.box-shadow(none);
+  }
+}
+
+.CodeMirror-dialog button {
+  font-size: 70%;
+}

@@ -1,10 +1,13 @@
-!function($) {
+/*jshint browser:true, laxbreak:true, laxcomma:true*/
+/*jshint devel:true*/
+/*global CodeMirror:false, screenfull:false, marked:false*/
+;(function($) {
 	"use strict"; // jshint ;_;
 
 	// Utilities
 	var eventNames = {
 		adjustHeight : 'adjustHeight',
-		stateChange: 'stateChange'
+		stateChange : 'stateChange'
 	};
 
 	var replaceCss = function($this, r, a) {
@@ -12,19 +15,22 @@
 	};
 
 	// Outline
-	var makeOutline = function(html) {
+	var processOutline = function($parent, prefix) {
 		var ot = '<div class="outline span2">';
+		var heads = $parent.find('h1,h2,h3,h4,h5,h6');
+		heads.each(function(index) {
+			$(this).append('<a href name=' + prefix + index + '>&nbsp;</a>');
+			ot += '<div class="' + this.localName + '" data-ol="' + prefix
+					+ index + '"><a href="#">' + this.innerText + '</a></div>';
+		});
+		return ot + '</div>';
+	};
+	var makeOutline = function(html) {
 		var prev = $('div.preview');
 		if (!prev[0]) {
 			prev = $('<div>' + html + '</div>');
 		}
-		var heads = prev.find('h1,h2,h3,h4,h5,h6');
-		heads.each(function(index) {
-			$(this).append('<a href name=ol' + index + '>&nbsp;</a>');
-			ot += '<div class="' + this.localName + '" data-ol="ol' + index
-					+ '"><a href="#">' + this.innerText + '</a></div>';
-		});
-		outline.text = ot + '</div>';
+		outline.text = processOutline(prev, 'ol');
 	};
 	var outline = {
 		text : false,
@@ -39,16 +45,10 @@
 	$(document).on(eventNames.stateChange, function(e) {
 		var $ref = $('div.reference');
 		var $outline = $('div.outline');
-		if($outline[0]) {
-			if($ref.hasClass('span10')) {
-				if(!outline.refs) {
-					var ot = '<div class="outline span2">';
-					$ref.find('h1,h2,h3,h4,h5,h6').each(function(){
-						$(this).append('<a href name=ref' + index + '>&nbsp;</a>');
-						ot += '<div class="' + this.localName + '" data-ol="ref' + index
-						+ '"><a href="#">' + this.innerText + '</a></div>';
-					});
-					outline.refs = ot + '</div>';
+		if ($outline[0]) {
+			if ($ref.hasClass('span10')) {
+				if (!outline.refs) {
+					outline.refs = processOutline($ref, 'ref');
 				}
 				$outline.replaceWith(outline.refs);
 			} else {
@@ -213,15 +213,23 @@
 			});
 
 	// Editor
+	marked.setOptions({
+		gfm : true,
+		pedantic : false,
+		sanitize : true,
+		highlight : function(code, lang) {
+			var r = $('<div>');
+			CodeMirror.runMode(code, lang, r[0]);
+			return '<span class="cm-s-default">' + r.html() + '</span>';
+		}
+	});
 	var transrate = function(value) {
 		$.when(function() {
-			console.log('transrate ' + new Date);
+			console.log('transrate ' + new Date());
 			var dfd = $.Deferred();
 			setTimeout(function() {
 				// TODO: switch to server side processing.
-				var converter = new Markdown.Converter();
-				var html = converter.makeHtml(value);
-				dfd.resolve(html);
+				dfd.resolve(marked(value));
 			});
 			return dfd.promise();
 		}()).then(function(html) {
@@ -255,8 +263,10 @@
 			$(window).trigger('resize');
 		});
 		var lineH = cm.getLineHandle(0);
-		// TODO auto save to local storage
+		// TODO fix FullScreen bug
+		// TODO auto save & restore to local storage
 		// TODO drag & drop file from desktop
 		// TODO search reference incrementally
+		// TODO save to S3 by CORS
 	});
-}(window.jQuery);
+}(window.jQuery));
