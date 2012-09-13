@@ -173,31 +173,6 @@
 		$(document).trigger(eventNames.stateChange);
 	});
 
-	// FullScreen
-	var header, footer;
-	$(document).on(
-			'keyup',
-			'body',
-			function(event) {
-				if (event.keyCode === 122/* F11 */) {
-					event.preventDefault();
-					var body = $('body');
-					if (body.hasClass('fullscreen')) {
-						screenfull.exit();
-						$('body').removeClass('fullscreen').prepend(header)
-								.append(footer);
-						$('div.app').addClass('container-fluid');
-					} else {
-						screenfull.request();
-						$('body').addClass('fullscreen');
-						$('div.app').removeClass('container-fluid');
-						header = $('#editor_header').remove();
-						footer = $('#editor_footer').remove();
-					}
-					$(window).trigger('resize');
-				}
-			});
-
 	// adjust component height
 	$(window).resize(
 			function() {
@@ -213,13 +188,32 @@
 			});
 
 	// Editor
+	var aliases = {
+		html : "htmlmixed",
+		js : "javascript",
+		json : "application/json",
+		c : "text/x-csrc",
+		"c++" : "text/x-c++src",
+		java : "text/x-java",
+		csharp : "text/x-csharp",
+		"c#" : "text/x-csharp",
+		scala : "text/x-scala",
+		ejs : "application/x-ejs",
+		aspx : "application/x-aspx",
+		jsp : "application/x-jsp",
+		php : "application/x-php",
+		pig : "application/x-pig",
+		plsql : "application/x-plsql"
+	};
+
 	marked.setOptions({
 		gfm : true,
 		pedantic : false,
 		sanitize : true,
 		highlight : function(code, lang) {
 			var r = $('<div>');
-			CodeMirror.runMode(code, lang, r[0]);
+			var mime = aliases[lang];
+			CodeMirror.runMode(code, mime ? mime : lang, r[0]);
 			return '<span class="cm-s-default">' + r.html() + '</span>';
 		}
 	});
@@ -242,7 +236,7 @@
 
 	$(function() {
 		var cm = CodeMirror.fromTextArea($('textarea.editorMain')[0], {
-			mode : 'markdown',
+			mode : 'gfm',
 			lineNumbers : true,
 			matchBrackets : true,
 			tabMode : 'indent',
@@ -263,10 +257,16 @@
 			$(window).trigger('resize');
 		});
 		var lineH = cm.getLineHandle(0);
-		// TODO fix FullScreen bug
 		// TODO auto save & restore to local storage
-		// TODO drag & drop file from desktop
 		// TODO search reference incrementally
 		// TODO save to S3 by CORS
+
+		// TODO FullScreen mode
+		// https://wiki.mozilla.org/Gecko:FullScreenAPI
+		// http://hacks.mozilla.org/2012/01/using-the-fullscreen-api-in-web-browsers/
+		// https://developer.mozilla.org/en-US/docs/DOM/Using_full-screen_mode
+		// https://github.com/sindresorhus/screenfull.js/
+		// HTML5のFullscreenAPIを使ってFullScreenモードに切り替えるとアルファベット系の入力が全て無効化される。
+		// これに対応する為、iframeタグによって領域を分割した上で表示内容の調節を行う必要がある。
 	});
 }(window.jQuery));
